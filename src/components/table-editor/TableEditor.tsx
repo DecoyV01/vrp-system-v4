@@ -157,9 +157,10 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
     if (value === '') return undefined
     
     switch (type) {
-      case 'number':
+      case 'number': {
         const num = parseFloat(value)
         return isNaN(num) ? undefined : num
+      }
       case 'array':
         try {
           const parsed = JSON.parse(value)

@@ -328,7 +328,7 @@ export const listWithFilters = query({
     // Validate user owns the project
     await validateUserOwnership(ctx, args.projectId, user._id);
     
-    let query = ctx.db.query("jobs").withIndex("by_project", (q) => q.eq("projectId", args.projectId));
+    const query = ctx.db.query("jobs").withIndex("by_project", (q) => q.eq("projectId", args.projectId));
     
     const jobs = await query.collect();
     
