@@ -46,6 +46,29 @@ export const listByProject = query({
   },
 });
 
+// Get all routes for a specific dataset (via project)
+export const listByDataset = query({
+  args: { datasetId: v.id("datasets") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    
+    // Get dataset to validate project ownership
+    const dataset = await ctx.db.get(args.datasetId);
+    if (!dataset) {
+      throw new Error("Dataset not found");
+    }
+    
+    // Validate user owns the project
+    await validateUserOwnership(ctx, dataset.projectId, user._id);
+    
+    // For now, return routes by project since routes don't have direct dataset link
+    return await ctx.db
+      .query("routes")
+      .withIndex("by_project", (q) => q.eq("projectId", dataset.projectId))
+      .collect();
+  },
+});
+
 // Get all routes for a specific vehicle
 export const listByVehicle = query({
   args: { vehicleId: v.id("vehicles") },

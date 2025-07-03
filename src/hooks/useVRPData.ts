@@ -268,10 +268,9 @@ export const useBulkImportLocations = () => {
 // =============================================================================
 
 export const useRoutes = (datasetId: Id<"datasets"> | undefined) => {
-  // Note: Routes API not fully implemented in backend yet
   return useQuery(
-    api.routes.listByProject,
-    datasetId ? { projectId: datasetId as any } : 'skip'
+    api.routes.listByDataset,
+    datasetId ? { datasetId } : 'skip'
   )
 }
 
