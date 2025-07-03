@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VRP System - Convex Database Schema</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #3498db;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        h4 {
+            color: #27ae60;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .mermaid {
+            text-align: center;
+            margin: 20px 0;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+        }
+        code {
+            background: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            color: #d63384;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        .tech-stack {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stack-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        .benefits {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #27ae60;
+            margin: 20px 0;
+        }
+        .phase {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin: 10px 0;
+        }
+        .highlight {
+            background: linear-gradient(120deg, #a8e6cf 0%, #dcedc1 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 8px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin: 8px 0;
+        }
+        .checkmark {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .cross {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>VRP System - Convex Database Schema</h1>
+
+        <h2>Architecture Overview</h2>
+        <div class="mermaid">
+            graph TB
+                subgraph "Frontend Layer"
+                    A[React/Vite Frontend]
+                    B[Cloudflare Pages Hosting]
+                end
+                
+                subgraph "Convex Backend Platform"
+                    C[Convex Runtime]
+                    D[Real-time Subscriptions]
+                    E[Built-in Services]
+                    F[Document Database]
+                end
+                
+                subgraph "External Services"
+                    G[Google Cloud VM - FastAPI]
+                    H[VROOM Solver Port 30010]
+                end
+                
+                A --> C
+                C --> D
+                C --> E
+                C --> F
+                A --> G
+                G --> H
+                
+                B --> A
+        </div>
+
+        <h2>Convex Function Types & Patterns</h2>
+        <div class="benefits">
+            <h3><span class="emoji">🔧</span> Core Function Types in VRP System</h3>
+            <div class="tech-stack">
+                <div class="stack-item" style="background: #e8f5e8; border-left-color: #27ae60;">
+                    <h4><span class="emoji">📖</span> Queries (Read Operations)</h4>
+                    <ul>
+                        <li><strong>Projects.list()</strong> - Get user's projects with real-time updates</li>
+                        <li><strong>Vehicles.getByDataset()</strong> - Live vehicle data for optimization</li>
+                        <li><strong>Jobs.getOptimizable()</strong> - Real-time job status for routing</li>
+                        <li><strong>Routes.getLive()</strong> - Live route visualization updates</li>
+                        <li><strong>Frontend Hook:</strong> <code>useQuery(api.projects.list)</code></li>
+                        <li><strong>Auto-reactive:</strong> UI updates when data changes</li>
+                    </ul>
+                </div>
+                <div class="stack-item" style="background: #fff3cd; border-left-color: #ffc107;">
+                    <h4><span class="emoji">✏️</span> Mutations (Write Operations)</h4>
+                    <ul>
+                        <li><strong>Projects.create()</strong> - ACID project creation with validation</li>
+                        <li><strong>Vehicles.bulkImport()</strong> - Transactional CSV imports</li>
+                        <li><strong>Routes.updateOptimization()</strong> - Store VROOM results</li>
+                        <li><strong>Jobs.assignToVehicle()</strong> - Manual route adjustments</li>
+                        <li><strong>Frontend Hook:</strong> <code>useMutation(api.projects.create)</code></li>
+                        <li><strong>Auto-optimistic:</strong> UI updates before server confirmation</li>
+                    </ul>
+                </div>
+                <div class="stack-item" style="background: #fce4ec; border-left-color: #e91e63;">
+                    <h4><span class="emoji">🚀</span> Actions (External Calls)</h4>
+                    <ul>
+                        <li><strong>Optimization.runVROOM()</strong> - Call FastAPI + VROOM solver</li>
+                        <li><strong>Import.processCSV()</strong> - Handle file uploads & parsing</li>
+                        <li><strong>Export.generateReport()</strong> - Create PDF/Excel exports</li>
+                        <li><strong>Geocoding.batchLocations()</strong> - External geocoding APIs</li>
+                        <li><strong>Frontend Hook:</strong> <code>useAction(api.optimization.runVROOM)</code></li>
+                        <li><strong>Long-running:</strong> Perfect for optimization workflows</li>
+                    </ul>
+                </div>
+                <div class="stack-item" style="background: #e3f2fd; border-left-color: #2196f3;">
+                    <h4><span class="emoji">🌐</span> HTTP Actions (REST APIs)</h4>
+                    <ul>
+                        <li><strong>webhooks/vroom-complete</strong> - VROOM solver callbacks</li>
+                        <li><strong>api/import/csv</strong> - File upload endpoints</li>
+                        <li><strong>api/export/routes</strong> - Data export endpoints</li>
+                        <li><strong>api/health/check</strong> - System health monitoring</li>
+                        <li><strong>Usage:</strong> Standard REST API endpoints</li>
+                        <li><strong>Integration:</strong> External systems and webhooks</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h3>VRP-Specific Convex Patterns</h3>
+        <div class="stack-item" style="background: #f8f9fa; border-left-color: #6c757d;">
+            <h4><span class="emoji">🛣️</span> Real-time Route Optimization Flow</h4>
+            <pre><code>// 1. Frontend triggers optimization
+const runOptimization = useAction(api.optimization.runVROOM);
+await runOptimization({ datasetId, optimizationSettings });
+
+// 2. Action calls external FastAPI
+export const runVROOM = action({
+  handler: async (ctx, { datasetId, settings }) => {
+    // Get data from Convex
+    const vehicles = await ctx.runQuery(api.vehicles.getByDataset, { datasetId });
+    const jobs = await ctx.runQuery(api.jobs.getByDataset, { datasetId });
+    
+    // Call external FastAPI + VROOM
+    const response = await fetch('http://fastapi:8000/optimize', {
+      method: 'POST',
+      body: JSON.stringify({ vehicles, jobs, settings })
+    });
+    
+    // Store results back in Convex
+    await ctx.runMutation(api.routes.storeOptimizationResults, {
+      datasetId,
+      results: await response.json()
+    });
+  }
+});
+
+// 3. Frontend automatically updates with new routes
+const routes = useQuery(api.routes.getByOptimization, { optimizationId });</code></pre>
+        </div>
+
+        <h3>Convex Hooks & Real-time Integration</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Hook Type</th>
+                    <th>Usage Pattern</th>
+                    <th>VRP Example</th>
+                    <th>Benefits</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>useQuery</strong></td>
+                    <td>Reactive data fetching</td>
+                    <td><code>useQuery(api.vehicles.list, { datasetId })</code></td>
+                    <td>Auto-updates when vehicles change</td>
+                </tr>
+                <tr>
+                    <td><strong>useMutation</strong></td>
+                    <td>Optimistic UI updates</td>
+                    <td><code>useMutation(api.jobs.create)</code></td>
+                    <td>Instant UI feedback + rollback on error</td>
+                </tr>
+                <tr>
+                    <td><strong>useAction</strong></td>
+                    <td>Long-running operations</td>
+                    <td><code>useAction(api.optimization.run)</code></td>
+                    <td>Perfect for VROOM optimization calls</td>
+                </tr>
+                <tr>
+                    <td><strong>usePaginatedQuery</strong></td>
+                    <td>Large dataset handling</td>
+                    <td><code>usePaginatedQuery(api.routes.listPaginated)</code></td>
+                    <td>Efficient loading of route history</td>
+                </tr>
+                <tr>
+                    <td><strong>useConvex</strong></td>
+                    <td>Direct client access</td>
+                    <td><code>convex.query(api.status.health)</code></td>
+                    <td>Non-reactive one-time queries</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="page-break-before: always;"></div>
+        <div style="width: 100%; transform: rotate(0deg); margin: 40px 0;">
+            <h2>Detailed Convex Architecture (VRP System)</h2>
+            <div class="mermaid" style="width: 100%; height: 800px; transform: scale(0.9); transform-origin: top left;">
+                graph LR
+                    subgraph "Frontend Application"
+                        subgraph "React Components"
+                            UI1[Project Dashboard]
+                            UI2[Vehicle Management]
+                            UI3[Route Optimizer]
+                            UI4[Results Viewer]
+                        end
+                        
+                        subgraph "Convex React Hooks"
+                            H1[useQuery - Live Data]
+                            H2[useMutation - Optimistic Updates]
+                            H3[useAction - Long Operations]
+                            H4[ConvexProvider - Context]
+                        end
+                    end
+                    
+                    subgraph "Convex Backend Platform"
+                        subgraph "Function Layer"
+                            F1[Queries<br/>• projects.list<br/>• vehicles.getByDataset<br/>• routes.getLive<br/>• jobs.getOptimizable]
+                            F2[Mutations<br/>• projects.create<br/>• vehicles.bulkImport<br/>• routes.store<br/>• jobs.assign]
+                            F3[Actions<br/>• optimization.runVROOM<br/>• import.processCSV<br/>• export.generatePDF<br/>• geocoding.batch]
+                            F4[HTTP Actions<br/>• /api/webhooks/vroom<br/>• /api/import/csv<br/>• /api/export/routes<br/>• /api/health]
+                        end
+                        
+                        subgraph "Real-time Engine"
+                            RT1[Live Queries<br/>Auto-reactive data]
+                            RT2[Optimistic Updates<br/>Instant UI feedback]
+                            RT3[Cache Invalidation<br/>Automatic sync]
+                            RT4[Subscriptions<br/>Push updates]
+                        end
+                        
+                        subgraph "Built-in Services"
+                            S1[Authentication<br/>Convex Auth]
+                            S2[File Storage<br/>CSV/PDF uploads]
+                            S3[Vector Search<br/>AI-powered search]
+                            S4[Scheduled Functions<br/>Cron jobs]
+                            S5[Rate Limiting<br/>API protection]
+                            S6[Workflows<br/>Long-running tasks]
+                        end
+                        
+                        subgraph "Database Layer"
+                            DB1[Document Collections<br/>Projects, Vehicles, Jobs, Routes]
+                            DB2[ACID Transactions<br/>Data consistency]
+                            DB3[Automatic Indexes<br/>Query optimization]
+                            DB4[Schema Validation<br/>Type safety]
+                        end
+                    end
+                    
+                    subgraph "External Optimization"
+                        EXT1[FastAPI Backend<br/>Python + asyncpg]
+                        EXT2[VROOM Solver<br/>Port 30010]
+                        EXT3[HTTP Bridge<br/>Action → FastAPI]
+                    end
+                    
+                    subgraph "VRP Data Flow"
+                        VRP1[1. Load Dataset]
+                        VRP2[2. Configure Optimization]
+                        VRP3[3. Run VROOM Solver]
+                        VRP4[4. Store Results]
+                        VRP5[5. Update UI]
+                    end
+                    
+                    %% Frontend Connections
+                    UI1 --> H1
+                    UI2 --> H2
+                    UI3 --> H3
+                    UI4 --> H1
+                    
+                    %% Hook to Function Connections
+                    H1 --> F1
+                    H2 --> F2
+                    H3 --> F3
+                    H4 --> RT1
+                    
+                    %% Function to Service Connections
+                    F1 --> DB1
+                    F2 --> DB2
+                    F3 --> S6
+                    F4 --> EXT3
+                    
+                    %% Real-time Connections
+                    RT1 --> RT2
+                    RT2 --> RT3
+                    RT3 --> RT4
+                    RT4 --> H1
+                    
+                    %% External Flow
+                    F3 --> EXT1
+                    EXT1 --> EXT2
+                    EXT2 --> EXT3
+                    EXT3 --> F2
+                    
+                    %% VRP Flow
+                    VRP1 --> F1
+                    VRP2 --> F3
+                    VRP3 --> EXT2
+                    VRP4 --> F2
+                    VRP5 --> RT1
+                    
+                    %% Styling
+                    style F1 fill:#e8f5e8,stroke:#27ae60,stroke-width:2px
+                    style F2 fill:#fff3cd,stroke:#ffc107,stroke-width:2px
+                    style F3 fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+                    style F4 fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
+                    style RT1 fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+                    style DB1 fill:#e0f2f1,stroke:#4caf50,stroke-width:2px
+                    style EXT1 fill:#ffebee,stroke:#f44336,stroke-width:2px
+                    style EXT2 fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+            </div>
+        </div>
+
+        <h2>Complete Tech Stack Analysis</h2>
+        
+        <h3>Current Production Stack</h3>
+        <div class="tech-stack">
+            <div class="stack-item">
+                <h4><span class="emoji">🎨</span> Frontend Layer</h4>
+                <ul>
+                    <li><strong>Framework:</strong> React 18.3+ with TypeScript</li>
+                    <li><strong>Build Tool:</strong> Vite 5.4+ (Fast HMR, ES modules)</li>
+                    <li><strong>UI Library:</strong> <s>Material-UI (MUI) v6+ with Joy UI</s> → shadcn/ui + Tailwind CSS</li>
+                    <li><strong>Styling:</strong> <s>Emotion CSS-in-JS + MUI System</s> → Tailwind CSS + CSS Modules</li>
+                    <li><strong>State Management:</strong> React Context + useReducer</li>
+                    <li><strong>Routing:</strong> React Router v6</li>
+                    <li><strong>Forms:</strong> React Hook Form + Zod validation</li>
+                    <li><strong>Testing:</strong> Vitest + React Testing Library</li>
+                    <li><strong>Hosting:</strong> Cloudflare Pages (GitHub integration)</li>
+                </ul>
+            </div>
+            <div class="stack-item">
+                <h4><span class="emoji">⚡</span> Backend Layer</h4>
+                <ul>
+                    <li><strong>Database:</strong> PostgreSQL 15+ with RLS</li>
+                    <li><strong>API:</strong> Supabase Edge Functions (TypeScript/Deno)</li>
+                    <li><strong>Authentication:</strong> Supabase Auth with JWT</li>
+                    <li><strong>Real-time:</strong> Supabase Realtime subscriptions</li>
+                    <li><strong>Storage:</strong> Supabase Storage for file uploads</li>
+                    <li><strong>Optimization:</strong> FastAPI (Python 3.13+) + VROOM</li>
+                    <li><strong>ORM:</strong> asyncpg for database connections</li>
+                    <li><strong>Deployment:</strong> Google Cloud VM (optimization only)</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>Convex Full-Stack Platform (Clean Slate Approach)</h3>
+        <div class="benefits">
+            <h4><span class="emoji">🚀</span> Complete Convex Built-in Capabilities</h4>
+            <div class="tech-stack">
+                <div class="stack-item" style="background: #e8f5e8; border-left-color: #27ae60;">
+                    <h4><span class="emoji">🎯</span> Core Platform Features</h4>
+                    <ul>
+                        <li><strong>Database:</strong> Convex Document Database (NoSQL with relations)</li>
+                        <li><strong>Authentication:</strong> Convex Auth (built-in) + Provider integrations</li>
+                        <li><strong>API:</strong> Convex Functions (TypeScript)</li>
+                        <li><strong>Real-time:</strong> Convex Live Queries (reactive subscriptions)</li>
+                        <li><strong>File Storage:</strong> Convex File Storage (integrated)</li>
+                        <li><strong>Vector Search:</strong> Built-in vector database for AI</li>
+                        <li><strong>Scheduling:</strong> Convex Cron Jobs + Workflows</li>
+                        <li><strong>Hosting:</strong> Convex Cloud (auto-scaling edge deployment)</li>
+                    </ul>
+                </div>
+                <div class="stack-item" style="background: #fff3cd; border-left-color: #ffc107;">
+                    <h4><span class="emoji">🔧</span> Advanced Built-in Tools</h4>
+                    <ul>
+                        <li><strong>Rate Limiting:</strong> Application-layer rate limits (built-in)</li>
+                        <li><strong>Aggregations:</strong> Real-time counts and sums</li>
+                        <li><strong>Workflows:</strong> Durable execution patterns</li>
+                        <li><strong>Workpools:</strong> Managed parallelism and queuing</li>
+                        <li><strong>Components:</strong> Reusable backend modules</li>
+                        <li><strong>Testing:</strong> Convex Test Harness (pure-JS testing)</li>
+                        <li><strong>Validation:</strong> Runtime type validation (built-in)</li>
+                        <li><strong>Deployment:</strong> Zero-downtime deploys + rollbacks</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h3>Recommended Frontend Stack for Convex</h3>
+        <div class="tech-stack">
+            <div class="stack-item" style="background: #e8f5e8; border-left-color: #27ae60;">
+                <h4><span class="emoji">⚡</span> Optimal Choice: Modern React Stack</h4>
+                <ul>
+                    <li><strong>Framework:</strong> React 18.3+ with TypeScript (Keep)</li>
+                    <li><strong>Build Tool:</strong> Vite 5.4+ (Perfect Convex integration)</li>
+                    <li><strong>UI Library:</strong> <span style="color: #27ae60;">shadcn/ui + Tailwind CSS</span> 🎯</li>
+                    <li><strong>State Management:</strong> <span style="color: #27ae60;">Convex + Zustand</span> 🎯</li>
+                    <li><strong>Forms:</strong> React Hook Form + Zod (Keep)</li>
+                    <li><strong>Animations:</strong> Framer Motion (Convex compatible)</li>
+                    <li><strong>Charts:</strong> Recharts or D3.js for VRP visualizations</li>
+                    <li><strong>Maps:</strong> Leaflet + React-Leaflet for route visualization</li>
+                    <li><strong>Testing:</strong> Vitest + Convex Test Helpers</li>
+                    <li><strong>Hosting:</strong> Cloudflare Pages (current, free tier)</li>
+                </ul>
+            </div>
+            <div class="stack-item" style="background: #fff3cd; border-left-color: #ffc107;">
+                <h4><span class="emoji">🔄</span> Alternative: Keep MUI (Lower Risk)</h4>
+                <ul>
+                    <li><strong>Framework:</strong> React 18.3+ with TypeScript</li>
+                    <li><strong>Build Tool:</strong> Vite 5.4+</li>
+                    <li><strong>UI Library:</strong> Material-UI (MUI) v6+ (Not selected - Alternative option)</li>
+                    <li><strong>State Management:</strong> Convex + MUI patterns</li>
+                    <li><strong>Styling:</strong> Emotion CSS-in-JS + MUI System</li>
+                    <li><strong>Benefits:</strong> Lower migration effort, existing team knowledge</li>
+                    <li><strong>Trade-offs:</strong> Larger bundle size, less optimization</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>VRP-Specific Technology Stack</h3>
+        <div class="stack-item" style="background: #e8f5e8; border-left-color: #27ae60;">
+            <h4><span class="emoji">🚛</span> VRP System Optimizations</h4>
+            <ul>
+                <li><strong>Optimization Engine:</strong> Keep FastAPI (Python 3.13+) + VROOM</li>
+                <li><strong>Geospatial:</strong> Leaflet + React-Leaflet for route visualization</li>
+                <li><strong>Charts:</strong> Recharts for optimization metrics</li>
+                <li><strong>Real-time Updates:</strong> Convex Live Queries for route changes</li>
+                <li><strong>File Imports:</strong> Convex File Storage for CSV/Excel uploads</li>
+                <li><strong>Background Jobs:</strong> Convex Workflows for long optimizations</li>
+                <li><strong>Rate Limiting:</strong> Convex Rate Limiter for API protection</li>
+                <li><strong>Data Export:</strong> Convex Actions for report generation</li>
+            </ul>
+        </div>
+
+        <h3>Complete Package.json Dependencies (Convex Optimized)</h3>
+        <pre><code>{
+  "dependencies": {
+    // Core Framework (Keep)
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.5.4",
+    
+    // Convex Full Stack Platform
+    "convex": "^1.16.0",
+    "@convex-dev/react-query": "^0.0.0-alpha.4",
+    "convex-helpers": "^0.1.57",
+    
+    // Authentication - Selected: Convex Auth
+    "convex-auth": "^0.0.65",              // Selected authentication option
+    // "@clerk/clerk-react": "^5.7.0",     // Alternative: Clerk (not selected)
+    
+    // State Management
+    "zustand": "^4.5.5",
+    
+    // UI Library - Selected: shadcn/ui
+    "@radix-ui/react-*": "latest",
+    "tailwindcss": "^3.4.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.0",
+    
+    // UI Library Alternative: MUI (not selected)
+    // "@mui/material": "^6.1.0",
+    // "@mui/joy": "^5.0.0",
+    // "@emotion/react": "^11.13.0",
+    // "@emotion/styled": "^11.13.0",
+    
+    // Forms & Validation (Keep)
+    "react-hook-form": "^7.53.0",
+    "zod": "^3.23.8",
+    "@hookform/resolvers": "^3.9.0",
+    
+    // Routing & Navigation (Keep)
+    "react-router-dom": "^6.26.1",
+    
+    // VRP-Specific Visualization
+    "recharts": "^2.12.7",
+    "leaflet": "^1.9.4",
+    "react-leaflet": "^4.2.1",
+    "d3": "^7.9.0",
+    
+    // Animations & UI Enhancement
+    "framer-motion": "^11.5.4",
+    "lucide-react": "^0.441.0",
+    
+    // Utilities (Keep)
+    "date-fns": "^3.6.0",
+    "lodash-es": "^4.17.21",
+    
+    // External API Integration (Keep for FastAPI)
+    "axios": "^1.7.4"
+  },
+  "devDependencies": {
+    // Build Tools (Keep)
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.0",
+    
+    // Testing (Enhanced with Convex)
+    "vitest": "^2.0.5",
+    "@testing-library/react": "^16.0.0",
+    "convex-test": "^0.0.25",
+    
+    // Code Quality (Keep)
+    "eslint": "^9.9.0",
+    "@typescript-eslint/eslint-plugin": "^8.1.0",
+    "prettier": "^3.3.3"
+  }
+}</code></pre>
+
+        <h3>Technology Decision Matrix</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Component</th>
+                    <th>Current</th>
+                    <th>Convex Optimized</th>
+                    <th>Migration Effort</th>
+                    <th>Benefits</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Database</strong></td>
+                    <td>PostgreSQL + Supabase</td>
+                    <td>Convex Document DB</td>
+                    <td>High (4-5 weeks)</td>
+                    <td>No SQL, auto-scaling, real-time, type-safe</td>
+                </tr>
+                <tr>
+                    <td><strong>API Layer</strong></td>
+                    <td>Supabase Edge Functions</td>
+                    <td>Convex Functions</td>
+                    <td>Medium (3-4 weeks)</td>
+                    <td>Better TypeScript, faster cold starts, auto-optimization</td>
+                </tr>
+                <tr>
+                    <td><strong>Authentication</strong></td>
+                    <td>Supabase Auth</td>
+                    <td><strong>Convex Auth</strong> (Selected)</td>
+                    <td>Medium (2-3 weeks)</td>
+                    <td>Better integration, more providers, type-safe</td>
+                </tr>
+                <tr>
+                    <td><strong>Real-time</strong></td>
+                    <td>Supabase Realtime</td>
+                    <td>Convex Live Queries</td>
+                    <td>Low (1-2 weeks)</td>
+                    <td>Automatic reactivity, optimistic updates, no setup</td>
+                </tr>
+                <tr>
+                    <td><strong>File Storage</strong></td>
+                    <td>Supabase Storage</td>
+                    <td>Convex File Storage</td>
+                    <td>Low (1 week)</td>
+                    <td>Integrated with database, automatic URLs</td>
+                </tr>
+                <tr>
+                    <td><strong>UI Library</strong></td>
+                    <td>MUI v6 + Joy UI</td>
+                    <td><strong>shadcn/ui + Tailwind</strong> (Selected)</td>
+                    <td>High (4-6 weeks)</td>
+                    <td>60% smaller bundle, better performance, modern design</td>
+                </tr>
+                <tr>
+                    <td><strong>State Management</strong></td>
+                    <td>React Context</td>
+                    <td>Convex + Zustand</td>
+                    <td>Medium (2-3 weeks)</td>
+                    <td>Type-safe, reactive, automatic sync</td>
+                </tr>
+                <tr>
+                    <td><strong>Build System</strong></td>
+                    <td>Vite</td>
+                    <td>Vite (Keep)</td>
+                    <td>None</td>
+                    <td>Perfect compatibility with Convex</td>
+                </tr>
+                <tr>
+                    <td><strong>Optimization</strong></td>
+                    <td>FastAPI + VROOM</td>
+                    <td>FastAPI + VROOM (Keep)</td>
+                    <td>None</td>
+                    <td>Specialized optimization remains external</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Entity Relationship Diagram</h2>
+        <div class="mermaid">
+            erDiagram
+                %% Core Hierarchy
+                PROJECTS ||--o{ SCENARIOS : contains
+                PROJECTS ||--o{ DATASETS : contains
+                PROJECTS ||--o{ PROJECT_USERS : has
+                PROJECTS ||--o{ VEHICLES : has
+                PROJECTS ||--o{ JOBS : has
+                PROJECTS ||--o{ SHIPMENTS : has
+                PROJECTS ||--o{ LOCATIONS : has
+                PROJECTS ||--o{ LOCATION_CLUSTERS : has
+                PROJECTS ||--o{ PRODUCTS : has
+                PROJECTS ||--o{ SKILLS : has
+                PROJECTS ||--o{ CAPACITY_DEFINITIONS : has
+                
+                SCENARIOS ||--o{ DATASETS : contains
+                SCENARIOS ||--o{ OPTIMIZATION_RUNS : generates
+                
+                %% Dataset Entities
+                DATASETS ||--o{ VEHICLES : contains
+                DATASETS ||--o{ JOBS : contains
+                DATASETS ||--o{ LOCATIONS : contains
+                DATASETS ||--o{ SHIPMENTS : contains
+                DATASETS ||--o{ PRODUCTS : contains
+                DATASETS ||--o{ SKILLS : contains
+                DATASETS ||--o{ CAPACITY_DEFINITIONS : contains
+                DATASETS ||--o{ OPTIMIZATION_RUN_SETTINGS : has
+                
+                %% Optimization Flow
+                OPTIMIZATION_RUNS ||--o{ ROUTE_SUMMARIES : produces
+                OPTIMIZATION_RUNS ||--o{ UNASSIGNED_JOBS : tracks
+                OPTIMIZATION_RUN_SETTINGS ||--o{ OPTIMIZATION_RUNS : configures
+                
+                ROUTE_SUMMARIES ||--o{ ROUTE_STEPS : contains
+                
+                %% Vehicle Relationships
+                VEHICLES ||--o{ ROUTE_SUMMARIES : assigned_to
+                VEHICLES ||--o{ ROUTE_STEPS : assigned_to
+                VEHICLES ||--o{ BREAKS : has
+                VEHICLES }o--|| LOCATIONS : starts_at
+                VEHICLES }o--|| LOCATIONS : ends_at
+                VEHICLES ||--o{ VEHICLE_SKILLS : has
+                VEHICLES ||--o{ VEHICLE_CAPACITIES : has
+                
+                %% Job Relationships
+                JOBS ||--o{ ROUTE_STEPS : visits
+                JOBS }o--|| LOCATIONS : located_at
+                JOBS ||--o{ JOB_SKILLS : requires
+                JOBS ||--o{ JOBS_PRODUCTS : contains
+                
+                %% Shipment Relationships
+                SHIPMENTS ||--o{ ROUTE_STEPS : includes
+                SHIPMENTS }o--|| LOCATIONS : pickup_at
+                SHIPMENTS }o--|| LOCATIONS : delivery_at
+                SHIPMENTS ||--o{ SHIPMENT_SKILLS : requires
+                SHIPMENTS ||--o{ SHIPMENTS_PRODUCTS : contains
+                
+                %% Break System
+                BREAKS ||--o{ BREAK_TIME_WINDOWS : defines
+                
+                %% Junction Tables
+                SKILLS ||--o{ JOB_SKILLS : required_by
+                SKILLS ||--o{ VEHICLE_SKILLS : assigned_to
+                SKILLS ||--o{ SHIPMENT_SKILLS : required_by
+                SKILLS }o--|| SKILLS : inherits_from
+                
+                PRODUCTS ||--o{ JOBS_PRODUCTS : used_in
+                PRODUCTS ||--o{ SHIPMENTS_PRODUCTS : shipped_as
+                
+                %% Location Clustering
+                LOCATION_CLUSTERS ||--o{ LOCATION_CLUSTER_MEMBERSHIP : includes
+                LOCATIONS ||--o{ LOCATION_CLUSTER_MEMBERSHIP : belongs_to
+                
+                %% Unassigned References
+                UNASSIGNED_JOBS }o--|| JOBS : references
+                UNASSIGNED_JOBS }o--|| SHIPMENTS : references
+        </div>
+
+        <h2>Data Flow Architecture</h2>
+        <div class="mermaid">
+            graph TD
+                subgraph "User Interface Layer"
+                    A[Projects Dashboard]
+                    B[Scenarios Management]
+                    C[Datasets Editor]
+                    D[Vehicle Management]
+                    E[Job Management]
+                    F[Location Management]
+                    G[Optimization Console]
+                    H[Results Viewer]
+                end
+                
+                subgraph "Convex Functions Layer"
+                    I[Project CRUD]
+                    J[Scenario CRUD]
+                    K[Dataset CRUD]
+                    L[Vehicle CRUD]
+                    M[Job CRUD]
+                    N[Location CRUD]
+                    O[Optimization Trigger]
+                    P[Results Processing]
+                    Q[Skills Management]
+                    R[Products Management]
+                end
+                
+                subgraph "External Optimization"
+                    S[FastAPI Backend]
+                    T[VROOM Solver]
+                end
+                
+                subgraph "Convex Database - Core Collections"
+                    U[Projects]
+                    V[Scenarios]
+                    W[Datasets]
+                    X[Project_Users]
+                end
+                
+                subgraph "Convex Database - VRP Entities"
+                    Y[Vehicles]
+                    Z[Jobs]
+                    AA[Locations]
+                    AB[Shipments]
+                    AC[Products]
+                    AD[Skills]
+                    AE[Capacity_Definitions]
+                end
+                
+                subgraph "Convex Database - Optimization"
+                    AF[Optimization_Run_Settings]
+                    AG[Optimization_Runs]
+                    AH[Route_Summaries]
+                    AI[Route_Steps]
+                    AJ[Unassigned_Jobs]
+                end
+                
+                subgraph "Convex Database - Supporting Tables"
+                    AK[Breaks]
+                    AL[Break_Time_Windows]
+                    AM[Location_Clusters]
+                    AN[Location_Cluster_Membership]
+                    AO[Vehicle_Skills]
+                    AP[Job_Skills]
+                    AQ[Shipment_Skills]
+                    AR[Vehicle_Capacities]
+                    AS[Jobs_Products]
+                    AT[Shipments_Products]
+                end
+                
+                %% UI to Functions
+                A --> I
+                B --> J
+                C --> K
+                D --> L
+                E --> M
+                F --> N
+                G --> O
+                H --> P
+                
+                %% Functions to Core DB
+                I --> U
+                I --> X
+                J --> V
+                K --> W
+                
+                %% Functions to VRP Entities
+                L --> Y
+                M --> Z
+                N --> AA
+                Q --> AD
+                R --> AC
+                
+                %% Dataset relationships
+                W --> Y
+                W --> Z
+                W --> AA
+                W --> AB
+                W --> AE
+                W --> AF
+                
+                %% Optimization flow
+                O --> S
+                S --> T
+                T --> P
+                P --> AG
+                P --> AH
+                P --> AI
+                P --> AJ
+                
+                %% Supporting relationships
+                Y --> AK
+                AK --> AL
+                AA --> AM
+                AA --> AN
+                AM --> AN
+                
+                %% Skill relationships
+                Y --> AO
+                Z --> AP
+                AB --> AQ
+                AD --> AO
+                AD --> AP
+                AD --> AQ
+                
+                %% Product relationships
+                Z --> AS
+                AB --> AT
+                AC --> AS
+                AC --> AT
+                
+                %% Capacity relationships
+                Y --> AR
+                AE --> AR
+        </div>
+
+        <h2>Convex Schema Definitions</h2>
+        
+        <div class="benefits">
+            <h3><span class="emoji">📋</span> Nullable Status Legend</h3>
+            <p><strong>Understanding Field Requirements:</strong></p>
+            <ul>
+                <li><strong>Required Fields (Not Nullable):</strong> Fields without <code>v.optional()</code> wrapper are mandatory</li>
+                <li><strong>Optional Fields (Nullable):</strong> Fields wrapped with <code>v.optional()</code> are nullable/optional</li>
+                <li><strong>Convex IDs:</strong> All <code>v.id("tableName")</code> references are required unless wrapped in <code>v.optional()</code></li>
+                <li><strong>Timestamps:</strong> <code>createdAt</code> and <code>updatedAt</code> are typically required for audit trails</li>
+            </ul>
+            
+            <h4>Key Patterns:</h4>
+            <pre><code>name: v.string(),                    // ✅ REQUIRED - Cannot be null
+description: v.optional(v.string()), // ❓ OPTIONAL - Can be null
+projectId: v.id("projects"),         // ✅ REQUIRED - Foreign key relationship
+scenarioId: v.optional(v.id("scenarios")), // ❓ OPTIONAL - Nullable relationship</code></pre>
+        </div>
+        
+        <h3>Core Collections</h3>
+        <pre><code>// schema.ts
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
+
+export default defineSchema({
+  // Projects - Core project entity
+  projects: defineTable({
+    // REQUIRED FIELDS (Not Nullable)
+    name: v.string(),                    // ✅ Project name - always required
+    ownerId: v.string(),                 // ✅ User ID from Convex Auth - required for ownership
+    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    
+    // OPTIONAL FIELDS (Nullable)
+    description: v.optional(v.string()),           // ❓ Project description
+    currency: v.optional(v.string()),              // ❓ Currency code (USD, EUR, etc.)
+    projectType: v.optional(v.string()),           // ❓ Project classification
+    industry: v.optional(v.string()),              // ❓ Industry sector
+    geographicRegion: v.optional(v.string()),      // ❓ Operating region
+    priority: v.optional(v.string()),              // ❓ Project priority level
+    estimatedVehicles: v.optional(v.number()),     // ❓ Expected vehicle count
+    estimatedJobs: v.optional(v.number()),         // ❓ Expected job count
+    planningHorizonDays: v.optional(v.number()),   // ❓ Planning period length
+    contactPerson: v.optional(v.string()),         // ❓ Primary contact name
+    contactEmail: v.optional(v.string()),          // ❓ Contact email
+    contactPhone: v.optional(v.string()),          // ❓ Contact phone
+    tags: v.optional(v.array(v.string())),         // ❓ Project tags for filtering
+    notes: v.optional(v.string()),                 // ❓ Additional notes
+  })
+    .index("by_owner", ["ownerId"])
+    .index("by_created_at", ["createdAt"])
+    .index("by_updated_at", ["updatedAt"]),
+
+  // Scenarios - Project optimization scenarios
+  scenarios: defineTable({
+    // REQUIRED FIELDS (Not Nullable)
+    projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
+    name: v.string(),                    // ✅ Scenario name - always required
+    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    
+    // OPTIONAL FIELDS (Nullable)
+    description: v.optional(v.string()),              // ❓ Scenario description
+    startDate: v.optional(v.number()),                // ❓ Scenario start date
+    endDate: v.optional(v.number()),                  // ❓ Scenario end date
+    planningHorizonDays: v.optional(v.number()),      // ❓ Planning period override
+    optimizationObjective: v.optional(v.string()),    // ❓ Primary optimization goal
+    optimizationParameters: v.optional(v.object({})), // ❓ Custom optimization settings
+    status: v.optional(v.string()),                   // ❓ Current scenario status
+    tags: v.optional(v.array(v.string())),            // ❓ Scenario tags
+    isActive: v.optional(v.boolean()),                // ❓ Active scenario flag
+    lastOptimizedAt: v.optional(v.number()),          // ❓ Last optimization timestamp
+    optimizationCount: v.optional(v.number()),        // ❓ Number of optimizations run
+  })
+    .index("by_project", ["projectId"])
+    .index("by_status", ["status"])
+    .index("by_created_at", ["createdAt"]),
+
+  // Datasets - Data collections for optimization
+  datasets: defineTable({
+    // REQUIRED FIELDS (Not Nullable)
+    projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
+    name: v.string(),                    // ✅ Dataset name - always required
+    version: v.number(),                 // ✅ Dataset version number - required for versioning
+    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    
+    // OPTIONAL FIELDS (Nullable)
+    scenarioId: v.optional(v.id("scenarios")),        // ❓ Optional scenario assignment
+    description: v.optional(v.string()),              // ❓ Dataset description
+    status: v.optional(v.string()),                   // ❓ Dataset status (active, archived, etc.)
+    createdFromDatasetId: v.optional(v.id("datasets")), // ❓ Source dataset for cloning
+    isBaseline: v.optional(v.boolean()),              // ❓ Baseline dataset flag
+    tags: v.optional(v.array(v.string())),            // ❓ Dataset tags
+    vehicleCount: v.optional(v.number()),             // ❓ Cached vehicle count
+    jobCount: v.optional(v.number()),                 // ❓ Cached job count
+    locationCount: v.optional(v.number()),            // ❓ Cached location count
+    optimizationRunCount: v.optional(v.number()),     // ❓ Number of optimization runs
+    optimizationCount: v.optional(v.number()),        // ❓ Total optimization count
+    lastOptimizationAt: v.optional(v.number()),       // ❓ Last optimization timestamp
+    datasetType: v.optional(v.string()),              // ❓ Dataset type classification
+    versionNote: v.optional(v.string()),              // ❓ Version change notes
+    entityCounts: v.optional(v.object({               // ❓ Detailed entity counts
+      jobs: v.number(),                               // Required if entityCounts exists
+      vehicles: v.number(),                           // Required if entityCounts exists
+      locations: v.number(),                          // Required if entityCounts exists
+    })),
+    createdBy: v.optional(v.string()),                // ❓ User who created the dataset
+    archivedAt: v.optional(v.number()),               // ❓ Archive timestamp
+  })
+    .index("by_project", ["projectId"])
+    .index("by_scenario", ["scenarioId"])
+    .index("by_status", ["status"])
+    .index("by_version", ["projectId", "version"]),
+
+  // Vehicles - Fleet vehicle definitions
+  vehicles: defineTable({
+    // REQUIRED FIELDS (Not Nullable)
+    projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
+    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    
+    // OPTIONAL FIELDS (Nullable)
+    scenarioId: v.optional(v.id("scenarios")),        // ❓ Optional scenario assignment
+    datasetId: v.optional(v.id("datasets")),          // ❓ Optional dataset assignment
+    description: v.optional(v.string()),              // ❓ Vehicle description/name
+    profile: v.optional(v.string()),                  // ❓ Vehicle profile (car, truck, bike)
+    
+    // Location coordinates (either coordinates or location references)
+    startLon: v.optional(v.number()),                 // ❓ Starting longitude
+    startLat: v.optional(v.number()),                 // ❓ Starting latitude
+    endLon: v.optional(v.number()),                   // ❓ Ending longitude
+    endLat: v.optional(v.number()),                   // ❓ Ending latitude
+    startLocationId: v.optional(v.id("locations")),   // ❓ Starting location reference
+    endLocationId: v.optional(v.id("locations")),     // ❓ Ending location reference
+    
+    // Vehicle capabilities
+    capacity: v.optional(v.array(v.number())),        // ❓ Multi-dimensional capacity array
+    skills: v.optional(v.array(v.number())),          // ❓ Vehicle skill IDs
+    
+    // Time windows and constraints
+    twStart: v.optional(v.number()),                  // ❓ Time window start
+    twEnd: v.optional(v.number()),                    // ❓ Time window end
+    speedFactor: v.optional(v.number()),              // ❓ Speed modification factor
+    maxTasks: v.optional(v.number()),                 // ❓ Maximum tasks per route
+    maxTravelTime: v.optional(v.number()),            // ❓ Maximum travel time
+    maxDistance: v.optional(v.number()),              // ❓ Maximum distance
+    
+    // Cost structure
+    costFixed: v.optional(v.number()),                // ❓ Fixed cost per vehicle
+    costPerHour: v.optional(v.number()),              // ❓ Hourly operating cost
+    costPerKm: v.optional(v.number()),                // ❓ Distance-based cost
+    
+    // Dataset metadata
+    datasetName: v.optional(v.string()),              // ❓ Source dataset name
+    datasetVersion: v.optional(v.number()),           // ❓ Source dataset version
+  })
+    .index("by_project", ["projectId"])
+    .index("by_scenario", ["scenarioId"])
+    .index("by_dataset", ["datasetId"])
+    .index("by_location", ["startLocationId"])
+    .index("by_created_at", ["createdAt"]),
+
+  // Jobs - Individual tasks/stops for vehicles
+  jobs: defineTable({
+    // REQUIRED FIELDS (Not Nullable)
+    projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
+    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    
+    // OPTIONAL FIELDS (Nullable)
+    scenarioId: v.optional(v.id("scenarios")),        // ❓ Optional scenario assignment
+    datasetId: v.optional(v.id("datasets")),          // ❓ Optional dataset assignment
+    locationId: v.optional(v.id("locations")),        // ❓ Location reference
+    description: v.optional(v.string()),              // ❓ Job description
+    
+    // Location coordinates (alternative to locationId)
+    locationLon: v.optional(v.number()),              // ❓ Job longitude
+    locationLat: v.optional(v.number()),              // ❓ Job latitude
+    
+    // Time requirements
+    setup: v.optional(v.number()),                    // ❓ Setup time (seconds)
+    service: v.optional(v.number()),                  // ❓ Service time (seconds)
+    
+    // Capacity requirements
+    delivery: v.optional(v.array(v.number())),        // ❓ Delivery quantities
+    pickup: v.optional(v.array(v.number())),          // ❓ Pickup quantities
+    
+    // Job constraints
+    skills: v.optional(v.array(v.number())),          // ❓ Required skill IDs
+    priority: v.optional(v.number()),                 // ❓ Job priority level
+    timeWindows: v.optional(v.array(v.object({        // ❓ Valid service time windows
+      start: v.number(),                              // Required if timeWindows exists
+      end: v.number(),                                // Required if timeWindows exists
+    }))),
+    
+    // Dataset metadata
+    datasetName: v.optional(v.string()),              // ❓ Source dataset name
+    datasetVersion: v.optional(v.number()),           // ❓ Source dataset version
+  })
+    .index("by_project", ["projectId"])
+    .index("by_scenario", ["scenarioId"])
+    .index("by_dataset", ["datasetId"])
+    .index("by_location", ["locationId"])
+    .index("by_priority", ["priority"])
+    .index("by_created_at", ["createdAt"]),
+
+  // Locations - Geographic points of interest
+  locations: defineTable({
+    // REQUIRED FIELDS (Not Nullable)
+    projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
+    name: v.string(),                    // ✅ Location name - always required
+    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    
+    // OPTIONAL FIELDS (Nullable)
+    scenarioId: v.optional(v.id("scenarios")),        // ❓ Optional scenario assignment
+    datasetId: v.optional(v.id("datasets")),          // ❓ Optional dataset assignment
+    clusterId: v.optional(v.id("locationClusters")),  // ❓ Location cluster assignment
+    address: v.optional(v.string()),                  // ❓ Physical address
+    description: v.optional(v.string()),              // ❓ Location description
+    locationLon: v.optional(v.number()),              // ❓ Longitude coordinate
+    locationLat: v.optional(v.number()),              // ❓ Latitude coordinate
+    locationType: v.optional(v.string()),             // ❓ Type (depot, customer, warehouse)
+    operatingHours: v.optional(v.string()),           // ❓ Operating hours string
+    contactInfo: v.optional(v.string()),              // ❓ Contact information
+    timezone: v.optional(v.string()),                 // ❓ Location timezone
+    datasetName: v.optional(v.string()),              // ❓ Source dataset name
+    datasetVersion: v.optional(v.number()),           // ❓ Source dataset version
+  })
+    .index("by_project", ["projectId"])
+    .index("by_scenario", ["scenarioId"])
+    .index("by_dataset", ["datasetId"])
+    .index("by_cluster", ["clusterId"])
+    .index("by_type", ["locationType"])
+    .index("by_name", ["name"]),
+
+  // Products
+  products: defineTable({
+    projectId: v.id("projects"),
+    name: v.string(),
+    category: v.optional(v.string()),
+    unitType: v.string(),
+    weightPerUnitKg: v.optional(v.number()),
+    volumePerUnitM3: v.optional(v.number()),
+    lengthCm: v.optional(v.number()),
+    widthCm: v.optional(v.number()),
+    heightCm: v.optional(v.number()),
+    stackable: v.optional(v.boolean()),
+    requiresRefrigeration: v.optional(v.boolean()),
+    hazmatClass: v.optional(v.string()),
+    handlingInstructions: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_project", ["projectId"])
+    .index("by_category", ["category"])
+    .index("by_name", ["name"]),
+
+  // Skills
+  skills: defineTable({
+    projectId: v.optional(v.id("projects")),
+    name: v.optional(v.string()),
+    description: v.optional(v.string()),
+    skillCode: v.optional(v.string()),
+    category: v.optional(v.string()),
+    subcategory: v.optional(v.string()),
+    parentSkillId: v.optional(v.id("skills")),
+    skillType: v.optional(v.string()),
+    requiresCertification: v.optional(v.boolean()),
+    certificationAuthority: v.optional(v.string()),
+    certificationExpiryRequired: v.optional(v.boolean()),
+    vroomSkillId: v.optional(v.number()),
+    isActive: v.optional(v.boolean()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_project", ["projectId"])
+    .index("by_category", ["category"])
+    .index("by_skill_code", ["skillCode"])
+    .index("by_parent", ["parentSkillId"]),
+
+  // Optimization Run Settings
+  optimizationRunSettings: defineTable({
+    datasetId: v.id("datasets"),
+    name: v.string(),
+    description: v.optional(v.string()),
+    algorithm: v.string(),
+    optimizationEngine: v.string(),
+    parameters: v.object({
+      maxIterations: v.optional(v.number()),
+      timeLimit: v.optional(v.number()),
+      vehicleBreaks: v.optional(v.boolean()),
+      trafficMatrix: v.optional(v.boolean()),
+      balanceRoutes: v.optional(v.boolean()),
+      minimizeVehicles: v.optional(v.boolean()),
+      allowSplitDeliveries: v.optional(v.boolean()),
+    }),
+    constraints: v.optional(v.object({
+      maxVehicleCapacity: v.optional(v.number()),
+      maxRouteDistance: v.optional(v.number()),
+      maxRouteDuration: v.optional(v.number()),
+      enforceTimeWindows: v.optional(v.boolean()),
+      enforceSkillMatching: v.optional(v.boolean()),
+    })),
+    objectives: v.optional(v.object({
+      minimizeCost: v.optional(v.number()),
+      minimizeDistance: v.optional(v.number()),
+      minimizeDuration: v.optional(v.number()),
+      maximizeServiceLevel: v.optional(v.number()),
+    })),
+    isDefault: v.optional(v.boolean()),
+    isActive: v.optional(v.boolean()),
+    createdBy: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_dataset", ["datasetId"])
+    .index("by_algorithm", ["algorithm"])
+    .index("by_default", ["isDefault"])
+    .index("by_active", ["isActive"]),
+
+  // Optimization Runs - Results of optimization executions
+  optimizationRuns: defineTable({
+    // REQUIRED FIELDS (Not Nullable)
+    scenarioId: v.id("scenarios"),       // ✅ Parent scenario - required relationship
+    timestamp: v.number(),               // ✅ Run timestamp - required for tracking
+    currencyCode: v.string(),            // ✅ Currency for cost calculations - required
+    algorithm: v.string(),               // ✅ Algorithm used - required for reference
+    durationMs: v.number(),              // ✅ Execution duration - required for performance tracking
+    settings: v.object({}),              // ✅ Settings used - required for reproducibility
+    optimizationEngine: v.string(),      // ✅ Engine used - required for tracking
+    optimizationParameters: v.object({}), // ✅ Parameters used - required for reproducibility
+    
+    // OPTIONAL FIELDS (Nullable)
+    projectId: v.optional(v.id("projects")),          // ❓ Optional project reference (derived from scenario)
+    datasetId: v.optional(v.id("datasets")),          // ❓ Optional dataset reference
+    optimizationRunSettingsId: v.optional(v.id("optimizationRunSettings")), // ❓ Settings template used
+    
+    // Execution metadata
+    computingTime: v.optional(v.number()),            // ❓ Server computing time
+    status: v.optional(v.string()),                   // ❓ Run status (success, failed, running)
+    errorMessage: v.optional(v.string()),             // ❓ Error details if failed
+    
+    // Result summary statistics (all optional - may not be available if run failed)
+    totalCost: v.optional(v.number()),                // ❓ Total optimization cost
+    totalRoutes: v.optional(v.number()),              // ❓ Number of routes generated
+    totalUnassigned: v.optional(v.number()),          // ❓ Number of unassigned tasks
+    totalDistance: v.optional(v.number()),            // ❓ Total distance traveled
+    totalDuration: v.optional(v.number()),            // ❓ Total route duration
+    totalWaitingTime: v.optional(v.number()),         // ❓ Total waiting time
+    totalServiceTime: v.optional(v.number()),         // ❓ Total service time
+    totalSetupTime: v.optional(v.number()),           // ❓ Total setup time
+    totalVehicles: v.optional(v.number()),            // ❓ Number of vehicles used
+    totalJobs: v.optional(v.number()),                // ❓ Number of jobs processed
+    totalShipments: v.optional(v.number()),           // ❓ Number of shipments processed
+    
+    // Raw data for debugging
+    rawRequest: v.optional(v.object({})),             // ❓ Original solver request
+    rawResponse: v.optional(v.object({})),            // ❓ Raw solver response
+    
+    // Dataset metadata
+    datasetName: v.optional(v.string()),              // ❓ Source dataset name
+    datasetVersion: v.optional(v.number()),           // ❓ Source dataset version
+    createdBy: v.optional(v.string()),                // ❓ User who initiated the run
+  })
+    .index("by_scenario", ["scenarioId"])
+    .index("by_project", ["projectId"])
+    .index("by_dataset", ["datasetId"])
+    .index("by_settings", ["optimizationRunSettingsId"])
+    .index("by_status", ["status"])
+    .index("by_timestamp", ["timestamp"]),
+
+  // Route Summaries
+  routeSummaries: defineTable({
+    optimizationRunId: v.optional(v.id("optimizationRuns")),
+    vehicleId: v.optional(v.id("vehicles")),
+    projectId: v.optional(v.id("projects")),
+    cost: v.optional(v.number()),
+    distance: v.optional(v.number()),
+    duration: v.optional(v.number()),
+    waitingTime: v.optional(v.number()),
+    serviceTime: v.optional(v.number()),
+    setupTime: v.optional(v.number()),
+    deliveries: v.optional(v.array(v.number())),
+    pickups: v.optional(v.array(v.number())),
+    priority: v.optional(v.number()),
+    violations: v.optional(v.array(v.object({}))),
+    geometry: v.optional(v.string()),
+    geojson: v.optional(v.object({})),
+    currencyCode: v.optional(v.string()),
+    datasetName: v.optional(v.string()),
+    datasetVersion: v.optional(v.number()),
+    deliveryCount: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_optimization_run", ["optimizationRunId"])
+    .index("by_vehicle", ["vehicleId"])
+    .index("by_project", ["projectId"])
+    .index("by_created_at", ["createdAt"]),
+
+  // Route Steps
+  routeSteps: defineTable({
+    routeSummaryId: v.optional(v.id("routeSummaries")),
+    vehicleId: v.optional(v.id("vehicles")),
+    optimizationRunId: v.optional(v.id("optimizationRuns")),
+    projectId: v.optional(v.id("projects")),
+    stepType: v.string(),
+    stepOrder: v.number(),
+    jobId: v.optional(v.id("jobs")),
+    lon: v.optional(v.number()),
+    lat: v.optional(v.number()),
+    arrivalTime: v.optional(v.number()),
+    setupTime: v.optional(v.number()),
+    serviceTime: v.optional(v.number()),
+    waitingTime: v.optional(v.number()),
+    distance: v.optional(v.number()),
+    duration: v.optional(v.number()),
+    load: v.optional(v.array(v.number())),
+    violations: v.optional(v.array(v.object({}))),
+    description: v.optional(v.string()),
+    datasetName: v.optional(v.string()),
+    datasetVersion: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_route_summary", ["routeSummaryId"])
+    .index("by_vehicle", ["vehicleId"])
+    .index("by_optimization_run", ["optimizationRunId"])
+    .index("by_project", ["projectId"])
+    .index("by_job", ["jobId"])
+    .index("by_step_order", ["routeSummaryId", "stepOrder"]),
+
+  // Supporting Tables
+  locationClusterMembership: defineTable({
+    locationId: v.id("locations"),
+    clusterId: v.id("locationClusters"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_location", ["locationId"])
+    .index("by_cluster", ["clusterId"]),
+
+  locationClusters: defineTable({
+    projectId: v.id("projects"),
+    name: v.string(),
+    description: v.optional(v.string()),
+    centerLon: v.optional(v.number()),
+    centerLat: v.optional(v.number()),
+    radius: v.optional(v.number()),
+    color: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_project", ["projectId"]),
+
+  projectUsers: defineTable({
+    projectId: v.id("projects"),
+    userId: v.string(),
+    role: v.string(),
+    permissions: v.optional(v.array(v.string())),
+    invitedBy: v.optional(v.string()),
+    invitedAt: v.optional(v.number()),
+    joinedAt: v.optional(v.number()),
+    status: v.optional(v.string()),
+  })
+    .index("by_project", ["projectId"])
+    .index("by_user", ["userId"])
+    .index("by_role", ["role"]),
+
+  // Shipments
+  shipments: defineTable({
+    projectId: v.id("projects"),
+    scenarioId: v.optional(v.id("scenarios")),
+    datasetId: v.optional(v.id("datasets")),
+    amount: v.optional(v.array(v.number())),
+    skills: v.optional(v.array(v.number())),
+    priority: v.optional(v.number()),
+    pickupId: v.optional(v.number()),
+    pickupDescription: v.optional(v.string()),
+    pickupLon: v.number(),
+    pickupLat: v.number(),
+    pickupSetup: v.optional(v.number()),
+    pickupService: v.optional(v.number()),
+    pickupTimeWindows: v.optional(v.array(v.object({
+      start: v.number(),
+      end: v.number(),
+    }))),
+    pickupLocationId: v.optional(v.id("locations")),
+    deliveryId: v.optional(v.number()),
+    deliveryDescription: v.optional(v.string()),
+    deliveryLon: v.number(),
+    deliveryLat: v.number(),
+    deliverySetup: v.optional(v.number()),
+    deliveryService: v.optional(v.number()),
+    deliveryTimeWindows: v.optional(v.array(v.object({
+      start: v.number(),
+      end: v.number(),
+    }))),
+    deliveryLocationId: v.optional(v.id("locations")),
+    datasetName: v.optional(v.string()),
+    datasetVersion: v.optional(v.number()),
+    sourceShipmentId: v.optional(v.id("shipments")),
+    isDerived: v.optional(v.boolean()),
+    derivationMetadata: v.optional(v.object({})),
+    pickupTimeWindowStartDt: v.optional(v.number()),
+    pickupTimeWindowEndDt: v.optional(v.number()),
+    deliveryTimeWindowStartDt: v.optional(v.number()),
+    deliveryTimeWindowEndDt: v.optional(v.number()),
+    pickupTimezone: v.optional(v.string()),
+    deliveryTimezone: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_project", ["projectId"])
+    .index("by_scenario", ["scenarioId"])
+    .index("by_dataset", ["datasetId"])
+    .index("by_pickup_location", ["pickupLocationId"])
+    .index("by_delivery_location", ["deliveryLocationId"])
+    .index("by_priority", ["priority"]),
+
+  // Breaks and Break Time Windows
+  breaks: defineTable({
+    vehicleId: v.optional(v.id("vehicles")),
+    breakId: v.number(),
+    service: v.optional(v.number()),
+    description: v.optional(v.string()),
+    maxLoad: v.optional(v.array(v.number())),
+    breakType: v.optional(v.string()),
+    regulationReference: v.optional(v.string()),
+    isActive: v.optional(v.boolean()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_vehicle", ["vehicleId"])
+    .index("by_break_id", ["breakId"])
+    .index("by_type", ["breakType"]),
+
+  breakTimeWindows: defineTable({
+    breakId: v.optional(v.id("breaks")),
+    startTime: v.number(),
+    endTime: v.number(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_break", ["breakId"])
+    .index("by_time_range", ["startTime", "endTime"]),
+
+  // Capacity Definitions
+  capacityDefinitions: defineTable({
+    projectId: v.id("projects"),
+    name: v.string(),
+    unit: v.string(),
+    dimensionIndex: v.number(),
+    description: v.optional(v.string()),
+    isActive: v.optional(v.boolean()),
+    createdAt: v.number(),
+  })
+    .index("by_project", ["projectId"])
+    .index("by_dimension", ["dimensionIndex"])
+    .index("by_name", ["name"]),
+
+  // Unassigned Jobs
+  unassignedJobs: defineTable({
+    optimizationRunId: v.optional(v.id("optimizationRuns")),
+    originalId: v.optional(v.number()),
+    taskType: v.optional(v.string()),
+    jobId: v.optional(v.id("jobs")),
+    shipmentId: v.optional(v.id("shipments")),
+    lon: v.optional(v.number()),
+    lat: v.optional(v.number()),
+    description: v.optional(v.string()),
+    datasetName: v.optional(v.string()),
+    datasetVersion: v.optional(v.number()),
+  })
+    .index("by_optimization_run", ["optimizationRunId"])
+    .index("by_job", ["jobId"])
+    .index("by_shipment", ["shipmentId"])
+    .index("by_task_type", ["taskType"]),
+
+  // Junction Tables for Many-to-Many Relationships
+  jobsProducts: defineTable({
+    jobId: v.id("jobs"),
+    productId: v.id("products"),
+    quantity: v.number(),
+    unitType: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_job", ["jobId"])
+    .index("by_product", ["productId"]),
+
+  shipmentsProducts: defineTable({
+    shipmentId: v.id("shipments"),
+    productId: v.id("products"),
+    quantity: v.number(),
+    calculatedWeight: v.optional(v.number()),
+    calculatedVolume: v.optional(v.number()),
+    capacityRequirements: v.optional(v.array(v.number())),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_shipment", ["shipmentId"])
+    .index("by_product", ["productId"]),
+
+  vehicleCapacities: defineTable({
+    vehicleId: v.id("vehicles"),
+    capacityType: v.string(),
+    capacity: v.number(),
+    unit: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_vehicle", ["vehicleId"])
+    .index("by_type", ["capacityType"]),
+
+  vehicleSkills: defineTable({
+    vehicleId: v.id("vehicles"),
+    skillId: v.id("skills"),
+    proficiencyLevel: v.optional(v.number()),
+    certificationExpiry: v.optional(v.number()),
+    createdAt: v.number(),
+  })
+    .index("by_vehicle", ["vehicleId"])
+    .index("by_skill", ["skillId"]),
+
+  jobSkills: defineTable({
+    jobId: v.id("jobs"),
+    skillId: v.id("skills"),
+    requiredLevel: v.optional(v.number()),
+    mandatory: v.optional(v.boolean()),
+    createdAt: v.number(),
+  })
+    .index("by_job", ["jobId"])
+    .index("by_skill", ["skillId"]),
+
+  shipmentSkills: defineTable({
+    shipmentId: v.id("shipments"),
+    skillId: v.id("skills"),
+    minimumProficiencyLevel: v.optional(v.number()),
+    isMandatory: v.optional(v.boolean()),
+    requirementSource: v.optional(v.string()),
+    reasoning: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_shipment", ["shipmentId"])
+    .index("by_skill", ["skillId"]),
+});
+</code></pre>
+
+        <h2>Conversion Strategy from Supabase to Convex</h2>
+
+        <h3>1. Data Type Mapping</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Supabase Type</th>
+                    <th>Convex Type</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>integer</code></td>
+                    <td><code>v.number()</code></td>
+                    <td>Auto-increment becomes Convex ID</td>
+                </tr>
+                <tr>
+                    <td><code>varchar(n)</code></td>
+                    <td><code>v.string()</code></td>
+                    <td>No length constraints in Convex</td>
+                </tr>
+                <tr>
+                    <td><code>text</code></td>
+                    <td><code>v.string()</code></td>
+                    <td>No distinction in Convex</td>
+                </tr>
+                <tr>
+                    <td><code>boolean</code></td>
+                    <td><code>v.boolean()</code></td>
+                    <td>Direct mapping</td>
+                </tr>
+                <tr>
+                    <td><code>jsonb</code></td>
+                    <td><code>v.object({})</code> or <code>v.array()</code></td>
+                    <td>Typed objects preferred</td>
+                </tr>
+                <tr>
+                    <td><code>timestamp with time zone</code></td>
+                    <td><code>v.number()</code></td>
+                    <td>Unix timestamp in milliseconds</td>
+                </tr>
+                <tr>
+                    <td><code>double precision</code></td>
+                    <td><code>v.number()</code></td>
+                    <td>Direct mapping</td>
+                </tr>
+                <tr>
+                    <td><code>numeric(p,s)</code></td>
+                    <td><code>v.number()</code></td>
+                    <td>Precision handled in application</td>
+                </tr>
+                <tr>
+                    <td><code>uuid</code></td>
+                    <td><code>v.string()</code></td>
+                    <td>Use Convex Auth user IDs</td>
+                </tr>
+                <tr>
+                    <td><code>ARRAY</code></td>
+                    <td><code>v.array()</code></td>
+                    <td>With typed elements</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>2. Relationship Handling</h3>
+        <ul>
+            <li><strong>Foreign Keys:</strong> Use Convex IDs with type safety (<code>v.id("tableName")</code>)</li>
+            <li><strong>Indexes:</strong> Define indexes for common query patterns</li>
+            <li><strong>RLS:</strong> Replace with Convex Auth + function-level security</li>
+        </ul>
+
+        <h3>3. Migration Process</h3>
+        <ol>
+            <li><strong>Schema Definition:</strong> Create Convex schema with proper types</li>
+            <li><strong>Data Export:</strong> Export Supabase data to JSON</li>
+            <li><strong>Data Transform:</strong> Convert data types and relationships</li>
+            <li><strong>Data Import:</strong> Use Convex mutations to populate collections</li>
+            <li><strong>Function Migration:</strong> Convert Edge Functions to Convex functions</li>
+            <li><strong>Auth Migration:</strong> Migrate to Convex Auth</li>
+            <li><strong>Frontend Update:</strong> Update API calls to use Convex</li>
+        </ol>
+
+        <h3>4. Key Benefits of Convex</h3>
+        <div class="benefits">
+            <ul>
+                <li><strong>Type Safety:</strong> End-to-end TypeScript with runtime validation</li>
+                <li><strong>Real-time:</strong> Built-in reactive queries and subscriptions</li>
+                <li><strong>Offline Support:</strong> Automatic optimistic updates</li>
+                <li><strong>No SQL:</strong> Document-based queries with automatic indexes</li>
+                <li><strong>Auth Integration:</strong> Built-in authentication system</li>
+                <li><strong>File Storage:</strong> Integrated file upload and storage</li>
+                <li><strong>Edge Functions:</strong> Faster than Supabase Edge Functions</li>
+            </ul>
+        </div>
+
+        <h2>Implementation Phases</h2>
+
+        <div class="phase">
+            <h3><span class="emoji">📋</span>Phase 1: Core Schema (Week 1)</h3>
+            <ul>
+                <li>Projects, Scenarios, Datasets</li>
+                <li>Basic CRUD operations</li>
+                <li>Authentication setup</li>
+            </ul>
+        </div>
+
+        <div class="phase">
+            <h3><span class="emoji">🚛</span>Phase 2: VRP Entities (Week 2)</h3>
+            <ul>
+                <li>Vehicles, Jobs, Locations</li>
+                <li>Products, Skills</li>
+                <li>Junction tables</li>
+            </ul>
+        </div>
+
+        <div class="phase">
+            <h3><span class="emoji">⚡</span>Phase 3: Optimization (Week 3)</h3>
+            <ul>
+                <li>Optimization runs</li>
+                <li>Route summaries and steps</li>
+                <li>FastAPI integration</li>
+            </ul>
+        </div>
+
+        <div class="phase">
+            <h3><span class="emoji">🚀</span>Phase 4: Advanced Features (Week 4)</h3>
+            <ul>
+                <li>Real-time subscriptions</li>
+                <li>File uploads</li>
+                <li>Advanced queries</li>
+                <li>Performance optimization</li>
+            </ul>
+        </div>
+
+        <div class="phase">
+            <h3><span class="emoji">🔄</span>Phase 5: Migration & Testing (Week 5)</h3>
+            <ul>
+                <li>Data migration</li>
+                <li>Comprehensive testing</li>
+                <li>Production deployment</li>
+                <li>Performance monitoring</li>
+            </ul>
+        </div>
+
+        <h2>Nullable Status Summary</h2>
+        
+        <div class="tech-stack">
+            <div class="stack-item" style="background: #e8f5e8; border-left-color: #27ae60;">
+                <h3><span class="emoji">✅</span> Critical Required Fields (Never Nullable)</h3>
+                <h4>Entity Identification:</h4>
+                <ul>
+                    <li><code>name</code> fields for all primary entities (projects, scenarios, datasets, locations, products)</li>
+                    <li><code>projectId</code> relationships linking to parent projects</li>
+                    <li><code>scenarioId</code> in optimization runs (required workflow relationship)</li>
+                    <li><code>stepType</code> and <code>stepOrder</code> in route steps (required for sequencing)</li>
+                </ul>
+                
+                <h4>Audit & Tracking:</h4>
+                <ul>
+                    <li><code>createdAt</code> and <code>updatedAt</code> timestamps (required for all entities)</li>
+                    <li><code>timestamp</code> in optimization runs (required for execution tracking)</li>
+                    <li><code>currencyCode</code>, <code>algorithm</code>, <code>optimizationEngine</code> in optimization runs</li>
+                </ul>
+                
+                <h4>Core Configuration:</h4>
+                <ul>
+                    <li><code>unitType</code> in products (required for capacity calculations)</li>
+                    <li><code>version</code> in datasets (required for versioning)</li>
+                    <li><code>ownerId</code> in projects (required for ownership/security)</li>
+                </ul>
+            </div>
+            
+            <div class="stack-item" style="background: #fff3cd; border-left-color: #ffc107;">
+                <h3><span class="emoji">❓</span> Common Optional Fields (Nullable)</h3>
+                <h4>Flexible Relationships:</h4>
+                <ul>
+                    <li><code>scenarioId</code> and <code>datasetId</code> in most entities (optional assignment)</li>
+                    <li><code>locationId</code> references (can use coordinates instead)</li>
+                    <li>Parent/child relationships (<code>parentSkillId</code>, <code>createdFromDatasetId</code>)</li>
+                </ul>
+                
+                <h4>Descriptive Information:</h4>
+                <ul>
+                    <li><code>description</code> fields across all entities</li>
+                    <li>Contact information (<code>contactEmail</code>, <code>contactPhone</code>, <code>contactInfo</code>)</li>
+                    <li>Classification fields (<code>category</code>, <code>locationType</code>, <code>projectType</code>)</li>
+                </ul>
+                
+                <h4>Operational Data:</h4>
+                <ul>
+                    <li>Capacity arrays, time windows, geographic coordinates</li>
+                    <li>Cost information, optimization parameters</li>
+                    <li>All optimization result statistics (<code>totalCost</code>, <code>totalDistance</code>, etc.)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="benefits">
+            <h3><span class="emoji">📝</span> Developer Implementation Notes</h3>
+            <ol>
+                <li><strong>Form Validation:</strong> Required fields should have client-side validation</li>
+                <li><strong>API Calls:</strong> Always provide required fields in mutations</li>
+                <li><strong>Default Values:</strong> Consider reasonable defaults for optional fields in UI</li>
+                <li><strong>Database Queries:</strong> Filter by required fields for better performance</li>
+                <li><strong>Migration Safety:</strong> Required fields need careful handling during data migration</li>
+            </ol>
+        </div>
+        
+        <div class="highlight">
+            <h2>Key Highlights</h2>
+            <p><span class="checkmark">✅</span> <strong>Core VRP Tables:</strong> Projects, Scenarios, Datasets, Vehicles, Jobs, Locations</p>
+            <p><span class="checkmark">✅</span> <strong>Optimization Data:</strong> Route summaries, steps, optimization runs</p>
+            <p><span class="checkmark">✅</span> <strong>Supporting Data:</strong> Products, Skills, Capacities, Time windows</p>
+            <p><span class="checkmark">✅</span> <strong>User Management:</strong> Project users, authentication</p>
+            <p><span class="checkmark">✅</span> <strong>Real-time Ready:</strong> Reactive queries and subscriptions</p>
+            <p><span class="checkmark">✅</span> <strong>Clear Nullable Status:</strong> All fields clearly marked as required or optional</p>
+            <p><span class="checkmark">✅</span> <strong>Developer-Friendly:</strong> Detailed comments explaining nullable status for each field</p>
+            
+            <p>The schema maintains <strong>full compatibility</strong> with your existing FastAPI backend while providing the benefits of Convex's type-safe, real-time architecture and <strong>clear nullable status information</strong> for all developers implementing the schema.</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#3498db',
+                primaryTextColor: '#2c3e50',
+                primaryBorderColor: '#2980b9',
+                lineColor: '#7f8c8d',
+                sectionBkgColor: '#ecf0f1',
+                altSectionBkgColor: '#bdc3c7',
+                gridColor: '#95a5a6',
+                secondaryColor: '#e8f5e8',
+                tertiaryColor: '#fff3cd'
+            }
+        });
+    </script>
+</body>
+</html>

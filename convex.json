@@ -1,0 +1,8 @@
+{
+  "node": {
+    "externalPackages": [
+      "node:crypto",
+      "node:buffer"
+    ]
+  }
+}

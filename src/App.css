@@ -1,0 +1,10 @@
+/* App-specific styles */
+.App {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Make sure the main layout takes full height */
+#root {
+  height: 100vh;
+}
