@@ -2,37 +2,12 @@ import { Routes, Route } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import MainLayout from './components/layout/MainLayout'
 import ProjectsPage from './pages/ProjectsPage'
+import ProjectDetailPage from './pages/ProjectDetailPage'
+import ScenarioDetailPage from './pages/ScenarioDetailPage'
+import DatasetDetailPage from './pages/DatasetDetailPage'
 import TableEditorPage from './pages/TableEditorPage'
 import LoginPage from './pages/auth/LoginPage'
 import './App.css'
-
-// Placeholder pages for future implementation
-const ProjectDetailPage = () => (
-  <div className="flex items-center justify-center h-full">
-    <div className="text-center">
-      <h1 className="text-2xl font-bold mb-2">Project Details</h1>
-      <p className="text-gray-600">Coming soon...</p>
-    </div>
-  </div>
-)
-
-const ScenarioDetailPage = () => (
-  <div className="flex items-center justify-center h-full">
-    <div className="text-center">
-      <h1 className="text-2xl font-bold mb-2">Scenario Details</h1>
-      <p className="text-gray-600">Coming soon...</p>
-    </div>
-  </div>
-)
-
-const DatasetDetailPage = () => (
-  <div className="flex items-center justify-center h-full">
-    <div className="text-center">
-      <h1 className="text-2xl font-bold mb-2">Dataset Overview</h1>
-      <p className="text-gray-600">Coming soon...</p>
-    </div>
-  </div>
-)
 
 function App() {
   return (
