@@ -459,7 +459,7 @@ export const getEfficiencyMetrics = query({
     const distanceEfficiency = totalDuration > 0 ? ((totalDuration - totalWaitingTime) / totalDuration) * 100 : 0;
     
     // Route balance (how evenly distributed the workload is)
-    const costVariance = routes.reduce((sum, r) => Math.pow((r.cost || 0) - averageCost, 2), 0) / routes.length;
+    const costVariance = routes.reduce((_, r) => Math.pow((r.cost || 0) - averageCost, 2), 0) / routes.length;
     const routeBalance = costVariance > 0 ? Math.max(0, 100 - (Math.sqrt(costVariance) / averageCost) * 100) : 100;
     
     return {

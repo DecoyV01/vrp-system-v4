@@ -24,7 +24,7 @@ export async function validateUserOwnership(ctx: any, projectId: string, userId?
 }
 
 // Helper function to get current user (mock implementation)
-export async function getCurrentUser(ctx: any) {
+export async function getCurrentUser(_ctx: any) {
   // In a real implementation, this would extract user info from auth token
   // For development purposes, we'll use a mock user
   return {
@@ -47,7 +47,7 @@ export const createUserProfile = mutation({
     name: v.string(),
     email: v.string(),
   },
-  handler: async (ctx, args) => {
+  handler: async (_ctx, args) => {
     // In production, this would be called after successful auth
     const user = {
       _id: `user_${Date.now()}`,
