@@ -429,30 +429,30 @@ const routes = useQuery(api.routes.getByOptimization, { optimizationId });</code
         <h3>Current Production Stack</h3>
         <div class="tech-stack">
             <div class="stack-item">
-                <h4><span class="emoji">🎨</span> Frontend Layer</h4>
+                <h4><span class="emoji">🎨</span> Frontend Layer (Production)</h4>
                 <ul>
-                    <li><strong>Framework:</strong> React 18.3+ with TypeScript</li>
-                    <li><strong>Build Tool:</strong> Vite 5.4+ (Fast HMR, ES modules)</li>
-                    <li><strong>UI Library:</strong> <s>Material-UI (MUI) v6+ with Joy UI</s> → shadcn/ui + Tailwind CSS</li>
-                    <li><strong>Styling:</strong> <s>Emotion CSS-in-JS + MUI System</s> → Tailwind CSS + CSS Modules</li>
-                    <li><strong>State Management:</strong> React Context + useReducer</li>
-                    <li><strong>Routing:</strong> React Router v6</li>
+                    <li><strong>Framework:</strong> React 18 + TypeScript + Vite (moved to /frontend/ folder)</li>
+                    <li><strong>UI Library:</strong> shadcn/ui + Tailwind CSS v4 (upgraded from v3)</li>
+                    <li><strong>Styling:</strong> OKLCH color format (upgraded from HSL)</li>
+                    <li><strong>Components:</strong> Radix UI components</li>
                     <li><strong>Forms:</strong> React Hook Form + Zod validation</li>
-                    <li><strong>Testing:</strong> Vitest + React Testing Library</li>
+                    <li><strong>State Management:</strong> Zustand for state management</li>
+                    <li><strong>Real-time:</strong> Real-time Convex subscriptions</li>
+                    <li><strong>Build Tool:</strong> Vite 5.4+ (Fast HMR, ES modules)</li>
                     <li><strong>Hosting:</strong> Cloudflare Pages (GitHub integration)</li>
                 </ul>
             </div>
             <div class="stack-item">
-                <h4><span class="emoji">⚡</span> Backend Layer</h4>
+                <h4><span class="emoji">⚡</span> Backend Layer (Production)</h4>
                 <ul>
-                    <li><strong>Database:</strong> PostgreSQL 15+ with RLS</li>
-                    <li><strong>API:</strong> Supabase Edge Functions (TypeScript/Deno)</li>
-                    <li><strong>Authentication:</strong> Supabase Auth with JWT</li>
-                    <li><strong>Real-time:</strong> Supabase Realtime subscriptions</li>
-                    <li><strong>Storage:</strong> Supabase Storage for file uploads</li>
-                    <li><strong>Optimization:</strong> FastAPI (Python 3.13+) + VROOM</li>
-                    <li><strong>ORM:</strong> asyncpg for database connections</li>
-                    <li><strong>Deployment:</strong> Google Cloud VM (optimization only)</li>
+                    <li><strong>Platform:</strong> Convex Platform (https://mild-elephant-70.convex.cloud)</li>
+                    <li><strong>Functions:</strong> TypeScript functions</li>
+                    <li><strong>Database:</strong> Real-time database with live queries</li>
+                    <li><strong>Functions Deployed:</strong> 70+ backend functions deployed</li>
+                    <li><strong>Indexes:</strong> 49+ optimized indexes</li>
+                    <li><strong>Optimization:</strong> FastAPI (Python 3.13+) + VROOM (external)</li>
+                    <li><strong>Structure:</strong> Monorepo: /convex/ (backend) + /frontend/ (React app)</li>
+                    <li><strong>Production Environment:</strong> mild-elephant-70.convex.cloud</li>
                 </ul>
             </div>
         </div>
@@ -490,33 +490,32 @@ const routes = useQuery(api.routes.getByOptimization, { optimizationId });</code
             </div>
         </div>
 
-        <h3>Recommended Frontend Stack for Convex</h3>
+        <h3>Production Deployment Status</h3>
         <div class="tech-stack">
             <div class="stack-item" style="background: #e8f5e8; border-left-color: #27ae60;">
-                <h4><span class="emoji">⚡</span> Optimal Choice: Modern React Stack</h4>
+                <h4><span class="emoji">✅</span> Current Production Stack (Deployed)</h4>
                 <ul>
-                    <li><strong>Framework:</strong> React 18.3+ with TypeScript (Keep)</li>
+                    <li><strong>Framework:</strong> React 18 + TypeScript + Vite</li>
                     <li><strong>Build Tool:</strong> Vite 5.4+ (Perfect Convex integration)</li>
-                    <li><strong>UI Library:</strong> <span style="color: #27ae60;">shadcn/ui + Tailwind CSS</span> 🎯</li>
-                    <li><strong>State Management:</strong> <span style="color: #27ae60;">Convex + Zustand</span> 🎯</li>
-                    <li><strong>Forms:</strong> React Hook Form + Zod (Keep)</li>
-                    <li><strong>Animations:</strong> Framer Motion (Convex compatible)</li>
-                    <li><strong>Charts:</strong> Recharts or D3.js for VRP visualizations</li>
-                    <li><strong>Maps:</strong> Leaflet + React-Leaflet for route visualization</li>
-                    <li><strong>Testing:</strong> Vitest + Convex Test Helpers</li>
-                    <li><strong>Hosting:</strong> Cloudflare Pages (current, free tier)</li>
+                    <li><strong>UI Library:</strong> <span style="color: #27ae60;">shadcn/ui + Tailwind CSS v4</span> ✅</li>
+                    <li><strong>State Management:</strong> <span style="color: #27ae60;">Zustand for state management</span> ✅</li>
+                    <li><strong>Forms:</strong> React Hook Form + Zod validation ✅</li>
+                    <li><strong>Real-time:</strong> Real-time Convex subscriptions ✅</li>
+                    <li><strong>Structure:</strong> Monorepo: /convex/ + /frontend/ ✅</li>
+                    <li><strong>Production:</strong> mild-elephant-70.convex.cloud ✅</li>
+                    <li><strong>Hosting:</strong> Cloudflare Pages ✅</li>
                 </ul>
             </div>
-            <div class="stack-item" style="background: #fff3cd; border-left-color: #ffc107;">
-                <h4><span class="emoji">🔄</span> Alternative: Keep MUI (Lower Risk)</h4>
+            <div class="stack-item" style="background: #e3f2fd; border-left-color: #2196f3;">
+                <h4><span class="emoji">🎨</span> Design System (Implemented)</h4>
                 <ul>
-                    <li><strong>Framework:</strong> React 18.3+ with TypeScript</li>
-                    <li><strong>Build Tool:</strong> Vite 5.4+</li>
-                    <li><strong>UI Library:</strong> Material-UI (MUI) v6+ (Not selected - Alternative option)</li>
-                    <li><strong>State Management:</strong> Convex + MUI patterns</li>
-                    <li><strong>Styling:</strong> Emotion CSS-in-JS + MUI System</li>
-                    <li><strong>Benefits:</strong> Lower migration effort, existing team knowledge</li>
-                    <li><strong>Trade-offs:</strong> Larger bundle size, less optimization</li>
+                    <li><strong>UI Components:</strong> shadcn/ui v4 + Tailwind v4</li>
+                    <li><strong>Typography:</strong> 4 font sizes, 2 weights only</li>
+                    <li><strong>Layout:</strong> 8pt grid system (spacing divisible by 8 or 4)</li>
+                    <li><strong>Colors:</strong> 60/30/10 color distribution</li>
+                    <li><strong>Color Format:</strong> OKLCH for better accessibility</li>
+                    <li><strong>CSS Architecture:</strong> @theme directive (replaces @layer base)</li>
+                    <li><strong>Components:</strong> Radix UI base components</li>
                 </ul>
             </div>
         </div>
@@ -536,90 +535,87 @@ const routes = useQuery(api.routes.getByOptimization, { optimizationId });</code
             </ul>
         </div>
 
-        <h3>Complete Package.json Dependencies (Convex Optimized)</h3>
+        <h3>Production Package.json Dependencies (Current Stack)</h3>
         <pre><code>{
   "dependencies": {
-    // Core Framework (Keep)
+    // Core Framework - DEPLOYED ✅
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "^5.5.4",
     
-    // Convex Full Stack Platform
-    "convex": "^1.16.0",
-    "@convex-dev/react-query": "^0.0.0-alpha.4",
-    "convex-helpers": "^0.1.57",
+    // Convex Full Stack Platform - DEPLOYED ✅
+    "convex": "^1.16.0",                   // 70+ functions deployed
+    "convex-helpers": "^0.1.57",           // Utility helpers
     
-    // Authentication - Selected: Convex Auth
-    "convex-auth": "^0.0.65",              // Selected authentication option
-    // "@clerk/clerk-react": "^5.7.0",     // Alternative: Clerk (not selected)
+    // State Management - DEPLOYED ✅
+    "zustand": "^4.5.5",                   // Primary state management
     
-    // State Management
-    "zustand": "^4.5.5",
-    
-    // UI Library - Selected: shadcn/ui
-    "@radix-ui/react-*": "latest",
-    "tailwindcss": "^3.4.0",
+    // UI Library - shadcn/ui + Tailwind v4 - DEPLOYED ✅
+    "@radix-ui/react-accordion": "^1.2.1",
+    "@radix-ui/react-alert-dialog": "^1.1.2",
+    "@radix-ui/react-checkbox": "^1.1.2",
+    "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-dropdown-menu": "^2.1.2",
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-select": "^2.1.2",
+    "@radix-ui/react-separator": "^1.1.0",
+    "@radix-ui/react-toast": "^1.2.2",
+    "tailwindcss": "^4.0.0",               // Upgraded to v4
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "tailwind-merge": "^2.5.0",
     
-    // UI Library Alternative: MUI (not selected)
-    // "@mui/material": "^6.1.0",
-    // "@mui/joy": "^5.0.0",
-    // "@emotion/react": "^11.13.0",
-    // "@emotion/styled": "^11.13.0",
-    
-    // Forms & Validation (Keep)
+    // Forms & Validation - DEPLOYED ✅
     "react-hook-form": "^7.53.0",
     "zod": "^3.23.8",
     "@hookform/resolvers": "^3.9.0",
     
-    // Routing & Navigation (Keep)
-    "react-router-dom": "^6.26.1",
+    // UI Enhancement - DEPLOYED ✅
+    "lucide-react": "^0.441.0",            // Icon library
     
-    // VRP-Specific Visualization
-    "recharts": "^2.12.7",
-    "leaflet": "^1.9.4",
-    "react-leaflet": "^4.2.1",
-    "d3": "^7.9.0",
-    
-    // Animations & UI Enhancement
-    "framer-motion": "^11.5.4",
-    "lucide-react": "^0.441.0",
-    
-    // Utilities (Keep)
+    // Utilities - DEPLOYED ✅
     "date-fns": "^3.6.0",
-    "lodash-es": "^4.17.21",
     
-    // External API Integration (Keep for FastAPI)
+    // External API Integration - FastAPI VROOM ✅
     "axios": "^1.7.4"
   },
   "devDependencies": {
-    // Build Tools (Keep)
+    // Build Tools - DEPLOYED ✅
     "@vitejs/plugin-react": "^4.3.1",
     "vite": "^5.4.0",
     
-    // Testing (Enhanced with Convex)
-    "vitest": "^2.0.5",
-    "@testing-library/react": "^16.0.0",
-    "convex-test": "^0.0.25",
+    // Tailwind CSS v4 Configuration - DEPLOYED ✅
+    "@tailwindcss/postcss": "^4.0.0",
+    "postcss": "^8.4.49",
     
-    // Code Quality (Keep)
+    // TypeScript Configuration - DEPLOYED ✅
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    
+    // Code Quality - DEPLOYED ✅
     "eslint": "^9.9.0",
     "@typescript-eslint/eslint-plugin": "^8.1.0",
     "prettier": "^3.3.3"
   }
-}</code></pre>
+}
 
-        <h3>Technology Decision Matrix</h3>
+// Production Environment Status:
+// ✅ Convex Backend: mild-elephant-70.convex.cloud (70+ functions, 49+ indexes)
+// ✅ Frontend: Cloudflare Pages deployment
+// ✅ Monorepo Structure: /convex/ + /frontend/
+// ✅ Design System: shadcn/ui v4 + Tailwind v4 + OKLCH colors
+// ✅ Real-time: Convex live queries integrated
+// ✅ External API: FastAPI + VROOM optimization engine</code></pre>
+
+        <h3>Production Implementation Status</h3>
         <table>
             <thead>
                 <tr>
                     <th>Component</th>
-                    <th>Current</th>
-                    <th>Convex Optimized</th>
-                    <th>Migration Effort</th>
-                    <th>Benefits</th>
+                    <th>Previous Stack</th>
+                    <th>Current Production</th>
+                    <th>Status</th>
+                    <th>Benefits Realized</th>
                 </tr>
             </thead>
             <tbody>
@@ -627,64 +623,64 @@ const routes = useQuery(api.routes.getByOptimization, { optimizationId });</code
                     <td><strong>Database</strong></td>
                     <td>PostgreSQL + Supabase</td>
                     <td>Convex Document DB</td>
-                    <td>High (4-5 weeks)</td>
-                    <td>No SQL, auto-scaling, real-time, type-safe</td>
+                    <td><span style="color: #27ae60;">✅ DEPLOYED</span></td>
+                    <td>Real-time queries, type-safe, 49+ indexes optimized</td>
                 </tr>
                 <tr>
                     <td><strong>API Layer</strong></td>
                     <td>Supabase Edge Functions</td>
                     <td>Convex Functions</td>
-                    <td>Medium (3-4 weeks)</td>
-                    <td>Better TypeScript, faster cold starts, auto-optimization</td>
-                </tr>
-                <tr>
-                    <td><strong>Authentication</strong></td>
-                    <td>Supabase Auth</td>
-                    <td><strong>Convex Auth</strong> (Selected)</td>
-                    <td>Medium (2-3 weeks)</td>
-                    <td>Better integration, more providers, type-safe</td>
+                    <td><span style="color: #27ae60;">✅ DEPLOYED</span></td>
+                    <td>70+ functions deployed, better TypeScript integration</td>
                 </tr>
                 <tr>
                     <td><strong>Real-time</strong></td>
                     <td>Supabase Realtime</td>
                     <td>Convex Live Queries</td>
-                    <td>Low (1-2 weeks)</td>
-                    <td>Automatic reactivity, optimistic updates, no setup</td>
-                </tr>
-                <tr>
-                    <td><strong>File Storage</strong></td>
-                    <td>Supabase Storage</td>
-                    <td>Convex File Storage</td>
-                    <td>Low (1 week)</td>
-                    <td>Integrated with database, automatic URLs</td>
+                    <td><span style="color: #27ae60;">✅ DEPLOYED</span></td>
+                    <td>Automatic reactivity, optimistic updates</td>
                 </tr>
                 <tr>
                     <td><strong>UI Library</strong></td>
                     <td>MUI v6 + Joy UI</td>
-                    <td><strong>shadcn/ui + Tailwind</strong> (Selected)</td>
-                    <td>High (4-6 weeks)</td>
-                    <td>60% smaller bundle, better performance, modern design</td>
+                    <td>shadcn/ui + Tailwind CSS v4</td>
+                    <td><span style="color: #27ae60;">✅ DEPLOYED</span></td>
+                    <td>Smaller bundle, OKLCH colors, modern design</td>
                 </tr>
                 <tr>
                     <td><strong>State Management</strong></td>
                     <td>React Context</td>
-                    <td>Convex + Zustand</td>
-                    <td>Medium (2-3 weeks)</td>
-                    <td>Type-safe, reactive, automatic sync</td>
+                    <td>Zustand + Convex</td>
+                    <td><span style="color: #27ae60;">✅ DEPLOYED</span></td>
+                    <td>Type-safe, reactive state with real-time sync</td>
                 </tr>
                 <tr>
-                    <td><strong>Build System</strong></td>
-                    <td>Vite</td>
-                    <td>Vite (Keep)</td>
-                    <td>None</td>
-                    <td>Perfect compatibility with Convex</td>
+                    <td><strong>Project Structure</strong></td>
+                    <td>Single folder</td>
+                    <td>Monorepo: /convex/ + /frontend/</td>
+                    <td><span style="color: #27ae60;">✅ DEPLOYED</span></td>
+                    <td>Clear separation, better organization</td>
                 </tr>
                 <tr>
-                    <td><strong>Optimization</strong></td>
+                    <td><strong>Deployment</strong></td>
+                    <td>Manual deployment</td>
+                    <td>GitHub Actions + Cloudflare Pages</td>
+                    <td><span style="color: #27ae60;">✅ DEPLOYED</span></td>
+                    <td>Automated CI/CD pipeline</td>
+                </tr>
+                <tr>
+                    <td><strong>Production Environment</strong></td>
+                    <td>Development only</td>
+                    <td>mild-elephant-70.convex.cloud</td>
+                    <td><span style="color: #27ae60;">✅ LIVE</span></td>
+                    <td>Production-ready environment with monitoring</td>
+                </tr>
+                <tr>
+                    <td><strong>Optimization Engine</strong></td>
                     <td>FastAPI + VROOM</td>
-                    <td>FastAPI + VROOM (Keep)</td>
-                    <td>None</td>
-                    <td>Specialized optimization remains external</td>
+                    <td>FastAPI + VROOM (External)</td>
+                    <td><span style="color: #27ae60;">✅ INTEGRATED</span></td>
+                    <td>Maintained specialized optimization capabilities</td>
                 </tr>
             </tbody>
         </table>
@@ -1764,16 +1760,18 @@ export default defineSchema({
         </div>
         
         <div class="highlight">
-            <h2>Key Highlights</h2>
-            <p><span class="checkmark">✅</span> <strong>Core VRP Tables:</strong> Projects, Scenarios, Datasets, Vehicles, Jobs, Locations</p>
-            <p><span class="checkmark">✅</span> <strong>Optimization Data:</strong> Route summaries, steps, optimization runs</p>
-            <p><span class="checkmark">✅</span> <strong>Supporting Data:</strong> Products, Skills, Capacities, Time windows</p>
-            <p><span class="checkmark">✅</span> <strong>User Management:</strong> Project users, authentication</p>
-            <p><span class="checkmark">✅</span> <strong>Real-time Ready:</strong> Reactive queries and subscriptions</p>
-            <p><span class="checkmark">✅</span> <strong>Clear Nullable Status:</strong> All fields clearly marked as required or optional</p>
-            <p><span class="checkmark">✅</span> <strong>Developer-Friendly:</strong> Detailed comments explaining nullable status for each field</p>
+            <h2>Production System Status</h2>
+            <p><span class="checkmark">✅</span> <strong>Full Stack Deployed:</strong> React 18 + TypeScript + Vite in production</p>
+            <p><span class="checkmark">✅</span> <strong>Convex Platform:</strong> mild-elephant-70.convex.cloud with 70+ functions deployed</p>
+            <p><span class="checkmark">✅</span> <strong>Modern UI:</strong> shadcn/ui v4 + Tailwind CSS v4 + OKLCH colors</p>
+            <p><span class="checkmark">✅</span> <strong>Real-time Database:</strong> 49+ optimized indexes with live queries</p>
+            <p><span class="checkmark">✅</span> <strong>Monorepo Structure:</strong> /convex/ (backend) + /frontend/ (React app)</p>
+            <p><span class="checkmark">✅</span> <strong>State Management:</strong> Zustand + Convex real-time subscriptions</p>
+            <p><span class="checkmark">✅</span> <strong>CI/CD Pipeline:</strong> GitHub Actions + Cloudflare Pages deployment</p>
+            <p><span class="checkmark">✅</span> <strong>Design System:</strong> 8pt grid, 4 font sizes, 60/30/10 color distribution</p>
+            <p><span class="checkmark">✅</span> <strong>External Optimization:</strong> FastAPI + VROOM integrated for VRP solving</p>
             
-            <p>The schema maintains <strong>full compatibility</strong> with your existing FastAPI backend while providing the benefits of Convex's type-safe, real-time architecture and <strong>clear nullable status information</strong> for all developers implementing the schema.</p>
+            <p>The VRP system is <strong>fully operational in production</strong> with modern tech stack including Convex platform, shadcn/ui design system, and real-time capabilities. The external FastAPI + VROOM optimization engine remains integrated for specialized vehicle routing calculations.</p>
         </div>
     </div>
 
