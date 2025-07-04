@@ -58,26 +58,26 @@ const getTableSchema = (tableType: string) => {
       return {
         columns: [
           { key: 'description', label: 'Description', type: 'string', required: false },
-          { key: 'pickup', label: 'Pickup', type: 'object', required: false },
-          { key: 'delivery', label: 'Delivery', type: 'object', required: false },
+          { key: 'locationLat', label: 'Latitude', type: 'number', required: false },
+          { key: 'locationLon', label: 'Longitude', type: 'number', required: false },
+          { key: 'setup', label: 'Setup Time', type: 'number', required: false },
           { key: 'service', label: 'Service Time', type: 'number', required: false },
-          { key: 'amount', label: 'Amount', type: 'array', required: false },
-          { key: 'skills', label: 'Skills', type: 'array', required: false },
-          { key: 'priority', label: 'Priority', type: 'number', required: false },
-          { key: 'timeWindows', label: 'Time Windows', type: 'array', required: false }
+          { key: 'delivery', label: 'Delivery', type: 'array', required: false },
+          { key: 'pickup', label: 'Pickup', type: 'array', required: false },
+          { key: 'priority', label: 'Priority', type: 'number', required: false }
         ]
       }
     case 'locations':
       return {
         columns: [
-          { key: 'id', label: 'Location ID', type: 'string', required: true },
-          { key: 'latitude', label: 'Latitude', type: 'number', required: true },
-          { key: 'longitude', label: 'Longitude', type: 'number', required: true },
+          { key: 'name', label: 'Name', type: 'string', required: true },
+          { key: 'locationLat', label: 'Latitude', type: 'number', required: false },
+          { key: 'locationLon', label: 'Longitude', type: 'number', required: false },
           { key: 'address', label: 'Address', type: 'string', required: false },
-          { key: 'city', label: 'City', type: 'string', required: false },
-          { key: 'state', label: 'State', type: 'string', required: false },
-          { key: 'postalCode', label: 'Postal Code', type: 'string', required: false },
-          { key: 'country', label: 'Country', type: 'string', required: false }
+          { key: 'description', label: 'Description', type: 'string', required: false },
+          { key: 'locationType', label: 'Type', type: 'string', required: false },
+          { key: 'operatingHours', label: 'Operating Hours', type: 'string', required: false },
+          { key: 'contactInfo', label: 'Contact Info', type: 'string', required: false }
         ]
       }
     case 'routes':
