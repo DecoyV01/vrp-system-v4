@@ -22,7 +22,7 @@ documentation/
 
 ### Format
 ```
-[category]-[topic]-[subtopic].[ext]
+[date]-[category]-[topic]-[subtopic].[ext]
 ```
 
 ### Examples

@@ -1,4 +1,4 @@
-import { ChevronRight, Folder, Database, Table, Plus, MoreHorizontal } from 'lucide-react'
+import { ChevronRight, ChevronLeft, Folder, Database, Table, Plus, MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
@@ -13,6 +13,7 @@ import {
 import { useCreateProject } from '@/hooks/useVRPData'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { toast } from 'sonner'
+import useSidebarStore from '@/stores/useSidebarStore'
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -83,8 +84,8 @@ const TreeNodeComponent = ({ node, level = 0 }: { node: TreeNode; level?: number
       <div 
         className={`flex items-center gap-2 px-2 py-1 rounded cursor-pointer group ${
           isSelected 
-            ? 'bg-blue-100 text-blue-900' 
-            : 'hover:bg-gray-100 text-gray-700'
+            ? 'bg-accent text-accent-foreground' 
+            : 'hover:bg-muted text-foreground'
         }`}
         style={{ paddingLeft: `${level * 16 + 8}px` }}
         onClick={handleClick}
@@ -114,7 +115,7 @@ const TreeNodeComponent = ({ node, level = 0 }: { node: TreeNode; level?: number
             <DropdownMenuContent align="end">
               <DropdownMenuItem>Edit</DropdownMenuItem>
               <DropdownMenuItem>Duplicate</DropdownMenuItem>
-              <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
+              <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )}
@@ -139,6 +140,7 @@ const SecondarySidebar = () => {
   const treeData = useTreeData()
   const createProject = useCreateProject()
   const [isCreatingProject, setIsCreatingProject] = useState(false)
+  const { secondary, toggleSecondary } = useSidebarStore()
 
   const handleCreateProject = async () => {
     try {
@@ -156,11 +158,37 @@ const SecondarySidebar = () => {
     }
   }
 
+  // Show toggle button when collapsed
+  if (secondary.collapsed) {
+    return (
+      <div className="relative">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="absolute top-4 left-2 z-10 w-8 h-8 p-0 bg-background border border-border shadow-sm hover:bg-muted"
+          onClick={toggleSecondary}
+          title="Show projects sidebar"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </Button>
+      </div>
+    )
+  }
+
   if (treeData === undefined) {
     return (
-      <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-4 border-b border-gray-200">
-          <h2 className="text-sm font-semibold text-gray-900">VRP Projects</h2>
+      <div className="w-64 bg-background border-r border-border flex flex-col transition-all duration-150 ease-out">
+        <div className="p-4 border-b border-border flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-foreground">VRP Projects</h2>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-8 h-8 p-0 hover:bg-muted"
+            onClick={toggleSecondary}
+            title="Collapse sidebar"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </Button>
         </div>
         <div className="flex-1 flex items-center justify-center">
           <LoadingSpinner />
@@ -170,16 +198,25 @@ const SecondarySidebar = () => {
   }
 
   return (
-    <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
+    <div className="w-64 bg-background border-r border-border flex flex-col transition-all duration-150 ease-out">
       {/* Header */}
-      <div className="p-4 border-b border-gray-200">
-        <h2 className="text-sm font-semibold text-gray-900">VRP Projects</h2>
+      <div className="p-4 border-b border-border flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-foreground">VRP Projects</h2>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-8 h-8 p-0 hover:bg-muted"
+          onClick={toggleSecondary}
+          title="Collapse sidebar"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </Button>
       </div>
       
       {/* Tree */}
       <div className="flex-1 overflow-y-auto p-2">
         {treeData.length === 0 ? (
-          <div className="text-center text-gray-500 text-sm mt-8">
+          <div className="text-center text-muted-foreground text-sm mt-8">
             <Folder className="w-8 h-8 mx-auto mb-2 opacity-50" />
             <p>No projects yet.</p>
             <p>Create your first project to get started.</p>
@@ -192,7 +229,7 @@ const SecondarySidebar = () => {
       </div>
       
       {/* Actions */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-border">
         <Button 
           size="sm" 
           className="w-full"

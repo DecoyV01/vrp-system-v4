@@ -4,10 +4,10 @@ import SecondarySidebar from './SecondarySidebar'
 
 const MainLayout = () => {
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-muted/30">
       <PrimarySidebar />
       <SecondarySidebar />
-      <main className="flex-1 overflow-hidden">
+      <main className="flex-1 overflow-hidden bg-background">
         <Outlet />
       </main>
     </div>
