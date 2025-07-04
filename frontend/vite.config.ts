@@ -22,6 +22,7 @@ export default defineConfig({
     outDir: '../dist',
     sourcemap: true,
     target: 'es2015',
+    emptyOutDir: true,
     rollupOptions: {
       output: {
         manualChunks: {
