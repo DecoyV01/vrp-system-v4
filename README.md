@@ -67,22 +67,23 @@ A comprehensive **Vehicle Routing Problem (VRP) management system** built with R
 git clone https://github.com/DecoyV01/vrp-system-v4.git
 cd vrp-system-v4
 
-# Install dependencies
-npm install
+# Install dependencies for both frontend and backend
+npm run install:all
 
 # Start development servers
-npm run dev          # Frontend (localhost:3000)
-npx convex dev      # Backend development mode
+npm run dev:frontend    # Frontend (localhost:3000)
+npm run dev:convex      # Backend development mode
 ```
 
 ### **For Production Deployment**
 
 ```bash
 # Deploy backend to production
+npm run build:convex
 npx convex deploy
 
 # Build frontend for production  
-npm run build
+npm run build:frontend
 
 # Deploy to Cloudflare Pages (see DEPLOYMENT.md)
 ```
@@ -102,20 +103,25 @@ npm run build
 ├── auth.ts               # Authentication & access control
 └── validation.ts         # Data validation with Zod schemas
 
-/src/                      # React Frontend (Production Ready)
-├── components/
-│   ├── layout/           # Dual sidebar navigation system
-│   ├── table-editor/     # Advanced VRP data table editor
-│   └── ui/              # shadcn/ui component library
-├── pages/               # Project management & table editing
-├── hooks/               # Convex data hooks & state management
-└── lib/                # Utilities & Convex client setup
+/frontend/                 # React Frontend (Production Ready)
+├── src/
+│   ├── components/
+│   │   ├── layout/       # Dual sidebar navigation system
+│   │   ├── table-editor/ # Advanced VRP data table editor
+│   │   └── ui/          # shadcn/ui component library
+│   ├── pages/           # Project management & table editing
+│   ├── hooks/           # Convex data hooks & state management
+│   └── lib/            # Utilities & Convex client setup
+├── package.json         # Frontend dependencies & scripts
+├── vite.config.ts       # Vite configuration
+├── tailwind.config.js   # Tailwind CSS v4 configuration
+└── wrangler.toml       # Cloudflare Pages deployment
 
 /memory-bank/             # Documentation & Guides
 ├── vrp-implementation-plan.md     # Complete development roadmap
 ├── convex-database-schema.md      # VRP schema specification  
 ├── convex-development-guide.md    # Best practices & patterns
-└── DEPLOYMENT.md                  # Production deployment guide
+└── documentation/                 # Structured documentation
 ```
 
 ## 🎯 **VRP Use Cases**

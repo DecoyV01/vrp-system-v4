@@ -15,7 +15,7 @@ import {
 } from '@/hooks/useVRPData'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { formatDistanceToNow } from 'date-fns'
-import type { Id } from '../../convex/_generated/dataModel'
+import type { Id } from '../convex/_generated/dataModel'
 
 const TableCard = ({ 
   title, 

@@ -18,7 +18,7 @@ export default defineConfig({
     port: 3000,
   },
   build: {
-    outDir: 'dist',
+    outDir: '../dist',
     sourcemap: true,
     target: 'es2015',
     rollupOptions: {

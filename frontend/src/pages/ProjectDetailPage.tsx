@@ -2,14 +2,13 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Settings, MoreHorizontal, Database, Calendar, Archive } from 'lucide-react'
+import { Plus, Settings, MoreHorizontal, Database, Calendar, Users } from 'lucide-react'
 import { 
-  useProject,
-  useScenario, 
-  useDatasets, 
-  useCreateDataset, 
-  useDeleteDataset,
-  useScenarioStats 
+  useProject, 
+  useScenarios, 
+  useCreateScenario, 
+  useDeleteScenario,
+  useProjectStats 
 } from '@/hooks/useVRPData'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { useState } from 'react'
@@ -21,33 +20,25 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import type { Id } from '../../convex/_generated/dataModel'
+import type { Id } from '../convex/_generated/dataModel'
 
-const DatasetCard = ({ 
-  dataset, 
-  projectId, 
-  scenarioId 
-}: { 
-  dataset: any; 
-  projectId: Id<"projects">; 
-  scenarioId: Id<"scenarios"> 
-}) => {
+const ScenarioCard = ({ scenario, projectId }: { scenario: any; projectId: Id<"projects"> }) => {
   const navigate = useNavigate()
-  const deleteDataset = useDeleteDataset()
+  const deleteScenario = useDeleteScenario()
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this dataset? This action cannot be undone.')) {
+    if (!confirm('Are you sure you want to delete this scenario? This action cannot be undone.')) {
       return
     }
     
     try {
       setIsDeleting(true)
-      await deleteDataset({ id: dataset._id })
-      toast.success('Dataset deleted successfully')
+      await deleteScenario({ id: scenario._id })
+      toast.success('Scenario deleted successfully')
     } catch (error) {
-      console.error('Failed to delete dataset:', error)
-      toast.error('Failed to delete dataset')
+      console.error('Failed to delete scenario:', error)
+      toast.error('Failed to delete scenario')
     } finally {
       setIsDeleting(false)
     }
@@ -57,13 +48,13 @@ const DatasetCard = ({
     <Card className="hover:shadow-md transition-shadow cursor-pointer">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
-          <div className="flex-1" onClick={() => navigate(`/projects/${projectId}/scenarios/${scenarioId}/datasets/${dataset._id}`)}>
+          <div className="flex-1" onClick={() => navigate(`/projects/${projectId}/scenarios/${scenario._id}`)}>
             <CardTitle className="text-lg mb-1 flex items-center gap-2">
-              <Archive className="w-4 h-4" />
-              {dataset.name} v{dataset.version || 1}
+              <Database className="w-4 h-4" />
+              {scenario.name}
             </CardTitle>
             <CardDescription className="text-sm">
-              {dataset.description || 'No description provided'}
+              {scenario.description || 'No description provided'}
             </CardDescription>
           </div>
           <DropdownMenu>
@@ -73,7 +64,7 @@ const DatasetCard = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => navigate(`/projects/${projectId}/scenarios/${scenarioId}/datasets/${dataset._id}`)}>
+              <DropdownMenuItem onClick={() => navigate(`/projects/${projectId}/scenarios/${scenario._id}`)}>
                 Open
               </DropdownMenuItem>
               <DropdownMenuItem disabled>
@@ -99,53 +90,32 @@ const DatasetCard = ({
           <div className="flex items-center gap-1">
             <Calendar className="w-4 h-4" />
             <span>
-              Created {formatDistanceToNow(new Date(dataset.createdAt), { addSuffix: true })}
+              Created {formatDistanceToNow(new Date(scenario.createdAt), { addSuffix: true })}
             </span>
           </div>
-          {dataset.status && (
+          {scenario.status && (
             <Badge variant="outline">
-              {dataset.status}
+              {scenario.status}
             </Badge>
           )}
         </div>
         
-        {dataset.datasetType && (
+        {scenario.optimizationObjective && (
           <div className="text-sm text-gray-600 mb-2">
-            <strong>Type:</strong> {dataset.datasetType}
+            <strong>Objective:</strong> {scenario.optimizationObjective}
           </div>
         )}
         
-        {dataset.entityCounts && (
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Vehicles:</span>
-              <Badge variant="secondary">{dataset.entityCounts.vehicles || 0}</Badge>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Jobs:</span>
-              <Badge variant="secondary">{dataset.entityCounts.jobs || 0}</Badge>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Locations:</span>
-              <Badge variant="secondary">{dataset.entityCounts.locations || 0}</Badge>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Routes:</span>
-              <Badge variant="secondary">{dataset.entityCounts.routes || 0}</Badge>
-            </div>
-          </div>
-        )}
-        
-        {dataset.tags && dataset.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-3">
-            {dataset.tags.slice(0, 3).map((tag: string) => (
+        {scenario.tags && scenario.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {scenario.tags.slice(0, 3).map((tag: string) => (
               <Badge key={tag} variant="outline" className="text-xs">
                 {tag}
               </Badge>
             ))}
-            {dataset.tags.length > 3 && (
+            {scenario.tags.length > 3 && (
               <Badge variant="outline" className="text-xs">
-                +{dataset.tags.length - 3} more
+                +{scenario.tags.length - 3} more
               </Badge>
             )}
           </div>
@@ -155,47 +125,41 @@ const DatasetCard = ({
   )
 }
 
-const ScenarioDetailPage = () => {
-  const { projectId, scenarioId } = useParams<{ 
-    projectId: Id<"projects">; 
-    scenarioId: Id<"scenarios"> 
-  }>()
+const ProjectDetailPage = () => {
+  const { projectId } = useParams<{ projectId: Id<"projects"> }>()
   const navigate = useNavigate()
   const project = useProject(projectId)
-  const scenario = useScenario(scenarioId)
-  const datasets = useDatasets(scenarioId)
-  const stats = useScenarioStats(scenarioId)
-  const createDataset = useCreateDataset()
-  const [isCreatingDataset, setIsCreatingDataset] = useState(false)
+  const scenarios = useScenarios(projectId)
+  const stats = useProjectStats(projectId)
+  const createScenario = useCreateScenario()
+  const [isCreatingScenario, setIsCreatingScenario] = useState(false)
 
-  const handleCreateDataset = async () => {
-    if (!projectId || !scenarioId) return
+  const handleCreateScenario = async () => {
+    if (!projectId) return
     
     try {
-      setIsCreatingDataset(true)
-      await createDataset({
+      setIsCreatingScenario(true)
+      await createScenario({
         projectId,
-        scenarioId,
-        name: `Dataset v${(datasets?.length || 0) + 1}`,
-        description: 'A new dataset for this scenario',
-        datasetType: 'working',
-        version: (datasets?.length || 0) + 1
+        name: `New Scenario ${Date.now()}`,
+        description: 'A new optimization scenario',
+        optimizationObjective: 'minimize_total_cost'
       })
-      toast.success('Dataset created successfully')
+      toast.success('Scenario created successfully')
     } catch (error) {
-      console.error('Failed to create dataset:', error)
-      toast.error('Failed to create dataset')
+      console.error('Failed to create scenario:', error)
+      toast.error('Failed to create scenario')
     } finally {
-      setIsCreatingDataset(false)
+      setIsCreatingScenario(false)
     }
   }
 
-  if (!projectId || !scenarioId) {
+  if (!projectId) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Scenario Not Found</h1>
-          <p className="text-gray-600 mb-4">The requested scenario could not be found.</p>
+          <h1 className="text-2xl font-bold mb-2">Project Not Found</h1>
+          <p className="text-gray-600 mb-4">The requested project could not be found.</p>
           <Button onClick={() => navigate('/projects')}>
             Back to Projects
           </Button>
@@ -204,12 +168,12 @@ const ScenarioDetailPage = () => {
     )
   }
 
-  if (project === undefined || scenario === undefined || datasets === undefined) {
+  if (project === undefined || scenarios === undefined) {
     return (
       <div className="flex flex-col h-full bg-white">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Loading Scenario...</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Loading Project...</h1>
           </div>
         </div>
         <div className="flex-1 flex items-center justify-center">
@@ -228,30 +192,32 @@ const ScenarioDetailPage = () => {
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={() => navigate(`/projects/${projectId}`)}
+              onClick={() => navigate('/projects')}
               className="text-gray-500 hover:text-gray-700"
             >
-              ← {project.name}
+              ← Projects
             </Button>
-            <h1 className="text-2xl font-bold text-gray-900">{scenario.name}</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{project.name}</h1>
           </div>
           <p className="text-sm text-gray-600">
-            {scenario.description || 'No description provided'}
+            {project.description || 'No description provided'}
           </p>
           
-          {/* Scenario Stats */}
+          {/* Project Stats */}
           {stats && (
             <div className="flex items-center gap-4 mt-3">
               <div className="flex items-center gap-1 text-sm text-gray-500">
-                <Archive className="w-4 h-4" />
-                <span>{stats.datasetCount} dataset{stats.datasetCount !== 1 ? 's' : ''}</span>
+                <Database className="w-4 h-4" />
+                <span>{stats.scenarioCount} scenario{stats.scenarioCount !== 1 ? 's' : ''}</span>
               </div>
-              {scenario.optimizationObjective && (
-                <div className="flex items-center gap-1 text-sm text-gray-500">
-                  <Database className="w-4 h-4" />
-                  <span>{scenario.optimizationObjective}</span>
-                </div>
-              )}
+              <div className="flex items-center gap-1 text-sm text-gray-500">
+                <Users className="w-4 h-4" />
+                <span>{stats.vehicleCount} vehicle{stats.vehicleCount !== 1 ? 's' : ''}</span>
+              </div>
+              <div className="flex items-center gap-1 text-sm text-gray-500">
+                <Calendar className="w-4 h-4" />
+                <span>{stats.jobCount} job{stats.jobCount !== 1 ? 's' : ''}</span>
+              </div>
             </div>
           )}
         </div>
@@ -263,10 +229,10 @@ const ScenarioDetailPage = () => {
           </Button>
           <Button 
             size="sm" 
-            onClick={handleCreateDataset}
-            disabled={isCreatingDataset}
+            onClick={handleCreateScenario}
+            disabled={isCreatingScenario}
           >
-            {isCreatingDataset ? (
+            {isCreatingScenario ? (
               <>
                 <LoadingSpinner className="w-4 h-4 mr-2" />
                 Creating...
@@ -274,7 +240,7 @@ const ScenarioDetailPage = () => {
             ) : (
               <>
                 <Plus className="w-4 h-4 mr-2" />
-                New Dataset
+                New Scenario
               </>
             )}
           </Button>
@@ -283,23 +249,23 @@ const ScenarioDetailPage = () => {
       
       {/* Content */}
       <div className="flex-1 p-6">
-        {datasets.length === 0 ? (
+        {scenarios.length === 0 ? (
           <div className="text-center py-12">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Archive className="w-8 h-8 text-gray-400" />
+              <Database className="w-8 h-8 text-gray-400" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Create your first dataset
+              Create your first scenario
             </h3>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              Datasets contain the vehicles, jobs, and locations for your optimization scenarios. 
-              Start by creating your first dataset.
+              Scenarios help you test different optimization parameters and compare results. 
+              Start by creating your first scenario.
             </p>
             <Button 
-              onClick={handleCreateDataset}
-              disabled={isCreatingDataset}
+              onClick={handleCreateScenario}
+              disabled={isCreatingScenario}
             >
-              {isCreatingDataset ? (
+              {isCreatingScenario ? (
                 <>
                   <LoadingSpinner className="w-4 h-4 mr-2" />
                   Creating...
@@ -307,7 +273,7 @@ const ScenarioDetailPage = () => {
               ) : (
                 <>
                   <Plus className="w-4 h-4 mr-2" />
-                  Create Dataset
+                  Create Scenario
                 </>
               )}
             </Button>
@@ -316,20 +282,19 @@ const ScenarioDetailPage = () => {
           <>
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">Datasets</h2>
+                <h2 className="text-xl font-semibold text-gray-900">Scenarios</h2>
                 <p className="text-sm text-gray-600">
-                  Manage datasets for this scenario ({datasets.length} dataset{datasets.length !== 1 ? 's' : ''})
+                  Manage optimization scenarios for this project ({scenarios.length} scenario{scenarios.length !== 1 ? 's' : ''})
                 </p>
               </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {datasets.map((dataset) => (
-                <DatasetCard 
-                  key={dataset._id} 
-                  dataset={dataset} 
+              {scenarios.map((scenario) => (
+                <ScenarioCard 
+                  key={scenario._id} 
+                  scenario={scenario} 
                   projectId={projectId}
-                  scenarioId={scenarioId}
                 />
               ))}
             </div>
@@ -340,4 +305,4 @@ const ScenarioDetailPage = () => {
   )
 }
 
-export default ScenarioDetailPage
+export default ProjectDetailPage

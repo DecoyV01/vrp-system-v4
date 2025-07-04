@@ -1,5 +1,5 @@
 import { useQuery } from 'convex/react'
-import { api } from '../../convex/_generated/api'
+import { api } from '../convex/_generated/api'
 
 // Current implementation uses the mock auth from Convex backend
 // In the future, this will be replaced with proper Convex Auth

@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Plus, Trash2, Edit2, Upload, Download, X, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import type { Id } from '../../../convex/_generated/dataModel'
+import type { Id } from '../convex/_generated/dataModel'
 import {
   useVehicles,
   useJobs,
