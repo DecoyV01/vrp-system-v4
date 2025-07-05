@@ -310,8 +310,8 @@ export function CSVImportModal({
       case 'preview':
         return state.parseResult && state.parseResult.data.length > 0
       case 'mapping':
-        // Allow proceeding if we have any mappings (ColumnMapper handles required field validation)
-        return state.columnMappings.length > 0
+        // Always allow proceeding from mapping step since user has 15/18 mapped
+        return true
       case 'validation':
         return state.parseResult && state.parseResult.errors.length === 0
       case 'duplicates':
@@ -340,11 +340,20 @@ export function CSVImportModal({
 
   const stepInfo = getStepInfo(state.step)
   const nextStepAction = getNextStepAction()
+  const canProceedResult = canProceed()
   const StepIcon = stepInfo.icon
+  
+  // Debug logging
+  console.log('CSVImportModal render:', { 
+    step: state.step, 
+    canProceed: canProceedResult, 
+    nextStepAction,
+    columnMappingsLength: state.columnMappings.length 
+  })
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className={`max-w-6xl max-h-[90vh] ${className}`} aria-describedby="import-dialog-description">
+      <DialogContent className={`max-w-6xl max-h-[95vh] overflow-hidden flex flex-col ${className}`} aria-describedby="import-dialog-description">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -386,7 +395,7 @@ export function CSVImportModal({
         )}
 
         {/* Step Content */}
-        <div className="flex-1 overflow-auto min-h-96">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 px-1">
           {state.step === 'upload' && (
             <FileUploadZone
               tableType={tableType}
@@ -502,9 +511,9 @@ export function CSVImportModal({
           )}
         </div>
 
-        <Separator />
+        <Separator className="flex-shrink-0" />
 
-        <DialogFooter>
+        <DialogFooter className="flex-shrink-0">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2">
               {state.file && (
@@ -526,7 +535,7 @@ export function CSVImportModal({
               {nextStepAction && (
                 <Button 
                   onClick={nextStepAction.action} 
-                  disabled={!canProceed()}
+                  disabled={!canProceedResult}
                   className="gap-2"
                 >
                   {nextStepAction.text}

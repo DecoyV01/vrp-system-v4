@@ -106,6 +106,8 @@ export function ColumnMapper({
 
   // Update mapping for a specific column
   const updateMapping = (sourceColumn: string, targetField: string) => {
+    console.log('ColumnMapper: updateMapping called', { sourceColumn, targetField })
+    
     // Handle "no mapping" special case
     if (targetField === '__no_mapping__') {
       targetField = sourceColumn // Reset to original column name (unmapped)
@@ -325,7 +327,7 @@ export function ColumnMapper({
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select target field" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="max-h-[200px]">
                         <SelectItem value="__no_mapping__">No mapping</SelectItem>
                         <Separator />
                         {schemaFields.map((field) => (
