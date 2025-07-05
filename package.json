@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "npm run dev:frontend",
-    "build": "npm run build:frontend",
+    "build": "npm run install:all && npm run build:frontend",
     "dev:frontend": "cd frontend && npm run dev",
     "build:frontend": "cd frontend && npm run build",
     "dev:convex": "convex dev",
