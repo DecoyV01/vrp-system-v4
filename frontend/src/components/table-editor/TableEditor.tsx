@@ -1,11 +1,14 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Separator } from '@/components/ui/separator'
 import { Plus, Trash2, Edit2, Upload, Download, X, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { useBulkSelection, TemplateDownload } from './bulk-operations'
 import type { Id } from '../convex/_generated/dataModel'
 import {
   useVehicles,
@@ -127,6 +130,11 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
   const [editValue, setEditValue] = useState('')
   const [isCreating, setIsCreating] = useState(false)
 
+  // Bulk operations modal state
+  const [showImportModal, setShowImportModal] = useState(false)
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [showBulkEditModal, setShowBulkEditModal] = useState(false)
+
   // Get current data based on table type
   const currentData = useMemo(() => {
     switch (tableType) {
@@ -140,6 +148,26 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
 
   const schema = getTableSchema(tableType)
   const isLoading = currentData === undefined
+
+  // Bulk selection functionality
+  const {
+    selectionState,
+    selectionStatus,
+    toggleRowSelection,
+    selectAll,
+    clearSelection,
+    isRowSelected,
+    getSelectedIds
+  } = useBulkSelection({
+    data: currentData,
+    maxSelection: 1000,
+    onSelectionChange: (selectedIds) => {
+      console.log('Selection changed:', selectedIds.length, 'rows selected')
+    }
+  })
+
+  // Checkbox ref for indeterminate state
+  const selectAllCheckboxRef = useRef<HTMLButtonElement>(null)
 
   const handleCellClick = (rowIndex: number, colKey: string, currentValue: any) => {
     setEditingCell({ row: rowIndex, col: colKey })
@@ -303,6 +331,43 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
     }
   }
 
+  // Bulk delete handler
+  const handleBulkDelete = async () => {
+    const selectedIds = getSelectedIds()
+    
+    if (selectedIds.length === 0) return
+    
+    const confirmMessage = `Are you sure you want to delete ${selectedIds.length} ${tableType}? This action cannot be undone.`
+    
+    if (!confirm(confirmMessage)) return
+    
+    try {
+      // Delete each selected item
+      for (const id of selectedIds) {
+        switch (tableType) {
+          case 'vehicles':
+            await deleteVehicle({ id: id as any })
+            break
+          case 'jobs':
+            await deleteJob({ id: id as any })
+            break
+          case 'locations':
+            await deleteLocation({ id: id as any })
+            break
+          case 'routes':
+            toast.error('Route deletion not implemented yet')
+            return
+        }
+      }
+      
+      clearSelection()
+      toast.success(`Deleted ${selectedIds.length} ${tableType} successfully`)
+    } catch (error) {
+      console.error('Bulk delete failed:', error)
+      toast.error('Failed to delete selected records')
+    }
+  }
+
   const renderCellValue = (value: any, column: any) => {
     if (value === undefined || value === null) {
       return <span className="text-muted-foreground italic">Empty</span>
@@ -348,15 +413,24 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
             {currentData.length} {tableType} in this dataset
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" disabled>
-            <Upload className="w-4 h-4 mr-2" />
-            Import
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            <Download className="w-4 h-4 mr-2" />
-            Export
-          </Button>
+        <div className="flex items-center gap-4">
+          {/* Import/Export Section */}
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setShowImportModal(true)}>
+              <Upload className="w-4 h-4 mr-2" />
+              Import CSV
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setShowExportModal(true)}>
+              <Download className="w-4 h-4 mr-2" />
+              Export CSV
+            </Button>
+            <TemplateDownload tableType={tableType} />
+          </div>
+          
+          {/* Separator */}
+          <Separator orientation="vertical" className="h-6" />
+          
+          {/* Add Row */}
           <Button 
             onClick={addRow} 
             size="sm"
@@ -374,6 +448,50 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
               </>
             )}
           </Button>
+
+          {/* Bulk Operations Section - Only show when rows are selected */}
+          {selectionStatus.hasSelection && (
+            <>
+              <Separator orientation="vertical" className="h-6" />
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-muted-foreground">
+                  {selectionStatus.selectedCount} of {selectionStatus.totalCount} selected
+                  {selectionStatus.isMaxSelection && (
+                    <span className="text-orange-600 ml-1">(max reached)</span>
+                  )}
+                </span>
+                
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setShowBulkEditModal(true)}
+                  >
+                    <Edit2 className="w-4 h-4 mr-2" />
+                    Bulk Edit
+                  </Button>
+                  
+                  <Button 
+                    variant="destructive" 
+                    size="sm" 
+                    onClick={handleBulkDelete}
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Selected
+                  </Button>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={clearSelection}
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    Clear Selection
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -381,6 +499,24 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-12">
+                <Checkbox
+                  ref={(checkboxRef) => {
+                    if (checkboxRef && selectionStatus.isIndeterminate) {
+                      checkboxRef.indeterminate = true
+                    }
+                  }}
+                  checked={selectionStatus.isAllSelected}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      selectAll()
+                    } else {
+                      clearSelection()
+                    }
+                  }}
+                  aria-label="Select all rows"
+                />
+              </TableHead>
               {schema.columns.map((column) => (
                 <TableHead key={column.key} className="font-semibold">
                   <div className="flex items-center gap-2">
@@ -402,13 +538,25 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
           <TableBody>
             {currentData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={schema.columns.length + 1} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={schema.columns.length + 2} className="text-center py-8 text-muted-foreground">
                   No {tableType} yet. Click "Add Row" to get started.
                 </TableCell>
               </TableRow>
             ) : (
               currentData.map((item: any, rowIndex: number) => (
-                <TableRow key={item._id || rowIndex}>
+                <TableRow 
+                  key={item._id || rowIndex}
+                  className={isRowSelected(item._id) ? 'bg-muted/50' : ''}
+                >
+                  <TableCell>
+                    <Checkbox
+                      checked={isRowSelected(item._id)}
+                      onCheckedChange={(checked) => 
+                        toggleRowSelection(item._id, checked as boolean)
+                      }
+                      aria-label={`Select row ${rowIndex + 1}`}
+                    />
+                  </TableCell>
                   {schema.columns.map((column) => (
                     <TableCell key={column.key} className="relative min-w-[120px]">
                       {editingCell?.row === rowIndex && editingCell?.col === column.key ? (

@@ -1,8 +1,8 @@
 // Re-export all types for cleaner imports
 export * from './types'
 
-// Export hooks when they are implemented
-// export * from './hooks'
+// Export hooks
+export * from './hooks'
 
 // Export utils
 export * from './utils'
