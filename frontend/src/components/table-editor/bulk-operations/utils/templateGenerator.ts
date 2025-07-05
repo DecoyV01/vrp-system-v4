@@ -33,8 +33,8 @@ export class CSVTemplateGenerator {
         { name: 'startLat', type: 'number', required: false, description: 'Starting latitude', example: 37.7749 },
         { name: 'endLon', type: 'number', required: false, description: 'Ending longitude (defaults to start)', example: -122.4194 },
         { name: 'endLat', type: 'number', required: false, description: 'Ending latitude (defaults to start)', example: 37.7749 },
-        { name: 'capacity', type: 'array', required: false, description: 'Multi-dimensional capacity [weight, volume, count]', example: '[1000, 50, 20]' },
-        { name: 'skills', type: 'array', required: false, description: 'Skill IDs (comma-separated)', example: '[1, 3, 7]' },
+        { name: 'capacity', type: 'array', required: false, description: 'Multi-dimensional capacity [weight, volume, count]', example: '[1000,50,20]' },
+        { name: 'skills', type: 'array', required: false, description: 'Skill IDs (comma-separated)', example: '[1,3,7]' },
         { name: 'twStart', type: 'number', required: false, description: 'Time window start (seconds since midnight)', example: 28800 },
         { name: 'twEnd', type: 'number', required: false, description: 'Time window end (seconds since midnight)', example: 61200 },
         { name: 'speedFactor', type: 'number', required: false, description: 'Speed modification factor (1.0 = normal)', example: 1.0 },
@@ -59,11 +59,11 @@ export class CSVTemplateGenerator {
         { name: 'locationLat', type: 'number', required: false, description: 'Job latitude', example: 37.7749 },
         { name: 'setup', type: 'number', required: false, description: 'Setup time (seconds)', example: 300 },
         { name: 'service', type: 'number', required: false, description: 'Service time (seconds)', example: 600 },
-        { name: 'delivery', type: 'array', required: false, description: 'Delivery quantities [weight, volume, count]', example: '[100, 5, 2]' },
-        { name: 'pickup', type: 'array', required: false, description: 'Pickup quantities [weight, volume, count]', example: '[0, 0, 0]' },
-        { name: 'skills', type: 'array', required: false, description: 'Required skill IDs (comma-separated)', example: '[1, 3]' },
+        { name: 'delivery', type: 'array', required: false, description: 'Delivery quantities [weight, volume, count]', example: '[100,5,2]' },
+        { name: 'pickup', type: 'array', required: false, description: 'Pickup quantities [weight, volume, count]', example: '[0,0,0]' },
+        { name: 'skills', type: 'array', required: false, description: 'Required skill IDs (comma-separated)', example: '[1,3]' },
         { name: 'priority', type: 'number', required: false, description: 'Job priority (0-100)', example: 50, validation: { min: 0, max: 100 } },
-        { name: 'timeWindows', type: 'array', required: false, description: 'Time windows [{start, end}]', example: '[{"start": 28800, "end": 36000}]' },
+        { name: 'timeWindows', type: 'array', required: false, description: 'Time windows [{start, end}]', example: '[{"start":28800,"end":36000}]' },
       ],
       primaryKey: '_id',
       foreignKeys: {
@@ -224,15 +224,15 @@ export class CSVTemplateGenerator {
 
       case 'array':
         if (field.name === 'capacity' || field.name === 'delivery' || field.name === 'pickup') {
-          return `[${100 * (index + 1)}, ${10 * (index + 1)}, ${index + 1}]`
+          return `[${100 * (index + 1)},${10 * (index + 1)},${index + 1}]`
         }
         if (field.name === 'skills') {
-          return `[${index + 1}, ${index + 2}]`
+          return `[${index + 1},${index + 2}]`
         }
         if (field.name === 'timeWindows') {
           const start = 28800 + (index * 3600) // 8 AM + index hours
           const end = start + 7200 // 2 hour window
-          return `[{"start": ${start}, "end": ${end}}]`
+          return `[{"start":${start},"end":${end}}]`
         }
         return '[]'
 

@@ -85,11 +85,16 @@ const transformRowData = (row: any, tableType: string) => {
     if (transformed[field] && typeof transformed[field] === 'string') {
       try {
         // Parse array strings like "[1000, 50, 20]" or "[1, 3, 7]"
-        transformed[field] = JSON.parse(transformed[field])
+        console.log(`Transforming ${field}:`, typeof transformed[field], transformed[field])
+        const parsed = JSON.parse(transformed[field])
+        console.log(`Parsed ${field}:`, typeof parsed, parsed, Array.isArray(parsed))
+        transformed[field] = parsed
       } catch (error) {
-        console.warn(`Failed to parse ${field} as array:`, transformed[field])
+        console.error(`Failed to parse ${field} as array:`, transformed[field], error)
         // Leave as string if parsing fails
       }
+    } else {
+      console.log(`Skipping ${field}:`, typeof transformed[field], transformed[field])
     }
   })
   
@@ -109,6 +114,13 @@ const transformRowData = (row: any, tableType: string) => {
   
   // Validate time windows
   if (transformed.twStart && transformed.twEnd) {
+    console.log('Time window validation:', { 
+      twStart: transformed.twStart, 
+      twEnd: transformed.twEnd,
+      twStartType: typeof transformed.twStart,
+      twEndType: typeof transformed.twEnd,
+      comparison: transformed.twStart >= transformed.twEnd
+    })
     if (transformed.twStart >= transformed.twEnd) {
       console.warn('Invalid time window: start >= end', { twStart: transformed.twStart, twEnd: transformed.twEnd })
     }
