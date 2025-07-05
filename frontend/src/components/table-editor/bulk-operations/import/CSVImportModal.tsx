@@ -342,14 +342,6 @@ export function CSVImportModal({
   const nextStepAction = getNextStepAction()
   const canProceedResult = canProceed()
   const StepIcon = stepInfo.icon
-  
-  // Debug logging
-  console.log('CSVImportModal render:', { 
-    step: state.step, 
-    canProceed: canProceedResult, 
-    nextStepAction,
-    columnMappingsLength: state.columnMappings.length 
-  })
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>

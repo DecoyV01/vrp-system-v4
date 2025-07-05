@@ -300,6 +300,49 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
     }
   }
 
+  // Transform imported row data to proper types
+  const transformRowData = (row: any, tableType: string) => {
+    const transformed = { ...row }
+    
+    // Handle array fields that come as strings from CSV
+    const arrayFields = ['capacity', 'skills', 'delivery', 'pickup', 'timeWindows']
+    
+    arrayFields.forEach(field => {
+      if (transformed[field] && typeof transformed[field] === 'string') {
+        try {
+          // Parse array strings like "[1000, 50, 20]" or "[1, 3, 7]"
+          transformed[field] = JSON.parse(transformed[field])
+        } catch (error) {
+          console.warn(`Failed to parse ${field} as array:`, transformed[field])
+          // Leave as string if parsing fails
+        }
+      }
+    })
+    
+    // Handle numeric fields
+    const numericFields = ['twStart', 'twEnd', 'startLon', 'startLat', 'endLon', 'endLat', 
+                          'locationLon', 'locationLat', 'speedFactor', 'maxTasks', 
+                          'maxTravelTime', 'maxDistance', 'costFixed', 'costPerHour', 'costPerKm']
+    
+    numericFields.forEach(field => {
+      if (transformed[field] && typeof transformed[field] === 'string') {
+        const num = parseFloat(transformed[field])
+        if (!isNaN(num)) {
+          transformed[field] = num
+        }
+      }
+    })
+    
+    // Validate time windows
+    if (transformed.twStart && transformed.twEnd) {
+      if (transformed.twStart >= transformed.twEnd) {
+        console.warn('Invalid time window: start >= end', { twStart: transformed.twStart, twEnd: transformed.twEnd })
+      }
+    }
+    
+    return transformed
+  }
+
   const handleImport = async (data: any[], mappings: any[]) => {
     try {
       let successCount = 0
@@ -312,16 +355,19 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
             scenarioId,
             datasetId
           }
+          
+          // Transform the row data to proper types
+          const transformedRow = transformRowData(row, tableType)
 
           switch (tableType) {
             case 'vehicles':
-              await createVehicle({ ...baseData, ...row })
+              await createVehicle({ ...baseData, ...transformedRow })
               break
             case 'jobs':
-              await createJob({ ...baseData, ...row })
+              await createJob({ ...baseData, ...transformedRow })
               break
             case 'locations':
-              await createLocation({ ...baseData, ...row })
+              await createLocation({ ...baseData, ...transformedRow })
               break
             default:
               throw new Error(`Import not supported for ${tableType}`)

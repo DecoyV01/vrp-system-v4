@@ -36,7 +36,7 @@ export class CSVTemplateGenerator {
         { name: 'capacity', type: 'array', required: false, description: 'Multi-dimensional capacity [weight, volume, count]', example: '[1000, 50, 20]' },
         { name: 'skills', type: 'array', required: false, description: 'Skill IDs (comma-separated)', example: '[1, 3, 7]' },
         { name: 'twStart', type: 'number', required: false, description: 'Time window start (seconds since midnight)', example: 28800 },
-        { name: 'twEnd', type: 'number', required: false, description: 'Time window end (seconds since midnight)', example: 64800 },
+        { name: 'twEnd', type: 'number', required: false, description: 'Time window end (seconds since midnight)', example: 61200 },
         { name: 'speedFactor', type: 'number', required: false, description: 'Speed modification factor (1.0 = normal)', example: 1.0 },
         { name: 'maxTasks', type: 'number', required: false, description: 'Maximum tasks per route', example: 50 },
         { name: 'maxTravelTime', type: 'number', required: false, description: 'Maximum travel time (seconds)', example: 28800 },
