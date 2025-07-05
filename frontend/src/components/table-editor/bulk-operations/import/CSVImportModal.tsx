@@ -74,6 +74,49 @@ interface ImportState {
   } | null
 }
 
+// Transform imported row data to proper types
+const transformRowData = (row: any, tableType: string) => {
+  const transformed = { ...row }
+  
+  // Handle array fields that come as strings from CSV
+  const arrayFields = ['capacity', 'skills', 'delivery', 'pickup', 'timeWindows']
+  
+  arrayFields.forEach(field => {
+    if (transformed[field] && typeof transformed[field] === 'string') {
+      try {
+        // Parse array strings like "[1000, 50, 20]" or "[1, 3, 7]"
+        transformed[field] = JSON.parse(transformed[field])
+      } catch (error) {
+        console.warn(`Failed to parse ${field} as array:`, transformed[field])
+        // Leave as string if parsing fails
+      }
+    }
+  })
+  
+  // Handle numeric fields
+  const numericFields = ['twStart', 'twEnd', 'startLon', 'startLat', 'endLon', 'endLat', 
+                        'locationLon', 'locationLat', 'speedFactor', 'maxTasks', 
+                        'maxTravelTime', 'maxDistance', 'costFixed', 'costPerHour', 'costPerKm']
+  
+  numericFields.forEach(field => {
+    if (transformed[field] && typeof transformed[field] === 'string') {
+      const num = parseFloat(transformed[field])
+      if (!isNaN(num)) {
+        transformed[field] = num
+      }
+    }
+  })
+  
+  // Validate time windows
+  if (transformed.twStart && transformed.twEnd) {
+    if (transformed.twStart >= transformed.twEnd) {
+      console.warn('Invalid time window: start >= end', { twStart: transformed.twStart, twEnd: transformed.twEnd })
+    }
+  }
+  
+  return transformed
+}
+
 export function CSVImportModal({
   isOpen,
   onClose,
@@ -148,13 +191,25 @@ export function CSVImportModal({
     }))
   }, [])
 
-  // Move to validation step
+  // Move to validation step - transform data first
   const handleProceedToValidation = useCallback(() => {
+    if (!state.parseResult) return
+    
+    // Transform all rows to proper data types before validation
+    const transformedData = state.parseResult.data.map(row => transformRowData(row, tableType))
+    
+    // Update parseResult with transformed data
+    const updatedParseResult = {
+      ...state.parseResult,
+      data: transformedData
+    }
+    
     setState(prev => ({
       ...prev,
+      parseResult: updatedParseResult,
       step: 'validation'
     }))
-  }, [])
+  }, [state.parseResult, tableType])
 
   // Move to duplicate resolution step
   const handleProceedToDuplicates = useCallback(async () => {
