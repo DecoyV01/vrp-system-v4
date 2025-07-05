@@ -356,15 +356,49 @@ export class CSVProcessor {
       // If it's a string, try to parse it as JSON
       if (typeof row.capacity === 'string') {
         try {
-          capacityArray = JSON.parse(row.capacity)
+          // Debug logging to see exact value
+          console.log('Parsing capacity string:', JSON.stringify(row.capacity), 'length:', row.capacity.length)
+          
+          // Clean the string of potential CSV artifacts
+          let cleanCapacity = row.capacity.trim()
+          
+          // Remove outer quotes if present (CSV might quote the field)
+          if ((cleanCapacity.startsWith('"') && cleanCapacity.endsWith('"')) ||
+              (cleanCapacity.startsWith("'") && cleanCapacity.endsWith("'"))) {
+            cleanCapacity = cleanCapacity.slice(1, -1)
+          }
+          
+          console.log('Cleaned capacity string:', JSON.stringify(cleanCapacity))
+          capacityArray = JSON.parse(cleanCapacity)
+          console.log('Successfully parsed capacity:', capacityArray)
         } catch (error) {
-          errors.push({
-            row: rowNumber,
-            column: 'capacity',
-            message: 'Capacity must be a valid array format like [1000,50,20]',
-            value: row.capacity
-          })
-          return // Skip further validation if parsing failed
+          console.error('Failed to parse capacity:', JSON.stringify(row.capacity), 'Error:', error.message)
+          
+          // Try alternate parsing method for common formats
+          try {
+            // Handle space-separated numbers in brackets: "[1000 50 20]"
+            let fallbackCapacity = row.capacity.trim()
+            if (fallbackCapacity.startsWith('[') && fallbackCapacity.endsWith(']')) {
+              const innerContent = fallbackCapacity.slice(1, -1).trim()
+              const numbers = innerContent.split(/[\s,]+/).filter(s => s.length > 0).map(s => parseFloat(s))
+              if (numbers.every(n => !isNaN(n))) {
+                capacityArray = numbers
+                console.log('Fallback parsing succeeded:', capacityArray)
+              } else {
+                throw new Error('Contains non-numeric values')
+              }
+            } else {
+              throw new Error('Not in bracket format')
+            }
+          } catch (fallbackError) {
+            errors.push({
+              row: rowNumber,
+              column: 'capacity',
+              message: `Capacity must be a valid array format like [1000,50,20]. Got: "${row.capacity}"`,
+              value: row.capacity
+            })
+            return // Skip further validation if parsing failed
+          }
         }
       }
       
