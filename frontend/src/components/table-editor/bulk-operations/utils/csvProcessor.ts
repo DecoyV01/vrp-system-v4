@@ -349,24 +349,71 @@ export class CSVProcessor {
       })
     }
 
-    // Validate capacity array
-    if (row.capacity && !Array.isArray(row.capacity)) {
-      errors.push({
-        row: rowNumber,
-        column: 'capacity',
-        message: 'Capacity must be an array of numbers',
-        value: row.capacity
-      })
+    // Validate capacity array (handle both string and array formats)
+    if (row.capacity) {
+      let capacityArray = row.capacity
+      
+      // If it's a string, try to parse it as JSON
+      if (typeof row.capacity === 'string') {
+        try {
+          capacityArray = JSON.parse(row.capacity)
+        } catch (error) {
+          errors.push({
+            row: rowNumber,
+            column: 'capacity',
+            message: 'Capacity must be a valid array format like [1000,50,20]',
+            value: row.capacity
+          })
+          return // Skip further validation if parsing failed
+        }
+      }
+      
+      // Now validate that it's actually an array
+      if (!Array.isArray(capacityArray)) {
+        errors.push({
+          row: rowNumber,
+          column: 'capacity',
+          message: 'Capacity must be an array of numbers',
+          value: row.capacity
+        })
+      } else {
+        // Validate that all elements are numbers
+        const hasNonNumbers = capacityArray.some(val => typeof val !== 'number' || isNaN(val))
+        if (hasNonNumbers) {
+          errors.push({
+            row: rowNumber,
+            column: 'capacity',
+            message: 'All capacity values must be numbers',
+            value: row.capacity
+          })
+        }
+      }
     }
 
-    // Validate time windows
-    if (row.twStart !== null && row.twEnd !== null && row.twStart >= row.twEnd) {
-      warnings.push({
-        row: rowNumber,
-        column: 'twStart',
-        message: 'Start time should be before end time',
-        suggestion: 'Check time window values'
-      })
+    // Validate time windows (handle both string and number formats)
+    if (row.twStart !== null && row.twStart !== undefined && 
+        row.twEnd !== null && row.twEnd !== undefined) {
+      
+      // Convert to numbers if they're strings
+      const twStart = typeof row.twStart === 'string' ? parseFloat(row.twStart) : row.twStart
+      const twEnd = typeof row.twEnd === 'string' ? parseFloat(row.twEnd) : row.twEnd
+      
+      // Validate that they're valid numbers
+      if (isNaN(twStart) || isNaN(twEnd)) {
+        errors.push({
+          row: rowNumber,
+          column: 'twStart',
+          message: 'Time window values must be numbers (seconds since midnight)',
+          value: `twStart: ${row.twStart}, twEnd: ${row.twEnd}`
+        })
+      } else if (twStart >= twEnd) {
+        warnings.push({
+          row: rowNumber,
+          column: 'twStart',
+          message: 'Start time should be before end time',
+          suggestion: 'Check time window values'
+        })
+      }
     }
   }
 
