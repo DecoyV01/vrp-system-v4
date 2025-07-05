@@ -1,0 +1,479 @@
+{
+  "sessionId": "20250705-113002",
+  "generatedAt": "2025-07-05T09:58:12.654Z",
+  "summary": {
+    "totalTests": 10,
+    "passedTests": 9,
+    "failedTests": 1,
+    "totalScreenshots": 42,
+    "duration": 8753
+  },
+  "screenshots": [
+    {
+      "id": "screenshot_1751709360267",
+      "timestamp": "2025-07-05T09:55:59.256Z",
+      "name": "baseline",
+      "filename": "20250705-115559-baseline.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709360364",
+      "timestamp": "2025-07-05T09:56:00.261Z",
+      "name": "state-verification",
+      "filename": "20250705-115559-state-verification.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709360388",
+      "timestamp": "2025-07-05T09:56:00.262Z",
+      "name": "navigate--projects",
+      "filename": "20250705-115559-navigate--projects.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709360311",
+      "timestamp": "2025-07-05T09:55:59.258Z",
+      "name": "project-list-before-create",
+      "filename": "20250705-115559-project-list-before-create.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709360326",
+      "timestamp": "2025-07-05T09:56:00.260Z",
+      "name": "click--add-project-button",
+      "filename": "20250705-115559-click--add-project-button.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709360339",
+      "timestamp": "2025-07-05T09:56:00.260Z",
+      "name": "project-create-form",
+      "filename": "20250705-115559-project-create-form.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709360351",
+      "timestamp": "2025-07-05T09:56:00.261Z",
+      "name": "form-filled",
+      "filename": "20250705-115559-form-filled.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709360375",
+      "timestamp": "2025-07-05T09:56:00.261Z",
+      "name": "project-created",
+      "filename": "20250705-115559-project-created.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463251",
+      "timestamp": "2025-07-05T09:57:42.234Z",
+      "name": "baseline",
+      "filename": "20250705-115742-baseline.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463369",
+      "timestamp": "2025-07-05T09:57:43.240Z",
+      "name": "state-verification",
+      "filename": "20250705-115742-state-verification.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463395",
+      "timestamp": "2025-07-05T09:57:43.240Z",
+      "name": "navigate--projects",
+      "filename": "20250705-115742-navigate--projects.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463314",
+      "timestamp": "2025-07-05T09:57:42.235Z",
+      "name": "project-list-before-create",
+      "filename": "20250705-115742-project-list-before-create.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463326",
+      "timestamp": "2025-07-05T09:57:43.238Z",
+      "name": "click--add-project-button",
+      "filename": "20250705-115742-click--add-project-button.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463343",
+      "timestamp": "2025-07-05T09:57:43.238Z",
+      "name": "project-create-form",
+      "filename": "20250705-115742-project-create-form.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463358",
+      "timestamp": "2025-07-05T09:57:43.239Z",
+      "name": "form-filled",
+      "filename": "20250705-115742-form-filled.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463380",
+      "timestamp": "2025-07-05T09:57:43.240Z",
+      "name": "project-created",
+      "filename": "20250705-115742-project-created.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709469099",
+      "timestamp": "2025-07-05T09:57:48.588Z",
+      "name": "baseline",
+      "filename": "20250705-115748-baseline.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709469115",
+      "timestamp": "2025-07-05T09:57:48.588Z",
+      "name": "state-verification",
+      "filename": "20250705-115748-state-verification.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709469126",
+      "timestamp": "2025-07-05T09:57:48.589Z",
+      "name": "navigate--projects",
+      "filename": "20250705-115748-navigate--projects.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709469141",
+      "timestamp": "2025-07-05T09:57:48.589Z",
+      "name": "project-list",
+      "filename": "20250705-115748-project-list.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709469152",
+      "timestamp": "2025-07-05T09:57:49.092Z",
+      "name": "click--data-project-id--fi",
+      "filename": "20250705-115748-click--data-project-id--fi.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709469162",
+      "timestamp": "2025-07-05T09:57:49.092Z",
+      "name": "project-detail-view",
+      "filename": "20250705-115748-project-detail-view.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478356",
+      "timestamp": "2025-07-05T09:57:55.481Z",
+      "name": "baseline",
+      "filename": "20250705-115755-baseline.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478470",
+      "timestamp": "2025-07-05T09:57:58.348Z",
+      "name": "state-verification",
+      "filename": "20250705-115755-state-verification.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478384",
+      "timestamp": "2025-07-05T09:57:55.483Z",
+      "name": "navigate--projects",
+      "filename": "20250705-115755-navigate--projects.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478398",
+      "timestamp": "2025-07-05T09:57:55.483Z",
+      "name": "project-list",
+      "filename": "20250705-115755-project-list.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478411",
+      "timestamp": "2025-07-05T09:57:55.985Z",
+      "name": "click--data-project-id--fi",
+      "filename": "20250705-115755-click--data-project-id--fi.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478422",
+      "timestamp": "2025-07-05T09:57:55.986Z",
+      "name": "project-detail-view",
+      "filename": "20250705-115755-project-detail-view.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478437",
+      "timestamp": "2025-07-05T09:57:58.346Z",
+      "name": "click--edit-button---edit-",
+      "filename": "20250705-115755-click--edit-button---edit-.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478448",
+      "timestamp": "2025-07-05T09:57:58.346Z",
+      "name": "project-edit-form",
+      "filename": "20250705-115755-project-edit-form.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478458",
+      "timestamp": "2025-07-05T09:57:58.347Z",
+      "name": "form-filled",
+      "filename": "20250705-115755-form-filled.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478482",
+      "timestamp": "2025-07-05T09:57:58.348Z",
+      "name": "project-updated",
+      "filename": "20250705-115755-project-updated.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486637",
+      "timestamp": "2025-07-05T09:58:04.620Z",
+      "name": "baseline",
+      "filename": "20250705-115804-baseline.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486655",
+      "timestamp": "2025-07-05T09:58:04.621Z",
+      "name": "state-verification",
+      "filename": "20250705-115804-state-verification.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486767",
+      "timestamp": "2025-07-05T09:58:06.628Z",
+      "name": "navigate--projects",
+      "filename": "20250705-115804-navigate--projects.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486686",
+      "timestamp": "2025-07-05T09:58:04.622Z",
+      "name": "project-list",
+      "filename": "20250705-115804-project-list.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486697",
+      "timestamp": "2025-07-05T09:58:05.125Z",
+      "name": "click--data-project-id--fi",
+      "filename": "20250705-115804-click--data-project-id--fi.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486707",
+      "timestamp": "2025-07-05T09:58:05.126Z",
+      "name": "project-detail-view",
+      "filename": "20250705-115804-project-detail-view.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486721",
+      "timestamp": "2025-07-05T09:58:06.127Z",
+      "name": "click--delete-button---del",
+      "filename": "20250705-115804-click--delete-button---del.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486731",
+      "timestamp": "2025-07-05T09:58:06.127Z",
+      "name": "project-delete-confirmation",
+      "filename": "20250705-115804-project-delete-confirmation.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486745",
+      "timestamp": "2025-07-05T09:58:06.628Z",
+      "name": "click--confirm-delete---co",
+      "filename": "20250705-115804-click--confirm-delete---co.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486756",
+      "timestamp": "2025-07-05T09:58:06.628Z",
+      "name": "project-deleted",
+      "filename": "20250705-115804-project-deleted.png",
+      "description": "",
+      "method": "browser-mcp"
+    }
+  ],
+  "insights": {
+    "testPhases": [
+      {
+        "phase": "initialization",
+        "screenshot": {
+          "id": "screenshot_1751709360267",
+          "timestamp": "2025-07-05T09:55:59.256Z",
+          "name": "baseline",
+          "filename": "20250705-115559-baseline.png",
+          "description": "",
+          "method": "browser-mcp"
+        }
+      },
+      {
+        "phase": "initialization",
+        "screenshot": {
+          "id": "screenshot_1751709463251",
+          "timestamp": "2025-07-05T09:57:42.234Z",
+          "name": "baseline",
+          "filename": "20250705-115742-baseline.png",
+          "description": "",
+          "method": "browser-mcp"
+        }
+      },
+      {
+        "phase": "initialization",
+        "screenshot": {
+          "id": "screenshot_1751709469099",
+          "timestamp": "2025-07-05T09:57:48.588Z",
+          "name": "baseline",
+          "filename": "20250705-115748-baseline.png",
+          "description": "",
+          "method": "browser-mcp"
+        }
+      },
+      {
+        "phase": "initialization",
+        "screenshot": {
+          "id": "screenshot_1751709478356",
+          "timestamp": "2025-07-05T09:57:55.481Z",
+          "name": "baseline",
+          "filename": "20250705-115755-baseline.png",
+          "description": "",
+          "method": "browser-mcp"
+        }
+      },
+      {
+        "phase": "initialization",
+        "screenshot": {
+          "id": "screenshot_1751709486637",
+          "timestamp": "2025-07-05T09:58:04.620Z",
+          "name": "baseline",
+          "filename": "20250705-115804-baseline.png",
+          "description": "",
+          "method": "browser-mcp"
+        }
+      }
+    ],
+    "errorScreenshots": [],
+    "successScreenshots": [],
+    "pageTransitions": [
+      {
+        "id": "screenshot_1751709360388",
+        "timestamp": "2025-07-05T09:56:00.262Z",
+        "name": "navigate--projects",
+        "filename": "20250705-115559-navigate--projects.png",
+        "description": "",
+        "method": "browser-mcp"
+      },
+      {
+        "id": "screenshot_1751709463395",
+        "timestamp": "2025-07-05T09:57:43.240Z",
+        "name": "navigate--projects",
+        "filename": "20250705-115742-navigate--projects.png",
+        "description": "",
+        "method": "browser-mcp"
+      },
+      {
+        "id": "screenshot_1751709469126",
+        "timestamp": "2025-07-05T09:57:48.589Z",
+        "name": "navigate--projects",
+        "filename": "20250705-115748-navigate--projects.png",
+        "description": "",
+        "method": "browser-mcp"
+      },
+      {
+        "id": "screenshot_1751709478384",
+        "timestamp": "2025-07-05T09:57:55.483Z",
+        "name": "navigate--projects",
+        "filename": "20250705-115755-navigate--projects.png",
+        "description": "",
+        "method": "browser-mcp"
+      },
+      {
+        "id": "screenshot_1751709486767",
+        "timestamp": "2025-07-05T09:58:06.628Z",
+        "name": "navigate--projects",
+        "filename": "20250705-115804-navigate--projects.png",
+        "description": "",
+        "method": "browser-mcp"
+      }
+    ],
+    "testsByType": {
+      "command": {
+        "passed": 9,
+        "failed": 1,
+        "total": 10
+      }
+    },
+    "testsByEntity": {
+      "project": {
+        "passed": 9,
+        "failed": 1,
+        "total": 10
+      }
+    },
+    "failurePatterns": [
+      {
+        "entity": "project",
+        "action": "create",
+        "error": "Click failed: this.wait is not a function"
+      }
+    ]
+  },
+  "videoFile": null,
+  "metadata": {
+    "framework": "VRP System UAT",
+    "version": "1.0.0",
+    "environment": "development"
+  }
+}

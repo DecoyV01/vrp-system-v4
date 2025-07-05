@@ -1,0 +1,1706 @@
+{
+  "sessionId": "20250705-113002",
+  "startTime": "2025-07-05T09:30:02.839Z",
+  "lastUpdated": "2025-07-05T10:16:22.077Z",
+  "tests": [
+    {
+      "id": "test_1751707802902",
+      "timestamp": "2025-07-05T09:30:02.902Z",
+      "type": "command",
+      "name": "project_create",
+      "status": "passed",
+      "duration": 63,
+      "entity": "project",
+      "action": "create",
+      "result": {
+        "operation": "create",
+        "data": {
+          "#project-name": "Test Project UAT",
+          "#project-description": "Automated test project created by UAT"
+        }
+      },
+      "screenshots": [],
+      "details": {
+        "success": true,
+        "type": "command",
+        "entity": "project",
+        "action": "create",
+        "name": "project_create",
+        "result": {
+          "operation": "create",
+          "data": {
+            "#project-name": "Test Project UAT",
+            "#project-description": "Automated test project created by UAT"
+          }
+        },
+        "screenshots": [],
+        "duration": 63,
+        "timestamp": "2025-07-05T09:30:02.902Z"
+      }
+    },
+    {
+      "id": "test_1751707811613",
+      "timestamp": "2025-07-05T09:30:11.613Z",
+      "type": "command",
+      "name": "project_read",
+      "status": "passed",
+      "duration": 60,
+      "entity": "project",
+      "action": "read",
+      "result": {
+        "operation": "read",
+        "viewed": true
+      },
+      "screenshots": [],
+      "details": {
+        "success": true,
+        "type": "command",
+        "entity": "project",
+        "action": "read",
+        "name": "project_read",
+        "result": {
+          "operation": "read",
+          "viewed": true
+        },
+        "screenshots": [],
+        "duration": 60,
+        "timestamp": "2025-07-05T09:30:11.612Z"
+      }
+    },
+    {
+      "id": "test_1751707811835",
+      "timestamp": "2025-07-05T09:30:11.835Z",
+      "type": "command",
+      "name": "project_update",
+      "status": "passed",
+      "duration": 90,
+      "entity": "project",
+      "action": "update",
+      "result": {
+        "operation": "update",
+        "field": "#project-name",
+        "value": "Test Project UAT (Updated)"
+      },
+      "screenshots": [],
+      "details": {
+        "success": true,
+        "type": "command",
+        "entity": "project",
+        "action": "update",
+        "name": "project_update",
+        "result": {
+          "operation": "update",
+          "field": "#project-name",
+          "value": "Test Project UAT (Updated)"
+        },
+        "screenshots": [],
+        "duration": 90,
+        "timestamp": "2025-07-05T09:30:11.835Z"
+      }
+    },
+    {
+      "id": "test_1751708765065",
+      "timestamp": "2025-07-05T09:46:05.065Z",
+      "type": "command",
+      "name": "project_create",
+      "status": "failed",
+      "duration": 39,
+      "entity": "project",
+      "action": "create",
+      "error": "Click failed: this.wait is not a function",
+      "screenshots": [],
+      "details": {
+        "success": false,
+        "type": "command",
+        "entity": "project",
+        "action": "create",
+        "name": "project_create",
+        "error": "Click failed: this.wait is not a function",
+        "screenshots": [],
+        "duration": 39,
+        "timestamp": "2025-07-05T09:46:05.065Z"
+      }
+    },
+    {
+      "id": "test_1751708819999",
+      "timestamp": "2025-07-05T09:46:59.999Z",
+      "type": "command",
+      "name": "project_create",
+      "status": "passed",
+      "duration": 1082,
+      "entity": "project",
+      "action": "create",
+      "result": {
+        "operation": "create",
+        "data": {
+          "#project-name": "Test Project UAT",
+          "#project-description": "Automated test project created by UAT"
+        }
+      },
+      "screenshots": [],
+      "details": {
+        "success": true,
+        "type": "command",
+        "entity": "project",
+        "action": "create",
+        "name": "project_create",
+        "result": {
+          "operation": "create",
+          "data": {
+            "#project-name": "Test Project UAT",
+            "#project-description": "Automated test project created by UAT"
+          }
+        },
+        "screenshots": [],
+        "duration": 1082,
+        "timestamp": "2025-07-05T09:46:59.999Z"
+      }
+    },
+    {
+      "id": "test_1751709360263",
+      "timestamp": "2025-07-05T09:56:00.263Z",
+      "type": "command",
+      "name": "project_create",
+      "status": "passed",
+      "duration": 1012,
+      "entity": "project",
+      "action": "create",
+      "result": {
+        "operation": "create",
+        "data": {
+          "#project-name": "Test Project UAT",
+          "#project-description": "Automated test project created by UAT"
+        }
+      },
+      "screenshots": [
+        {
+          "name": "baseline",
+          "filename": "20250705-115559-baseline.png",
+          "timestamp": "2025-07-05T09:55:59.256Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "state-verification",
+          "filename": "20250705-115559-state-verification.png",
+          "timestamp": "2025-07-05T09:55:59.257Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "navigate--projects",
+          "filename": "20250705-115559-navigate--projects.png",
+          "timestamp": "2025-07-05T09:55:59.258Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-list-before-create",
+          "filename": "20250705-115559-project-list-before-create.png",
+          "timestamp": "2025-07-05T09:55:59.258Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "click--add-project-button",
+          "filename": "20250705-115559-click--add-project-button.png",
+          "timestamp": "2025-07-05T09:56:00.260Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-create-form",
+          "filename": "20250705-115559-project-create-form.png",
+          "timestamp": "2025-07-05T09:56:00.260Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "form-filled",
+          "filename": "20250705-115559-form-filled.png",
+          "timestamp": "2025-07-05T09:56:00.261Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "state-verification",
+          "filename": "20250705-115559-state-verification.png",
+          "timestamp": "2025-07-05T09:56:00.261Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-created",
+          "filename": "20250705-115559-project-created.png",
+          "timestamp": "2025-07-05T09:56:00.261Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "navigate--projects",
+          "filename": "20250705-115559-navigate--projects.png",
+          "timestamp": "2025-07-05T09:56:00.262Z",
+          "description": "",
+          "method": "browser-mcp"
+        }
+      ],
+      "details": {
+        "success": true,
+        "type": "command",
+        "entity": "project",
+        "action": "create",
+        "name": "project_create",
+        "result": {
+          "operation": "create",
+          "data": {
+            "#project-name": "Test Project UAT",
+            "#project-description": "Automated test project created by UAT"
+          }
+        },
+        "screenshots": [
+          {
+            "name": "baseline",
+            "filename": "20250705-115559-baseline.png",
+            "timestamp": "2025-07-05T09:55:59.256Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "state-verification",
+            "filename": "20250705-115559-state-verification.png",
+            "timestamp": "2025-07-05T09:55:59.257Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "navigate--projects",
+            "filename": "20250705-115559-navigate--projects.png",
+            "timestamp": "2025-07-05T09:55:59.258Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-list-before-create",
+            "filename": "20250705-115559-project-list-before-create.png",
+            "timestamp": "2025-07-05T09:55:59.258Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "click--add-project-button",
+            "filename": "20250705-115559-click--add-project-button.png",
+            "timestamp": "2025-07-05T09:56:00.260Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-create-form",
+            "filename": "20250705-115559-project-create-form.png",
+            "timestamp": "2025-07-05T09:56:00.260Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "form-filled",
+            "filename": "20250705-115559-form-filled.png",
+            "timestamp": "2025-07-05T09:56:00.261Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "state-verification",
+            "filename": "20250705-115559-state-verification.png",
+            "timestamp": "2025-07-05T09:56:00.261Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-created",
+            "filename": "20250705-115559-project-created.png",
+            "timestamp": "2025-07-05T09:56:00.261Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "navigate--projects",
+            "filename": "20250705-115559-navigate--projects.png",
+            "timestamp": "2025-07-05T09:56:00.262Z",
+            "description": "",
+            "method": "browser-mcp"
+          }
+        ],
+        "duration": 1012,
+        "timestamp": "2025-07-05T09:56:00.263Z"
+      }
+    },
+    {
+      "id": "test_1751709463241",
+      "timestamp": "2025-07-05T09:57:43.241Z",
+      "type": "command",
+      "name": "project_create",
+      "status": "passed",
+      "duration": 1011,
+      "entity": "project",
+      "action": "create",
+      "result": {
+        "operation": "create",
+        "data": {
+          "#project-name": "Test Project UAT",
+          "#project-description": "Automated test project created by UAT"
+        }
+      },
+      "screenshots": [
+        {
+          "name": "baseline",
+          "filename": "20250705-115742-baseline.png",
+          "timestamp": "2025-07-05T09:57:42.234Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "state-verification",
+          "filename": "20250705-115742-state-verification.png",
+          "timestamp": "2025-07-05T09:57:42.235Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "navigate--projects",
+          "filename": "20250705-115742-navigate--projects.png",
+          "timestamp": "2025-07-05T09:57:42.235Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-list-before-create",
+          "filename": "20250705-115742-project-list-before-create.png",
+          "timestamp": "2025-07-05T09:57:42.235Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "click--add-project-button",
+          "filename": "20250705-115742-click--add-project-button.png",
+          "timestamp": "2025-07-05T09:57:43.238Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-create-form",
+          "filename": "20250705-115742-project-create-form.png",
+          "timestamp": "2025-07-05T09:57:43.238Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "form-filled",
+          "filename": "20250705-115742-form-filled.png",
+          "timestamp": "2025-07-05T09:57:43.239Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "state-verification",
+          "filename": "20250705-115742-state-verification.png",
+          "timestamp": "2025-07-05T09:57:43.240Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-created",
+          "filename": "20250705-115742-project-created.png",
+          "timestamp": "2025-07-05T09:57:43.240Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "navigate--projects",
+          "filename": "20250705-115742-navigate--projects.png",
+          "timestamp": "2025-07-05T09:57:43.240Z",
+          "description": "",
+          "method": "browser-mcp"
+        }
+      ],
+      "details": {
+        "success": true,
+        "type": "command",
+        "entity": "project",
+        "action": "create",
+        "name": "project_create",
+        "result": {
+          "operation": "create",
+          "data": {
+            "#project-name": "Test Project UAT",
+            "#project-description": "Automated test project created by UAT"
+          }
+        },
+        "screenshots": [
+          {
+            "name": "baseline",
+            "filename": "20250705-115742-baseline.png",
+            "timestamp": "2025-07-05T09:57:42.234Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "state-verification",
+            "filename": "20250705-115742-state-verification.png",
+            "timestamp": "2025-07-05T09:57:42.235Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "navigate--projects",
+            "filename": "20250705-115742-navigate--projects.png",
+            "timestamp": "2025-07-05T09:57:42.235Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-list-before-create",
+            "filename": "20250705-115742-project-list-before-create.png",
+            "timestamp": "2025-07-05T09:57:42.235Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "click--add-project-button",
+            "filename": "20250705-115742-click--add-project-button.png",
+            "timestamp": "2025-07-05T09:57:43.238Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-create-form",
+            "filename": "20250705-115742-project-create-form.png",
+            "timestamp": "2025-07-05T09:57:43.238Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "form-filled",
+            "filename": "20250705-115742-form-filled.png",
+            "timestamp": "2025-07-05T09:57:43.239Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "state-verification",
+            "filename": "20250705-115742-state-verification.png",
+            "timestamp": "2025-07-05T09:57:43.240Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-created",
+            "filename": "20250705-115742-project-created.png",
+            "timestamp": "2025-07-05T09:57:43.240Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "navigate--projects",
+            "filename": "20250705-115742-navigate--projects.png",
+            "timestamp": "2025-07-05T09:57:43.240Z",
+            "description": "",
+            "method": "browser-mcp"
+          }
+        ],
+        "duration": 1011,
+        "timestamp": "2025-07-05T09:57:43.241Z"
+      }
+    },
+    {
+      "id": "test_1751709469093",
+      "timestamp": "2025-07-05T09:57:49.093Z",
+      "type": "command",
+      "name": "project_read",
+      "status": "passed",
+      "duration": 509,
+      "entity": "project",
+      "action": "read",
+      "result": {
+        "operation": "read",
+        "viewed": true
+      },
+      "screenshots": [
+        {
+          "name": "baseline",
+          "filename": "20250705-115748-baseline.png",
+          "timestamp": "2025-07-05T09:57:48.588Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "state-verification",
+          "filename": "20250705-115748-state-verification.png",
+          "timestamp": "2025-07-05T09:57:48.588Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "navigate--projects",
+          "filename": "20250705-115748-navigate--projects.png",
+          "timestamp": "2025-07-05T09:57:48.589Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-list",
+          "filename": "20250705-115748-project-list.png",
+          "timestamp": "2025-07-05T09:57:48.589Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "click--data-project-id--fi",
+          "filename": "20250705-115748-click--data-project-id--fi.png",
+          "timestamp": "2025-07-05T09:57:49.092Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-detail-view",
+          "filename": "20250705-115748-project-detail-view.png",
+          "timestamp": "2025-07-05T09:57:49.092Z",
+          "description": "",
+          "method": "browser-mcp"
+        }
+      ],
+      "details": {
+        "success": true,
+        "type": "command",
+        "entity": "project",
+        "action": "read",
+        "name": "project_read",
+        "result": {
+          "operation": "read",
+          "viewed": true
+        },
+        "screenshots": [
+          {
+            "name": "baseline",
+            "filename": "20250705-115748-baseline.png",
+            "timestamp": "2025-07-05T09:57:48.588Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "state-verification",
+            "filename": "20250705-115748-state-verification.png",
+            "timestamp": "2025-07-05T09:57:48.588Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "navigate--projects",
+            "filename": "20250705-115748-navigate--projects.png",
+            "timestamp": "2025-07-05T09:57:48.589Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-list",
+            "filename": "20250705-115748-project-list.png",
+            "timestamp": "2025-07-05T09:57:48.589Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "click--data-project-id--fi",
+            "filename": "20250705-115748-click--data-project-id--fi.png",
+            "timestamp": "2025-07-05T09:57:49.092Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-detail-view",
+            "filename": "20250705-115748-project-detail-view.png",
+            "timestamp": "2025-07-05T09:57:49.092Z",
+            "description": "",
+            "method": "browser-mcp"
+          }
+        ],
+        "duration": 509,
+        "timestamp": "2025-07-05T09:57:49.092Z"
+      }
+    },
+    {
+      "id": "test_1751709478348",
+      "timestamp": "2025-07-05T09:57:58.348Z",
+      "type": "command",
+      "name": "project_update",
+      "status": "passed",
+      "duration": 2872,
+      "entity": "project",
+      "action": "update",
+      "result": {
+        "operation": "update",
+        "field": "#project-name",
+        "value": "Test Project UAT (Updated)"
+      },
+      "screenshots": [
+        {
+          "name": "baseline",
+          "filename": "20250705-115755-baseline.png",
+          "timestamp": "2025-07-05T09:57:55.481Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "state-verification",
+          "filename": "20250705-115755-state-verification.png",
+          "timestamp": "2025-07-05T09:57:55.482Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "navigate--projects",
+          "filename": "20250705-115755-navigate--projects.png",
+          "timestamp": "2025-07-05T09:57:55.483Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-list",
+          "filename": "20250705-115755-project-list.png",
+          "timestamp": "2025-07-05T09:57:55.483Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "click--data-project-id--fi",
+          "filename": "20250705-115755-click--data-project-id--fi.png",
+          "timestamp": "2025-07-05T09:57:55.985Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-detail-view",
+          "filename": "20250705-115755-project-detail-view.png",
+          "timestamp": "2025-07-05T09:57:55.986Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "click--edit-button---edit-",
+          "filename": "20250705-115755-click--edit-button---edit-.png",
+          "timestamp": "2025-07-05T09:57:58.346Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-edit-form",
+          "filename": "20250705-115755-project-edit-form.png",
+          "timestamp": "2025-07-05T09:57:58.346Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "form-filled",
+          "filename": "20250705-115755-form-filled.png",
+          "timestamp": "2025-07-05T09:57:58.347Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "state-verification",
+          "filename": "20250705-115755-state-verification.png",
+          "timestamp": "2025-07-05T09:57:58.348Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-updated",
+          "filename": "20250705-115755-project-updated.png",
+          "timestamp": "2025-07-05T09:57:58.348Z",
+          "description": "",
+          "method": "browser-mcp"
+        }
+      ],
+      "details": {
+        "success": true,
+        "type": "command",
+        "entity": "project",
+        "action": "update",
+        "name": "project_update",
+        "result": {
+          "operation": "update",
+          "field": "#project-name",
+          "value": "Test Project UAT (Updated)"
+        },
+        "screenshots": [
+          {
+            "name": "baseline",
+            "filename": "20250705-115755-baseline.png",
+            "timestamp": "2025-07-05T09:57:55.481Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "state-verification",
+            "filename": "20250705-115755-state-verification.png",
+            "timestamp": "2025-07-05T09:57:55.482Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "navigate--projects",
+            "filename": "20250705-115755-navigate--projects.png",
+            "timestamp": "2025-07-05T09:57:55.483Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-list",
+            "filename": "20250705-115755-project-list.png",
+            "timestamp": "2025-07-05T09:57:55.483Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "click--data-project-id--fi",
+            "filename": "20250705-115755-click--data-project-id--fi.png",
+            "timestamp": "2025-07-05T09:57:55.985Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-detail-view",
+            "filename": "20250705-115755-project-detail-view.png",
+            "timestamp": "2025-07-05T09:57:55.986Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "click--edit-button---edit-",
+            "filename": "20250705-115755-click--edit-button---edit-.png",
+            "timestamp": "2025-07-05T09:57:58.346Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-edit-form",
+            "filename": "20250705-115755-project-edit-form.png",
+            "timestamp": "2025-07-05T09:57:58.346Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "form-filled",
+            "filename": "20250705-115755-form-filled.png",
+            "timestamp": "2025-07-05T09:57:58.347Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "state-verification",
+            "filename": "20250705-115755-state-verification.png",
+            "timestamp": "2025-07-05T09:57:58.348Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-updated",
+            "filename": "20250705-115755-project-updated.png",
+            "timestamp": "2025-07-05T09:57:58.348Z",
+            "description": "",
+            "method": "browser-mcp"
+          }
+        ],
+        "duration": 2872,
+        "timestamp": "2025-07-05T09:57:58.348Z"
+      }
+    },
+    {
+      "id": "test_1751709486629",
+      "timestamp": "2025-07-05T09:58:06.629Z",
+      "type": "command",
+      "name": "project_delete",
+      "status": "passed",
+      "duration": 2015,
+      "entity": "project",
+      "action": "delete",
+      "result": {
+        "operation": "delete",
+        "confirmed": true
+      },
+      "screenshots": [
+        {
+          "name": "baseline",
+          "filename": "20250705-115804-baseline.png",
+          "timestamp": "2025-07-05T09:58:04.620Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "state-verification",
+          "filename": "20250705-115804-state-verification.png",
+          "timestamp": "2025-07-05T09:58:04.621Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "navigate--projects",
+          "filename": "20250705-115804-navigate--projects.png",
+          "timestamp": "2025-07-05T09:58:04.622Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-list",
+          "filename": "20250705-115804-project-list.png",
+          "timestamp": "2025-07-05T09:58:04.622Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "click--data-project-id--fi",
+          "filename": "20250705-115804-click--data-project-id--fi.png",
+          "timestamp": "2025-07-05T09:58:05.125Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-detail-view",
+          "filename": "20250705-115804-project-detail-view.png",
+          "timestamp": "2025-07-05T09:58:05.126Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "click--delete-button---del",
+          "filename": "20250705-115804-click--delete-button---del.png",
+          "timestamp": "2025-07-05T09:58:06.127Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-delete-confirmation",
+          "filename": "20250705-115804-project-delete-confirmation.png",
+          "timestamp": "2025-07-05T09:58:06.127Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "click--confirm-delete---co",
+          "filename": "20250705-115804-click--confirm-delete---co.png",
+          "timestamp": "2025-07-05T09:58:06.628Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-deleted",
+          "filename": "20250705-115804-project-deleted.png",
+          "timestamp": "2025-07-05T09:58:06.628Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "navigate--projects",
+          "filename": "20250705-115804-navigate--projects.png",
+          "timestamp": "2025-07-05T09:58:06.628Z",
+          "description": "",
+          "method": "browser-mcp"
+        }
+      ],
+      "details": {
+        "success": true,
+        "type": "command",
+        "entity": "project",
+        "action": "delete",
+        "name": "project_delete",
+        "result": {
+          "operation": "delete",
+          "confirmed": true
+        },
+        "screenshots": [
+          {
+            "name": "baseline",
+            "filename": "20250705-115804-baseline.png",
+            "timestamp": "2025-07-05T09:58:04.620Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "state-verification",
+            "filename": "20250705-115804-state-verification.png",
+            "timestamp": "2025-07-05T09:58:04.621Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "navigate--projects",
+            "filename": "20250705-115804-navigate--projects.png",
+            "timestamp": "2025-07-05T09:58:04.622Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-list",
+            "filename": "20250705-115804-project-list.png",
+            "timestamp": "2025-07-05T09:58:04.622Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "click--data-project-id--fi",
+            "filename": "20250705-115804-click--data-project-id--fi.png",
+            "timestamp": "2025-07-05T09:58:05.125Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-detail-view",
+            "filename": "20250705-115804-project-detail-view.png",
+            "timestamp": "2025-07-05T09:58:05.126Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "click--delete-button---del",
+            "filename": "20250705-115804-click--delete-button---del.png",
+            "timestamp": "2025-07-05T09:58:06.127Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-delete-confirmation",
+            "filename": "20250705-115804-project-delete-confirmation.png",
+            "timestamp": "2025-07-05T09:58:06.127Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "click--confirm-delete---co",
+            "filename": "20250705-115804-click--confirm-delete---co.png",
+            "timestamp": "2025-07-05T09:58:06.628Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-deleted",
+            "filename": "20250705-115804-project-deleted.png",
+            "timestamp": "2025-07-05T09:58:06.628Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "navigate--projects",
+            "filename": "20250705-115804-navigate--projects.png",
+            "timestamp": "2025-07-05T09:58:06.628Z",
+            "description": "",
+            "method": "browser-mcp"
+          }
+        ],
+        "duration": 2015,
+        "timestamp": "2025-07-05T09:58:06.629Z"
+      }
+    },
+    {
+      "id": "test_1751710206723",
+      "timestamp": "2025-07-05T10:10:06.723Z",
+      "type": "command",
+      "name": "project_create",
+      "status": "passed",
+      "duration": 1010,
+      "entity": "project",
+      "action": "create",
+      "result": {
+        "operation": "create",
+        "data": {
+          "#project-name": "Test Project UAT",
+          "#project-description": "Automated test project created by UAT"
+        }
+      },
+      "screenshots": [
+        {
+          "name": "baseline",
+          "filename": "20250705-121005-baseline.png",
+          "timestamp": "2025-07-05T10:10:05.718Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "state-verification",
+          "filename": "20250705-121005-state-verification.png",
+          "timestamp": "2025-07-05T10:10:05.718Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "navigate--projects",
+          "filename": "20250705-121005-navigate--projects.png",
+          "timestamp": "2025-07-05T10:10:05.719Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-list-before-create",
+          "filename": "20250705-121005-project-list-before-create.png",
+          "timestamp": "2025-07-05T10:10:05.719Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "click--add-project-button",
+          "filename": "20250705-121005-click--add-project-button.png",
+          "timestamp": "2025-07-05T10:10:06.721Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-create-form",
+          "filename": "20250705-121005-project-create-form.png",
+          "timestamp": "2025-07-05T10:10:06.722Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "form-filled",
+          "filename": "20250705-121005-form-filled.png",
+          "timestamp": "2025-07-05T10:10:06.722Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "state-verification",
+          "filename": "20250705-121005-state-verification.png",
+          "timestamp": "2025-07-05T10:10:06.722Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "project-created",
+          "filename": "20250705-121005-project-created.png",
+          "timestamp": "2025-07-05T10:10:06.722Z",
+          "description": "",
+          "method": "browser-mcp"
+        },
+        {
+          "name": "navigate--projects",
+          "filename": "20250705-121005-navigate--projects.png",
+          "timestamp": "2025-07-05T10:10:06.722Z",
+          "description": "",
+          "method": "browser-mcp"
+        }
+      ],
+      "details": {
+        "success": true,
+        "type": "command",
+        "entity": "project",
+        "action": "create",
+        "name": "project_create",
+        "result": {
+          "operation": "create",
+          "data": {
+            "#project-name": "Test Project UAT",
+            "#project-description": "Automated test project created by UAT"
+          }
+        },
+        "screenshots": [
+          {
+            "name": "baseline",
+            "filename": "20250705-121005-baseline.png",
+            "timestamp": "2025-07-05T10:10:05.718Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "state-verification",
+            "filename": "20250705-121005-state-verification.png",
+            "timestamp": "2025-07-05T10:10:05.718Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "navigate--projects",
+            "filename": "20250705-121005-navigate--projects.png",
+            "timestamp": "2025-07-05T10:10:05.719Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-list-before-create",
+            "filename": "20250705-121005-project-list-before-create.png",
+            "timestamp": "2025-07-05T10:10:05.719Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "click--add-project-button",
+            "filename": "20250705-121005-click--add-project-button.png",
+            "timestamp": "2025-07-05T10:10:06.721Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-create-form",
+            "filename": "20250705-121005-project-create-form.png",
+            "timestamp": "2025-07-05T10:10:06.722Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "form-filled",
+            "filename": "20250705-121005-form-filled.png",
+            "timestamp": "2025-07-05T10:10:06.722Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "state-verification",
+            "filename": "20250705-121005-state-verification.png",
+            "timestamp": "2025-07-05T10:10:06.722Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "project-created",
+            "filename": "20250705-121005-project-created.png",
+            "timestamp": "2025-07-05T10:10:06.722Z",
+            "description": "",
+            "method": "browser-mcp"
+          },
+          {
+            "name": "navigate--projects",
+            "filename": "20250705-121005-navigate--projects.png",
+            "timestamp": "2025-07-05T10:10:06.722Z",
+            "description": "",
+            "method": "browser-mcp"
+          }
+        ],
+        "duration": 1010,
+        "timestamp": "2025-07-05T10:10:06.723Z"
+      }
+    },
+    {
+      "id": "test_1751710582077",
+      "timestamp": "2025-07-05T10:16:22.077Z",
+      "type": "command",
+      "name": "project_create",
+      "status": "failed",
+      "duration": 25,
+      "entity": "project",
+      "action": "create",
+      "error": "Failed to navigate to application: Browser not initialized",
+      "screenshots": [
+        {
+          "name": "project-create-failure",
+          "filename": "20250705-121622-project-create-failure.png",
+          "timestamp": "2025-07-05T10:16:22.077Z",
+          "description": "",
+          "method": "simulated",
+          "error": "Screenshot capture not available in current environment"
+        }
+      ],
+      "details": {
+        "success": false,
+        "type": "command",
+        "entity": "project",
+        "action": "create",
+        "name": "project_create",
+        "error": "Failed to navigate to application: Browser not initialized",
+        "screenshots": [
+          {
+            "name": "project-create-failure",
+            "filename": "20250705-121622-project-create-failure.png",
+            "timestamp": "2025-07-05T10:16:22.077Z",
+            "description": "",
+            "method": "simulated",
+            "error": "Screenshot capture not available in current environment"
+          }
+        ],
+        "duration": 25,
+        "timestamp": "2025-07-05T10:16:22.077Z"
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "id": "screenshot_1751709360267",
+      "timestamp": "2025-07-05T09:55:59.256Z",
+      "name": "baseline",
+      "filename": "20250705-115559-baseline.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709360286",
+      "timestamp": "2025-07-05T09:55:59.257Z",
+      "name": "state-verification",
+      "filename": "20250705-115559-state-verification.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709360299",
+      "timestamp": "2025-07-05T09:55:59.258Z",
+      "name": "navigate--projects",
+      "filename": "20250705-115559-navigate--projects.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709360311",
+      "timestamp": "2025-07-05T09:55:59.258Z",
+      "name": "project-list-before-create",
+      "filename": "20250705-115559-project-list-before-create.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709360326",
+      "timestamp": "2025-07-05T09:56:00.260Z",
+      "name": "click--add-project-button",
+      "filename": "20250705-115559-click--add-project-button.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709360339",
+      "timestamp": "2025-07-05T09:56:00.260Z",
+      "name": "project-create-form",
+      "filename": "20250705-115559-project-create-form.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709360351",
+      "timestamp": "2025-07-05T09:56:00.261Z",
+      "name": "form-filled",
+      "filename": "20250705-115559-form-filled.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709360364",
+      "timestamp": "2025-07-05T09:56:00.261Z",
+      "name": "state-verification",
+      "filename": "20250705-115559-state-verification.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709360375",
+      "timestamp": "2025-07-05T09:56:00.261Z",
+      "name": "project-created",
+      "filename": "20250705-115559-project-created.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709360388",
+      "timestamp": "2025-07-05T09:56:00.262Z",
+      "name": "navigate--projects",
+      "filename": "20250705-115559-navigate--projects.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463251",
+      "timestamp": "2025-07-05T09:57:42.234Z",
+      "name": "baseline",
+      "filename": "20250705-115742-baseline.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463278",
+      "timestamp": "2025-07-05T09:57:42.235Z",
+      "name": "state-verification",
+      "filename": "20250705-115742-state-verification.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463299",
+      "timestamp": "2025-07-05T09:57:42.235Z",
+      "name": "navigate--projects",
+      "filename": "20250705-115742-navigate--projects.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463314",
+      "timestamp": "2025-07-05T09:57:42.235Z",
+      "name": "project-list-before-create",
+      "filename": "20250705-115742-project-list-before-create.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463326",
+      "timestamp": "2025-07-05T09:57:43.238Z",
+      "name": "click--add-project-button",
+      "filename": "20250705-115742-click--add-project-button.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463343",
+      "timestamp": "2025-07-05T09:57:43.238Z",
+      "name": "project-create-form",
+      "filename": "20250705-115742-project-create-form.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463358",
+      "timestamp": "2025-07-05T09:57:43.239Z",
+      "name": "form-filled",
+      "filename": "20250705-115742-form-filled.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463369",
+      "timestamp": "2025-07-05T09:57:43.240Z",
+      "name": "state-verification",
+      "filename": "20250705-115742-state-verification.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463380",
+      "timestamp": "2025-07-05T09:57:43.240Z",
+      "name": "project-created",
+      "filename": "20250705-115742-project-created.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709463395",
+      "timestamp": "2025-07-05T09:57:43.240Z",
+      "name": "navigate--projects",
+      "filename": "20250705-115742-navigate--projects.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709469099",
+      "timestamp": "2025-07-05T09:57:48.588Z",
+      "name": "baseline",
+      "filename": "20250705-115748-baseline.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709469115",
+      "timestamp": "2025-07-05T09:57:48.588Z",
+      "name": "state-verification",
+      "filename": "20250705-115748-state-verification.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709469126",
+      "timestamp": "2025-07-05T09:57:48.589Z",
+      "name": "navigate--projects",
+      "filename": "20250705-115748-navigate--projects.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709469141",
+      "timestamp": "2025-07-05T09:57:48.589Z",
+      "name": "project-list",
+      "filename": "20250705-115748-project-list.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709469152",
+      "timestamp": "2025-07-05T09:57:49.092Z",
+      "name": "click--data-project-id--fi",
+      "filename": "20250705-115748-click--data-project-id--fi.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709469162",
+      "timestamp": "2025-07-05T09:57:49.092Z",
+      "name": "project-detail-view",
+      "filename": "20250705-115748-project-detail-view.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478356",
+      "timestamp": "2025-07-05T09:57:55.481Z",
+      "name": "baseline",
+      "filename": "20250705-115755-baseline.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478373",
+      "timestamp": "2025-07-05T09:57:55.482Z",
+      "name": "state-verification",
+      "filename": "20250705-115755-state-verification.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478384",
+      "timestamp": "2025-07-05T09:57:55.483Z",
+      "name": "navigate--projects",
+      "filename": "20250705-115755-navigate--projects.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478398",
+      "timestamp": "2025-07-05T09:57:55.483Z",
+      "name": "project-list",
+      "filename": "20250705-115755-project-list.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478411",
+      "timestamp": "2025-07-05T09:57:55.985Z",
+      "name": "click--data-project-id--fi",
+      "filename": "20250705-115755-click--data-project-id--fi.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478422",
+      "timestamp": "2025-07-05T09:57:55.986Z",
+      "name": "project-detail-view",
+      "filename": "20250705-115755-project-detail-view.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478437",
+      "timestamp": "2025-07-05T09:57:58.346Z",
+      "name": "click--edit-button---edit-",
+      "filename": "20250705-115755-click--edit-button---edit-.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478448",
+      "timestamp": "2025-07-05T09:57:58.346Z",
+      "name": "project-edit-form",
+      "filename": "20250705-115755-project-edit-form.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478458",
+      "timestamp": "2025-07-05T09:57:58.347Z",
+      "name": "form-filled",
+      "filename": "20250705-115755-form-filled.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478470",
+      "timestamp": "2025-07-05T09:57:58.348Z",
+      "name": "state-verification",
+      "filename": "20250705-115755-state-verification.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709478482",
+      "timestamp": "2025-07-05T09:57:58.348Z",
+      "name": "project-updated",
+      "filename": "20250705-115755-project-updated.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486637",
+      "timestamp": "2025-07-05T09:58:04.620Z",
+      "name": "baseline",
+      "filename": "20250705-115804-baseline.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486655",
+      "timestamp": "2025-07-05T09:58:04.621Z",
+      "name": "state-verification",
+      "filename": "20250705-115804-state-verification.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486672",
+      "timestamp": "2025-07-05T09:58:04.622Z",
+      "name": "navigate--projects",
+      "filename": "20250705-115804-navigate--projects.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486686",
+      "timestamp": "2025-07-05T09:58:04.622Z",
+      "name": "project-list",
+      "filename": "20250705-115804-project-list.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486697",
+      "timestamp": "2025-07-05T09:58:05.125Z",
+      "name": "click--data-project-id--fi",
+      "filename": "20250705-115804-click--data-project-id--fi.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486707",
+      "timestamp": "2025-07-05T09:58:05.126Z",
+      "name": "project-detail-view",
+      "filename": "20250705-115804-project-detail-view.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486721",
+      "timestamp": "2025-07-05T09:58:06.127Z",
+      "name": "click--delete-button---del",
+      "filename": "20250705-115804-click--delete-button---del.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486731",
+      "timestamp": "2025-07-05T09:58:06.127Z",
+      "name": "project-delete-confirmation",
+      "filename": "20250705-115804-project-delete-confirmation.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486745",
+      "timestamp": "2025-07-05T09:58:06.628Z",
+      "name": "click--confirm-delete---co",
+      "filename": "20250705-115804-click--confirm-delete---co.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486756",
+      "timestamp": "2025-07-05T09:58:06.628Z",
+      "name": "project-deleted",
+      "filename": "20250705-115804-project-deleted.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751709486767",
+      "timestamp": "2025-07-05T09:58:06.628Z",
+      "name": "navigate--projects",
+      "filename": "20250705-115804-navigate--projects.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751710206728",
+      "timestamp": "2025-07-05T10:10:05.718Z",
+      "name": "baseline",
+      "filename": "20250705-121005-baseline.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751710206743",
+      "timestamp": "2025-07-05T10:10:05.718Z",
+      "name": "state-verification",
+      "filename": "20250705-121005-state-verification.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751710206753",
+      "timestamp": "2025-07-05T10:10:05.719Z",
+      "name": "navigate--projects",
+      "filename": "20250705-121005-navigate--projects.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751710206764",
+      "timestamp": "2025-07-05T10:10:05.719Z",
+      "name": "project-list-before-create",
+      "filename": "20250705-121005-project-list-before-create.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751710206774",
+      "timestamp": "2025-07-05T10:10:06.721Z",
+      "name": "click--add-project-button",
+      "filename": "20250705-121005-click--add-project-button.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751710206786",
+      "timestamp": "2025-07-05T10:10:06.722Z",
+      "name": "project-create-form",
+      "filename": "20250705-121005-project-create-form.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751710206799",
+      "timestamp": "2025-07-05T10:10:06.722Z",
+      "name": "form-filled",
+      "filename": "20250705-121005-form-filled.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751710206809",
+      "timestamp": "2025-07-05T10:10:06.722Z",
+      "name": "state-verification",
+      "filename": "20250705-121005-state-verification.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751710206819",
+      "timestamp": "2025-07-05T10:10:06.722Z",
+      "name": "project-created",
+      "filename": "20250705-121005-project-created.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751710206830",
+      "timestamp": "2025-07-05T10:10:06.722Z",
+      "name": "navigate--projects",
+      "filename": "20250705-121005-navigate--projects.png",
+      "description": "",
+      "method": "browser-mcp"
+    },
+    {
+      "id": "screenshot_1751710582081",
+      "timestamp": "2025-07-05T10:16:22.077Z",
+      "name": "project-create-failure",
+      "filename": "20250705-121622-project-create-failure.png",
+      "description": "",
+      "method": "simulated",
+      "error": "Screenshot capture not available in current environment"
+    }
+  ],
+  "metadata": {
+    "framework": "VRP System UAT",
+    "version": "1.0.0",
+    "environment": "development"
+  },
+  "summary": {
+    "totalTests": 12,
+    "passedTests": 10,
+    "failedTests": 2,
+    "totalScreenshots": 59,
+    "duration": 9788
+  }
+}

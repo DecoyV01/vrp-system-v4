@@ -1,13 +1,29 @@
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '../convex/_generated/api'
 import type { Id } from '../convex/_generated/dataModel'
+import { useEffect } from 'react'
 
 // =============================================================================
 // PROJECT HOOKS
 // =============================================================================
 
 export const useProjects = () => {
-  return useQuery(api.projects.list)
+  const projects = useQuery(api.projects.list)
+  
+  // Update UAT health check with projects load state
+  useEffect(() => {
+    if (import.meta.env.DEV && (window as any).__UAT_HEALTH__) {
+      if (projects === undefined) {
+        (window as any).__UAT_HEALTH__.setLoadState('projects', 'loading')
+      } else if (projects === null) {
+        (window as any).__UAT_HEALTH__.setLoadState('projects', 'error')
+      } else {
+        (window as any).__UAT_HEALTH__.setLoadState('projects', 'success')
+      }
+    }
+  }, [projects])
+  
+  return projects
 }
 
 export const useProject = (projectId: Id<"projects"> | undefined) => {
@@ -48,10 +64,25 @@ export const useSearchProjects = (query: string) => {
 // =============================================================================
 
 export const useScenarios = (projectId: Id<"projects"> | undefined) => {
-  return useQuery(
+  const scenarios = useQuery(
     api.scenarios.listByProject,
     projectId ? { projectId } : 'skip'
   )
+  
+  // Update UAT health check with scenarios load state
+  useEffect(() => {
+    if (import.meta.env.DEV && (window as any).__UAT_HEALTH__) {
+      if (scenarios === undefined) {
+        (window as any).__UAT_HEALTH__.setLoadState('scenarios', 'loading')
+      } else if (scenarios === null) {
+        (window as any).__UAT_HEALTH__.setLoadState('scenarios', 'error')
+      } else {
+        (window as any).__UAT_HEALTH__.setLoadState('scenarios', 'success')
+      }
+    }
+  }, [scenarios])
+  
+  return scenarios
 }
 
 export const useScenario = (scenarioId: Id<"scenarios"> | undefined) => {
@@ -89,10 +120,25 @@ export const useCloneScenario = () => {
 // =============================================================================
 
 export const useDatasets = (scenarioId: Id<"scenarios"> | undefined) => {
-  return useQuery(
+  const datasets = useQuery(
     api.datasets.listByScenario,
     scenarioId ? { scenarioId } : 'skip'
   )
+  
+  // Update UAT health check with datasets load state
+  useEffect(() => {
+    if (import.meta.env.DEV && (window as any).__UAT_HEALTH__) {
+      if (datasets === undefined) {
+        (window as any).__UAT_HEALTH__.setLoadState('datasets', 'loading')
+      } else if (datasets === null) {
+        (window as any).__UAT_HEALTH__.setLoadState('datasets', 'error')
+      } else {
+        (window as any).__UAT_HEALTH__.setLoadState('datasets', 'success')
+      }
+    }
+  }, [datasets])
+  
+  return datasets
 }
 
 export const useDatasetsByProject = (projectId: Id<"projects"> | undefined) => {
@@ -141,10 +187,25 @@ export const useArchiveDataset = () => {
 // =============================================================================
 
 export const useVehicles = (datasetId: Id<"datasets"> | undefined) => {
-  return useQuery(
+  const vehicles = useQuery(
     api.vehicles.listByDataset,
     datasetId ? { datasetId } : 'skip'
   )
+  
+  // Update UAT health check with vehicles load state
+  useEffect(() => {
+    if (import.meta.env.DEV && (window as any).__UAT_HEALTH__) {
+      if (vehicles === undefined) {
+        (window as any).__UAT_HEALTH__.setLoadState('vehicles', 'loading')
+      } else if (vehicles === null) {
+        (window as any).__UAT_HEALTH__.setLoadState('vehicles', 'error')
+      } else {
+        (window as any).__UAT_HEALTH__.setLoadState('vehicles', 'success')
+      }
+    }
+  }, [vehicles])
+  
+  return vehicles
 }
 
 export const useVehiclesByProject = (projectId: Id<"projects"> | undefined) => {
@@ -186,10 +247,25 @@ export const useDuplicateVehicles = () => {
 // =============================================================================
 
 export const useJobs = (datasetId: Id<"datasets"> | undefined) => {
-  return useQuery(
+  const jobs = useQuery(
     api.jobs.listByDataset,
     datasetId ? { datasetId } : 'skip'
   )
+  
+  // Update UAT health check with jobs load state
+  useEffect(() => {
+    if (import.meta.env.DEV && (window as any).__UAT_HEALTH__) {
+      if (jobs === undefined) {
+        (window as any).__UAT_HEALTH__.setLoadState('jobs', 'loading')
+      } else if (jobs === null) {
+        (window as any).__UAT_HEALTH__.setLoadState('jobs', 'error')
+      } else {
+        (window as any).__UAT_HEALTH__.setLoadState('jobs', 'success')
+      }
+    }
+  }, [jobs])
+  
+  return jobs
 }
 
 export const useJobsByProject = (projectId: Id<"projects"> | undefined) => {

@@ -72,7 +72,7 @@ graph TB
 - **Deployment:** 70+ functions deployed to mild-elephant-70.convex.cloud
 
 #### 🌐 HTTP Actions (REST APIs)
-- **webhooks/vroom-complete** - VROOM solver callbacks
+- **webhooks/optimization-complete** - Optimization engine callbacks
 - **api/import/csv** - File upload endpoints
 - **api/export/routes** - Data export endpoints
 - **api/health/check** - System health monitoring
@@ -325,85 +325,107 @@ jobs:
 | **Optimization** | FastAPI + VROOM | **FastAPI + VROOM** | ✅ Deployed | Specialized optimization remains external |
 | **Deployment** | Manual/Individual | **Monorepo + GitHub Actions** | ✅ Automated | Single deployment, consistency, reliability |
 
-## Entity Relationship Diagram
+## Entity Relationship Diagram (Convex Denormalization Pattern)
+
+> **Note:** This ERD shows the **Convex NoSQL denormalized pattern** where entities have multiple access paths for optimal query performance. Unlike SQL normalization, Convex encourages denormalization with `projectId` references in most tables for direct project-level queries.
 
 ```mermaid
 erDiagram
-    %% Core Hierarchy
-    PROJECTS ||--o{ SCENARIOS : contains
-    PROJECTS ||--o{ DATASETS : contains
-    PROJECTS ||--o{ PROJECT_USERS : has
-    PROJECTS ||--o{ VEHICLES : has
-    PROJECTS ||--o{ JOBS : has
-    PROJECTS ||--o{ SHIPMENTS : has
-    PROJECTS ||--o{ LOCATIONS : has
-    PROJECTS ||--o{ LOCATION_CLUSTERS : has
-    PROJECTS ||--o{ PRODUCTS : has
-    PROJECTS ||--o{ SKILLS : has
-    PROJECTS ||--o{ CAPACITY_DEFINITIONS : has
+    %% ========== CORE HIERARCHY (4 tables) ==========
+    PROJECTS ||--o{ SCENARIOS : "contains [projectId required]"
+    PROJECTS ||--o{ DATASETS : "contains [projectId required]"
+    PROJECTS ||--o{ PROJECT_USERS : "has_members [projectId required]"
     
-    SCENARIOS ||--o{ DATASETS : contains
-    SCENARIOS ||--o{ OPTIMIZATION_RUNS : generates
+    %% ========== PRIMARY VRP ENTITIES - DENORMALIZED ACCESS (6 tables) ==========
+    %% These tables have projectId (required) + optional scenarioId + optional datasetId
+    PROJECTS ||--o{ VEHICLES : "direct_access [projectId required]"
+    PROJECTS ||--o{ JOBS : "direct_access [projectId required]"
+    PROJECTS ||--o{ LOCATIONS : "direct_access [projectId required]"
+    PROJECTS ||--o{ SHIPMENTS : "direct_access [projectId required]"
+    PROJECTS ||--o{ PRODUCTS : "direct_access [projectId required]"
+    PROJECTS ||--o{ SKILLS : "optionally_scoped [projectId optional - can be global]"
     
-    %% Dataset Entities
-    DATASETS ||--o{ VEHICLES : contains
-    DATASETS ||--o{ JOBS : contains
-    DATASETS ||--o{ LOCATIONS : contains
-    DATASETS ||--o{ SHIPMENTS : contains
-    DATASETS ||--o{ PRODUCTS : contains
-    DATASETS ||--o{ SKILLS : contains
-    DATASETS ||--o{ CAPACITY_DEFINITIONS : contains
-    DATASETS ||--o{ OPTIMIZATION_RUN_SETTINGS : has
+    %% ========== SCENARIO CROSS-REFERENCES (Optional denormalized paths) ==========
+    SCENARIOS ||--o{ VEHICLES : "optionally_assigns [scenarioId optional]"
+    SCENARIOS ||--o{ JOBS : "optionally_assigns [scenarioId optional]"
+    SCENARIOS ||--o{ LOCATIONS : "optionally_assigns [scenarioId optional]"
+    SCENARIOS ||--o{ SHIPMENTS : "optionally_assigns [scenarioId optional]"
+    SCENARIOS ||--o{ OPTIMIZATION_RUNS : "generates [scenarioId required]"
     
-    %% Optimization Flow
-    OPTIMIZATION_RUNS ||--o{ ROUTE_SUMMARIES : produces
-    OPTIMIZATION_RUNS ||--o{ UNASSIGNED_JOBS : tracks
-    OPTIMIZATION_RUN_SETTINGS ||--o{ OPTIMIZATION_RUNS : configures
+    %% ========== DATASET CROSS-REFERENCES (Optional denormalized paths) ==========
+    DATASETS ||--o{ VEHICLES : "optionally_contains [datasetId optional]"
+    DATASETS ||--o{ JOBS : "optionally_contains [datasetId optional]"
+    DATASETS ||--o{ LOCATIONS : "optionally_contains [datasetId optional]"
+    DATASETS ||--o{ SHIPMENTS : "optionally_contains [datasetId optional]"
+    DATASETS ||--o{ OPTIMIZATION_RUN_SETTINGS : "configures [datasetId required]"
+    DATASETS ||--o{ OPTIMIZATION_RUNS : "optionally_targets [datasetId optional]"
     
-    ROUTE_SUMMARIES ||--o{ ROUTE_STEPS : contains
+    %% ========== PROJECT-SCOPED SUPPORT ENTITIES (2 tables) ==========
+    PROJECTS ||--o{ LOCATION_CLUSTERS : "direct_access [projectId required]"
+    PROJECTS ||--o{ CAPACITY_DEFINITIONS : "direct_access [projectId required]"
     
-    %% Vehicle Relationships
-    VEHICLES ||--o{ ROUTE_SUMMARIES : assigned_to
-    VEHICLES ||--o{ ROUTE_STEPS : assigned_to
-    VEHICLES ||--o{ BREAKS : has
-    VEHICLES }o--|| LOCATIONS : starts_at
-    VEHICLES }o--|| LOCATIONS : ends_at
-    VEHICLES ||--o{ VEHICLE_SKILLS : has
-    VEHICLES ||--o{ VEHICLE_CAPACITIES : has
+    %% ========== OPTIMIZATION SYSTEM (5 tables) ==========
+    OPTIMIZATION_RUN_SETTINGS ||--o{ OPTIMIZATION_RUNS : "configures [optimizationRunSettingsId optional]"
+    OPTIMIZATION_RUNS ||--o{ ROUTE_SUMMARIES : "produces [optimizationRunId optional]"
+    OPTIMIZATION_RUNS ||--o{ UNASSIGNED_JOBS : "tracks_failures [optimizationRunId optional]"
+    ROUTE_SUMMARIES ||--o{ ROUTE_STEPS : "contains [routeSummaryId optional]"
     
-    %% Job Relationships
-    JOBS ||--o{ ROUTE_STEPS : visits
-    JOBS }o--|| LOCATIONS : located_at
-    JOBS ||--o{ JOB_SKILLS : requires
-    JOBS ||--o{ JOBS_PRODUCTS : contains
+    %% ========== OPTIMIZATION RESULTS - DENORMALIZED TRACKING ==========
+    %% These can be queried by optimization, vehicle, or project
+    PROJECTS ||--o{ ROUTE_SUMMARIES : "optionally_tracks [projectId optional]"
+    PROJECTS ||--o{ ROUTE_STEPS : "optionally_tracks [projectId optional]"
+    VEHICLES ||--o{ ROUTE_SUMMARIES : "assigned_to [vehicleId optional]"
+    VEHICLES ||--o{ ROUTE_STEPS : "assigned_to [vehicleId optional]"
     
-    %% Shipment Relationships
-    SHIPMENTS ||--o{ ROUTE_STEPS : includes
-    SHIPMENTS }o--|| LOCATIONS : pickup_at
-    SHIPMENTS }o--|| LOCATIONS : delivery_at
-    SHIPMENTS ||--o{ SHIPMENT_SKILLS : requires
-    SHIPMENTS ||--o{ SHIPMENTS_PRODUCTS : contains
+    %% ========== VEHICLE SYSTEM (3 tables) ==========
+    VEHICLES ||--o{ BREAKS : "has_breaks [vehicleId optional]"
+    VEHICLES ||--o{ VEHICLE_CAPACITIES : "has_capacity [vehicleId required]"
+    BREAKS ||--o{ BREAK_TIME_WINDOWS : "defines_schedule [breakId optional]"
     
-    %% Break System
-    BREAKS ||--o{ BREAK_TIME_WINDOWS : defines
+    %% ========== LOCATION REFERENCES (Optional foreign keys) ==========
+    VEHICLES }o--|| LOCATIONS : "starts_at [startLocationId optional]"
+    VEHICLES }o--|| LOCATIONS : "ends_at [endLocationId optional]"
+    JOBS }o--|| LOCATIONS : "located_at [locationId optional]"
+    SHIPMENTS }o--|| LOCATIONS : "pickup_at [pickupLocationId optional]"
+    SHIPMENTS }o--|| LOCATIONS : "delivery_at [deliveryLocationId optional]"
     
-    %% Junction Tables
-    SKILLS ||--o{ JOB_SKILLS : required_by
-    SKILLS ||--o{ VEHICLE_SKILLS : assigned_to
-    SKILLS ||--o{ SHIPMENT_SKILLS : required_by
-    SKILLS }o--|| SKILLS : inherits_from
+    %% ========== ROUTE STEP REFERENCES (Optional foreign keys) ==========
+    JOBS ||--o{ ROUTE_STEPS : "visited_in [jobId optional]"
+    JOBS ||--o{ UNASSIGNED_JOBS : "may_fail [jobId optional]"
+    SHIPMENTS ||--o{ UNASSIGNED_JOBS : "may_fail [shipmentId optional]"
     
-    PRODUCTS ||--o{ JOBS_PRODUCTS : used_in
-    PRODUCTS ||--o{ SHIPMENTS_PRODUCTS : shipped_as
+    %% ========== LOCATION CLUSTERING SYSTEM (2 tables) ==========
+    LOCATION_CLUSTERS ||--o{ LOCATION_CLUSTER_MEMBERSHIP : "includes [clusterId required]"
+    LOCATIONS ||--o{ LOCATION_CLUSTER_MEMBERSHIP : "belongs_to [locationId required]"
+    LOCATIONS }o--|| LOCATION_CLUSTERS : "optionally_clustered [clusterId optional]"
     
-    %% Location Clustering
-    LOCATION_CLUSTERS ||--o{ LOCATION_CLUSTER_MEMBERSHIP : includes
-    LOCATIONS ||--o{ LOCATION_CLUSTER_MEMBERSHIP : belongs_to
+    %% ========== SKILLS HIERARCHY & JUNCTION TABLES (4 tables) ==========
+    SKILLS }o--|| SKILLS : "inherits_from [parentSkillId optional]"
+    VEHICLES ||--o{ VEHICLE_SKILLS : "possesses [vehicleId + skillId required]"
+    JOBS ||--o{ JOB_SKILLS : "requires [jobId + skillId required]"
+    SHIPMENTS ||--o{ SHIPMENT_SKILLS : "requires [shipmentId + skillId required]"
+    SKILLS ||--o{ VEHICLE_SKILLS : "possessed_by [skillId required]"
+    SKILLS ||--o{ JOB_SKILLS : "required_by [skillId required]"
+    SKILLS ||--o{ SHIPMENT_SKILLS : "required_by [skillId required]"
     
-    %% Unassigned References
-    UNASSIGNED_JOBS }o--|| JOBS : references
-    UNASSIGNED_JOBS }o--|| SHIPMENTS : references
+    %% ========== PRODUCT JUNCTION TABLES (2 tables) ==========
+    JOBS ||--o{ JOBS_PRODUCTS : "contains [jobId + productId required]"
+    SHIPMENTS ||--o{ SHIPMENTS_PRODUCTS : "contains [shipmentId + productId required]"
+    PRODUCTS ||--o{ JOBS_PRODUCTS : "used_in [productId required]"
+    PRODUCTS ||--o{ SHIPMENTS_PRODUCTS : "shipped_as [productId required]"
+    
+    %% ========== LEGACY/UTILITY TABLES (2 tables) ==========
+    PROJECTS ||--o{ ROUTES : "simplified_routes [projectId optional - legacy table]"
+    TASKS
 ```
+
+### Key Convex Denormalization Benefits:
+
+1. **Direct Project Queries**: `projectId` in most tables enables `ctx.db.query("vehicles").withIndex("by_project", q => q.eq("projectId", id))`
+2. **Multiple Access Paths**: Vehicles can be queried by project, scenario, OR dataset without joins
+3. **Optional Cross-References**: `scenarioId?` and `datasetId?` provide flexible assignment patterns
+4. **Performance Optimization**: Indexed denormalized fields avoid complex relationship traversals
+5. **NoSQL Best Practice**: Embraces document database strengths over SQL normalization
 
 ## Data Flow Architecture
 
@@ -550,7 +572,7 @@ graph TD
 - **Required Fields (Not Nullable)**: Fields without `v.optional()` wrapper are mandatory
 - **Optional Fields (Nullable)**: Fields wrapped with `v.optional()` are nullable/optional
 - **Convex IDs**: All `v.id("tableName")` references are required unless wrapped in `v.optional()`
-- **Timestamps**: `createdAt` and `updatedAt` are typically required for audit trails
+- **Timestamps**: `_creationTime` is automatic and immutable, `updatedAt` is manually managed and updated on each modification
 
 **Key Patterns:**
 ```typescript
@@ -558,6 +580,55 @@ name: v.string(),                    // ✅ REQUIRED - Cannot be null
 description: v.optional(v.string()), // ❓ OPTIONAL - Can be null
 projectId: v.id("projects"),         // ✅ REQUIRED - Foreign key relationship
 scenarioId: v.optional(v.id("scenarios")), // ❓ OPTIONAL - Nullable relationship
+```
+
+### Convex Timestamp Strategy
+
+**Automatic Creation Timestamps:**
+- `_creationTime`: Automatically set by Convex when document is created
+- **Immutable**: Cannot be changed after creation
+- **Always Available**: No need to define in schema
+- **Type**: `number` (Unix timestamp in milliseconds)
+
+**Manual Update Timestamps:**
+- `updatedAt`: Manually set in mutations when document is modified
+- **Mutable**: Updated on each change
+- **Required in Schema**: Must be defined as `updatedAt: v.number()`
+- **Developer Responsibility**: Update in every mutation that modifies the document
+
+**Usage Example:**
+```typescript
+// Schema - only define updatedAt
+projects: defineTable({
+  name: v.string(),
+  updatedAt: v.number(), // ✅ Manual timestamp
+  // _creationTime is automatic - no need to define
+})
+
+// Mutation - only set updatedAt
+export const updateProject = mutation({
+  args: { id: v.id("projects"), name: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db.patch(args.id, {
+      name: args.name,
+      updatedAt: Date.now(), // ✅ Manually update
+      // _creationTime is immutable - cannot be changed
+    });
+  },
+});
+
+// Query - access both timestamps
+export const getProject = query({
+  args: { id: v.id("projects") },
+  handler: async (ctx, args) => {
+    const project = await ctx.db.get(args.id);
+    return {
+      ...project,
+      createdAt: project._creationTime, // ✅ Use automatic timestamp
+      updatedAt: project.updatedAt,     // ✅ Use manual timestamp
+    };
+  },
+});
 ```
 
 ### Core Collections
@@ -573,8 +644,7 @@ export default defineSchema({
     // REQUIRED FIELDS (Not Nullable)
     name: v.string(),                    // ✅ Project name - always required
     ownerId: v.string(),                 // ✅ User ID from Convex Auth - required for ownership
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
-    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - manually managed
     
     // OPTIONAL FIELDS (Nullable)
     description: v.optional(v.string()),           // ❓ Project description
@@ -593,7 +663,7 @@ export default defineSchema({
     notes: v.optional(v.string()),                 // ❓ Additional notes
   })
     .index("by_owner", ["ownerId"])
-    .index("by_created_at", ["createdAt"])
+    .index("by_creation_time", ["_creationTime"])
     .index("by_updated_at", ["updatedAt"]),
 
   // Scenarios - Project optimization scenarios
@@ -601,8 +671,7 @@ export default defineSchema({
     // REQUIRED FIELDS (Not Nullable)
     projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
     name: v.string(),                    // ✅ Scenario name - always required
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
-    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - manually managed
     
     // OPTIONAL FIELDS (Nullable)
     description: v.optional(v.string()),              // ❓ Scenario description
@@ -619,7 +688,7 @@ export default defineSchema({
   })
     .index("by_project", ["projectId"])
     .index("by_status", ["status"])
-    .index("by_created_at", ["createdAt"]),
+    .index("by_creation_time", ["_creationTime"]),
 
   // Datasets - Data collections for optimization
   datasets: defineTable({
@@ -627,8 +696,7 @@ export default defineSchema({
     projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
     name: v.string(),                    // ✅ Dataset name - always required
     version: v.number(),                 // ✅ Dataset version number - required for versioning
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
-    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - manually managed
     
     // OPTIONAL FIELDS (Nullable)
     scenarioId: v.optional(v.id("scenarios")),        // ❓ Optional scenario assignment
@@ -662,8 +730,7 @@ export default defineSchema({
   vehicles: defineTable({
     // REQUIRED FIELDS (Not Nullable)
     projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
-    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - manually managed
     
     // OPTIONAL FIELDS (Nullable)
     scenarioId: v.optional(v.id("scenarios")),        // ❓ Optional scenario assignment
@@ -704,14 +771,13 @@ export default defineSchema({
     .index("by_scenario", ["scenarioId"])
     .index("by_dataset", ["datasetId"])
     .index("by_location", ["startLocationId"])
-    .index("by_created_at", ["createdAt"]),
+    .index("by_creation_time", ["_creationTime"]),
 
   // Jobs - Individual tasks/stops for vehicles
   jobs: defineTable({
     // REQUIRED FIELDS (Not Nullable)
     projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
-    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - manually managed
     
     // OPTIONAL FIELDS (Nullable)
     scenarioId: v.optional(v.id("scenarios")),        // ❓ Optional scenario assignment
@@ -748,15 +814,14 @@ export default defineSchema({
     .index("by_dataset", ["datasetId"])
     .index("by_location", ["locationId"])
     .index("by_priority", ["priority"])
-    .index("by_created_at", ["createdAt"]),
+    .index("by_creation_time", ["_creationTime"]),
 
   // Locations - Geographic points of interest
   locations: defineTable({
     // REQUIRED FIELDS (Not Nullable)
     projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
     name: v.string(),                    // ✅ Location name - always required
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
-    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - manually managed
     
     // OPTIONAL FIELDS (Nullable)
     scenarioId: v.optional(v.id("scenarios")),        // ❓ Optional scenario assignment
@@ -786,8 +851,7 @@ export default defineSchema({
     projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
     name: v.string(),                    // ✅ Product name - always required
     unitType: v.string(),                // ✅ Unit of measurement - required for calculations
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
-    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - manually managed
     
     // OPTIONAL FIELDS (Nullable)
     category: v.optional(v.string()),                 // ❓ Product category
@@ -808,8 +872,7 @@ export default defineSchema({
   // Skills - Capabilities required for jobs or possessed by vehicles
   skills: defineTable({
     // REQUIRED FIELDS (Not Nullable)
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
-    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - manually managed
     
     // OPTIONAL FIELDS (Nullable) - Note: Skills can be global or project-specific
     projectId: v.optional(v.id("projects")),          // ❓ Optional project scope (null = global skill)
@@ -823,7 +886,7 @@ export default defineSchema({
     requiresCertification: v.optional(v.boolean()),   // ❓ Certification required flag
     certificationAuthority: v.optional(v.string()),   // ❓ Certifying authority
     certificationExpiryRequired: v.optional(v.boolean()), // ❓ Expiry tracking required
-    vroomSkillId: v.optional(v.number()),             // ❓ VROOM solver skill ID
+    optimizerSkillId: v.optional(v.number()),         // ❓ Optimization engine skill ID
     isActive: v.optional(v.boolean()),                // ❓ Active skill flag
   })
     .index("by_project", ["projectId"])
@@ -847,8 +910,7 @@ export default defineSchema({
       minimizeVehicles: v.optional(v.boolean()),     // ❓ Minimize vehicle count
       allowSplitDeliveries: v.optional(v.boolean()), // ❓ Allow split deliveries
     }),
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
-    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - manually managed
     
     // OPTIONAL FIELDS (Nullable)
     description: v.optional(v.string()),              // ❓ Settings description
@@ -928,8 +990,7 @@ export default defineSchema({
   // Route Summaries - High-level route information per vehicle
   routeSummaries: defineTable({
     // REQUIRED FIELDS (Not Nullable)
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
-    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - manually managed
     
     // OPTIONAL FIELDS (Nullable) - Routes may be partial or in draft state
     optimizationRunId: v.optional(v.id("optimizationRuns")), // ❓ Parent optimization run
@@ -963,15 +1024,14 @@ export default defineSchema({
     .index("by_optimization_run", ["optimizationRunId"])
     .index("by_vehicle", ["vehicleId"])
     .index("by_project", ["projectId"])
-    .index("by_created_at", ["createdAt"]),
+    .index("by_creation_time", ["_creationTime"]),
 
   // Route Steps - Individual stops/actions within a route
   routeSteps: defineTable({
     // REQUIRED FIELDS (Not Nullable)
     stepType: v.string(),                // ✅ Step type (start, job, break, end) - required for sequence
     stepOrder: v.number(),               // ✅ Order within route - required for sequencing
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
-    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    updatedAt: v.number(),               // ✅ Last update timestamp - manually managed
     
     // OPTIONAL FIELDS (Nullable)
     routeSummaryId: v.optional(v.id("routeSummaries")), // ❓ Parent route
@@ -1014,7 +1074,6 @@ export default defineSchema({
   locationClusterMembership: defineTable({
     locationId: v.id("locations"),
     clusterId: v.id("locationClusters"),
-    createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index("by_location", ["locationId"])
@@ -1028,7 +1087,6 @@ export default defineSchema({
     centerLat: v.optional(v.number()),
     radius: v.optional(v.number()),
     color: v.optional(v.string()),
-    createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index("by_project", ["projectId"]),
@@ -1088,7 +1146,6 @@ export default defineSchema({
     deliveryTimeWindowEndDt: v.optional(v.number()),
     pickupTimezone: v.optional(v.string()),
     deliveryTimezone: v.optional(v.string()),
-    createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index("by_project", ["projectId"])
@@ -1108,7 +1165,6 @@ export default defineSchema({
     breakType: v.optional(v.string()),
     regulationReference: v.optional(v.string()),
     isActive: v.optional(v.boolean()),
-    createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index("by_vehicle", ["vehicleId"])
@@ -1119,7 +1175,6 @@ export default defineSchema({
     breakId: v.optional(v.id("breaks")),
     startTime: v.number(),
     endTime: v.number(),
-    createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index("by_break", ["breakId"])
@@ -1133,7 +1188,7 @@ export default defineSchema({
     dimensionIndex: v.number(),
     description: v.optional(v.string()),
     isActive: v.optional(v.boolean()),
-    createdAt: v.number(),
+    updatedAt: v.number(),
   })
     .index("by_project", ["projectId"])
     .index("by_dimension", ["dimensionIndex"])
@@ -1163,7 +1218,7 @@ export default defineSchema({
     productId: v.id("products"),
     quantity: v.number(),
     unitType: v.optional(v.string()),
-    createdAt: v.number(),
+    updatedAt: v.number(),
   })
     .index("by_job", ["jobId"])
     .index("by_product", ["productId"]),
@@ -1175,7 +1230,6 @@ export default defineSchema({
     calculatedWeight: v.optional(v.number()),
     calculatedVolume: v.optional(v.number()),
     capacityRequirements: v.optional(v.array(v.number())),
-    createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index("by_shipment", ["shipmentId"])
@@ -1186,7 +1240,7 @@ export default defineSchema({
     capacityType: v.string(),
     capacity: v.number(),
     unit: v.optional(v.string()),
-    createdAt: v.number(),
+    updatedAt: v.number(),
   })
     .index("by_vehicle", ["vehicleId"])
     .index("by_type", ["capacityType"]),
@@ -1196,7 +1250,7 @@ export default defineSchema({
     skillId: v.id("skills"),
     proficiencyLevel: v.optional(v.number()),
     certificationExpiry: v.optional(v.number()),
-    createdAt: v.number(),
+    updatedAt: v.number(),
   })
     .index("by_vehicle", ["vehicleId"])
     .index("by_skill", ["skillId"]),
@@ -1206,7 +1260,7 @@ export default defineSchema({
     skillId: v.id("skills"),
     requiredLevel: v.optional(v.number()),
     mandatory: v.optional(v.boolean()),
-    createdAt: v.number(),
+    updatedAt: v.number(),
   })
     .index("by_job", ["jobId"])
     .index("by_skill", ["skillId"]),
@@ -1218,7 +1272,6 @@ export default defineSchema({
     isMandatory: v.optional(v.boolean()),
     requirementSource: v.optional(v.string()),
     reasoning: v.optional(v.string()),
-    createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index("by_shipment", ["shipmentId"])
@@ -1310,7 +1363,7 @@ export default defineSchema({
 - `stepType` and `stepOrder` in route steps (required for sequencing)
 
 **Audit & Tracking:**
-- `createdAt` and `updatedAt` timestamps (required for all entities)
+- `_creationTime` (automatic) and `updatedAt` (manual) timestamps (required for all entities)
 - `timestamp` in optimization runs (required for execution tracking)
 - `currencyCode`, `algorithm`, `optimizationEngine` in optimization runs (required for reproducibility)
 

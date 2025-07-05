@@ -1,0 +1,468 @@
+{
+  "dashboard_profile": {
+    "name": "Convex Dashboard - VRP System V4",
+    "description": "Design profile for Convex dashboard interface with double sidebar and table editor based on official documentation and research",
+    "url": "https://dashboard.convex.dev/t/gijsbertuskooy/vrp-system-v4/mild-elephant-70/data?table=jobs",
+    "created_date": "2025-07-04",
+    "research_sources": [
+      "https://docs.convex.dev/dashboard/deployments/data",
+      "Tavily search results for Convex dashboard design patterns"
+    ],
+    "layout": {
+      "type": "triple_pane_layout",
+      "description": "Dashboard with main sidebar, secondary contextual sidebar, and main content area",
+      "structure": {
+        "main_sidebar": {
+          "position": "left",
+          "width": "240px",
+          "type": "navigation_sidebar",
+          "background": "#f8f9fa",
+          "sections": [
+            {
+              "name": "project_selector",
+              "type": "dropdown",
+              "description": "Project selection dropdown",
+              "content": "vrp-system-v4"
+            },
+            {
+              "name": "main_navigation",
+              "type": "vertical_menu",
+              "description": "Primary navigation menu",
+              "items": [
+                {
+                  "name": "Health",
+                  "path": "/dashboard/deployments/health",
+                  "icon": "health"
+                },
+                {
+                  "name": "Data",
+                  "path": "/dashboard/deployments/data",
+                  "icon": "database",
+                  "active": true
+                },
+                {
+                  "name": "Functions",
+                  "path": "/dashboard/deployments/functions",
+                  "icon": "function"
+                },
+                {
+                  "name": "Files",
+                  "path": "/dashboard/deployments/file-storage",
+                  "icon": "file"
+                },
+                {
+                  "name": "Schedules",
+                  "path": "/dashboard/deployments/schedules",
+                  "icon": "schedule"
+                },
+                {
+                  "name": "Logs",
+                  "path": "/dashboard/deployments/logs",
+                  "icon": "logs"
+                },
+                {
+                  "name": "History",
+                  "path": "/dashboard/deployments/history",
+                  "icon": "history"
+                },
+                {
+                  "name": "Settings",
+                  "path": "/dashboard/deployments/deployment-settings",
+                  "icon": "settings"
+                }
+              ]
+            }
+          ]
+        },
+        "secondary_sidebar": {
+          "position": "left_secondary",
+          "width": "200px",
+          "type": "contextual_sidebar",
+          "background": "#ffffff",
+          "border": "1px solid #e5e7eb",
+          "description": "Context-aware sidebar that shows relevant items based on main navigation selection",
+          "sections": [
+            {
+              "name": "table_list",
+              "type": "scrollable_list",
+              "description": "List of database tables when Data is selected",
+              "content": "Database tables",
+              "active_item": "jobs",
+              "features": [
+                "table_filtering",
+                "table_creation",
+                "table_search"
+              ]
+            }
+          ]
+        },
+        "main_content": {
+          "position": "center",
+          "flex": "1",
+          "background": "#ffffff",
+          "description": "Primary content area with toolbar and data table",
+          "sections": [
+            {
+              "name": "toolbar",
+              "type": "action_toolbar",
+              "height": "60px",
+              "description": "Top toolbar with actions and filters",
+              "elements": [
+                {
+                  "name": "breadcrumb",
+                  "type": "breadcrumb_navigation",
+                  "position": "left"
+                },
+                {
+                  "name": "search_filter",
+                  "type": "search_input",
+                  "position": "center"
+                },
+                {
+                  "name": "action_buttons",
+                  "type": "button_group",
+                  "position": "right",
+                  "buttons": [
+                    "add_documents",
+                    "filter",
+                    "custom_query",
+                    "overflow_menu"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "data_table",
+              "type": "interactive_data_grid",
+              "description": "Main data table with inline editing capabilities",
+              "features": [
+                "sortable_columns",
+                "resizable_columns",
+                "drag_drop_columns",
+                "inline_editing",
+                "row_selection",
+                "bulk_operations",
+                "context_menu",
+                "filtering",
+                "pagination",
+                "keyboard_navigation"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "design_system": {
+      "colors": {
+        "primary": "#2563eb",
+        "secondary": "#6b7280",
+        "background": "#ffffff",
+        "sidebar_bg": "#f8f9fa",
+        "border": "#e5e7eb",
+        "text_primary": "#111827",
+        "text_secondary": "#6b7280",
+        "accent": "#10b981",
+        "success": "#059669",
+        "warning": "#d97706",
+        "error": "#dc2626",
+        "info": "#0284c7"
+      },
+      "typography": {
+        "font_family": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        "font_sizes": {
+          "xs": "11px",
+          "sm": "12px",
+          "base": "14px",
+          "lg": "16px",
+          "xl": "18px",
+          "2xl": "20px"
+        },
+        "font_weights": {
+          "normal": "400",
+          "medium": "500",
+          "semibold": "600",
+          "bold": "700"
+        },
+        "line_heights": {
+          "tight": "1.2",
+          "normal": "1.5",
+          "relaxed": "1.75"
+        }
+      },
+      "spacing": {
+        "xs": "4px",
+        "sm": "8px",
+        "md": "12px",
+        "lg": "16px",
+        "xl": "20px",
+        "2xl": "24px",
+        "3xl": "32px",
+        "4xl": "40px"
+      },
+      "borders": {
+        "radius": {
+          "sm": "4px",
+          "md": "6px",
+          "lg": "8px",
+          "xl": "12px"
+        },
+        "width": {
+          "thin": "1px",
+          "medium": "2px",
+          "thick": "3px"
+        }
+      },
+      "shadows": {
+        "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+        "md": "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+        "lg": "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+        "xl": "0 20px 25px -5px rgba(0, 0, 0, 0.1)"
+      }
+    },
+    "components": {
+      "sidebar": {
+        "type": "fixed_navigation_sidebar",
+        "width": "240px",
+        "collapse": "responsive",
+        "navigation": {
+          "type": "vertical_menu",
+          "highlight": "active_state_with_left_border",
+          "icons": true,
+          "hover_effects": true
+        },
+        "responsive_behavior": {
+          "mobile": "overlay",
+          "tablet": "collapsible",
+          "desktop": "fixed"
+        }
+      },
+      "contextual_sidebar": {
+        "type": "dynamic_contextual_sidebar",
+        "width": "200px",
+        "content": "dynamic_based_on_main_selection",
+        "scroll": "auto",
+        "border": "right_border",
+        "background": "white"
+      },
+      "data_table": {
+        "type": "interactive_data_grid",
+        "description": "Full-featured data table with editing capabilities",
+        "features": {
+          "column_operations": {
+            "sorting": true,
+            "filtering": true,
+            "resizing": true,
+            "reordering": "drag_drop",
+            "freezing": false
+          },
+          "row_operations": {
+            "selection": "multiple_with_checkbox",
+            "editing": "inline_double_click",
+            "bulk_editing": true,
+            "context_menu": true,
+            "keyboard_navigation": true
+          },
+          "data_operations": {
+            "filtering": "advanced_filter_ui",
+            "searching": "global_search",
+            "custom_queries": "javascript_editor",
+            "pagination": "infinite_scroll_or_pages"
+          }
+        },
+        "toolbar": {
+          "position": "top",
+          "sticky": true,
+          "actions": [
+            {
+              "name": "add_documents",
+              "type": "primary_button",
+              "action": "open_document_editor"
+            },
+            {
+              "name": "filter",
+              "type": "filter_button",
+              "action": "toggle_filter_panel"
+            },
+            {
+              "name": "custom_query",
+              "type": "secondary_button",
+              "action": "open_query_editor"
+            },
+            {
+              "name": "bulk_edit",
+              "type": "secondary_button",
+              "condition": "rows_selected",
+              "action": "open_bulk_editor"
+            },
+            {
+              "name": "delete",
+              "type": "danger_button",
+              "condition": "rows_selected",
+              "action": "delete_selected_rows"
+            }
+          ]
+        }
+      },
+      "document_editor": {
+        "type": "side_panel_editor",
+        "position": "right",
+        "width": "400px",
+        "features": [
+          "javascript_syntax_highlighting",
+          "json_validation",
+          "auto_completion",
+          "error_highlighting",
+          "save_cancel_actions"
+        ]
+      },
+      "filter_panel": {
+        "type": "expandable_filter_panel",
+        "position": "top_of_table",
+        "features": [
+          "field_selection",
+          "operation_selection",
+          "value_input",
+          "multiple_conditions",
+          "and_or_logic",
+          "date_picker_for_timestamps"
+        ]
+      }
+    },
+    "interactions": {
+      "hover_states": {
+        "sidebar_items": {
+          "background": "rgba(0, 0, 0, 0.05)",
+          "transition": "150ms ease"
+        },
+        "table_rows": {
+          "background": "rgba(0, 0, 0, 0.02)",
+          "transition": "150ms ease"
+        },
+        "buttons": {
+          "background": "color_shift",
+          "transition": "150ms ease"
+        }
+      },
+      "active_states": {
+        "sidebar_items": {
+          "background": "rgba(37, 99, 235, 0.1)",
+          "border_left": "3px solid #2563eb",
+          "text_color": "#2563eb"
+        },
+        "table_columns": {
+          "header_highlight": "rgba(37, 99, 235, 0.1)"
+        },
+        "selected_rows": {
+          "background": "rgba(37, 99, 235, 0.05)",
+          "border": "1px solid #2563eb"
+        }
+      },
+      "keyboard_shortcuts": {
+        "ctrl_backtick": "open_function_runner",
+        "ctrl_k": "open_search",
+        "enter": "edit_selected_cell",
+        "escape": "cancel_edit",
+        "arrow_keys": "navigate_cells",
+        "shift_click": "select_range"
+      }
+    },
+    "data_management": {
+      "table_context": "jobs",
+      "expected_schema": {
+        "columns": [
+          {
+            "name": "_id",
+            "type": "Id<'jobs'>",
+            "description": "Document ID",
+            "editable": false
+          },
+          {
+            "name": "_creationTime",
+            "type": "number",
+            "description": "Creation timestamp",
+            "editable": false
+          },
+          {
+            "name": "status",
+            "type": "string",
+            "description": "Job status",
+            "editable": true
+          },
+          {
+            "name": "priority",
+            "type": "number",
+            "description": "Job priority",
+            "editable": true
+          },
+          {
+            "name": "assignedTo",
+            "type": "string",
+            "description": "Assigned user",
+            "editable": true
+          }
+        ]
+      },
+      "operations": {
+        "create": {
+          "method": "add_documents_button",
+          "editor": "javascript_object_editor",
+          "bulk_support": true
+        },
+        "read": {
+          "method": "table_view",
+          "filtering": "advanced_ui",
+          "custom_queries": "javascript_editor"
+        },
+        "update": {
+          "method": "inline_editing",
+          "bulk_editing": true,
+          "document_editor": true
+        },
+        "delete": {
+          "method": "context_menu_or_bulk_action",
+          "confirmation": "required_in_production"
+        }
+      }
+    },
+    "technical_specifications": {
+      "framework": "React",
+      "build_tool": "Modern bundler (likely Vite or Next.js)",
+      "styling": "CSS-in-JS or Tailwind CSS",
+      "state_management": "React hooks + Context",
+      "data_fetching": "Convex client SDK",
+      "ui_components": "Custom component library",
+      "accessibility": "WCAG 2.1 AA compliant",
+      "browser_support": "Modern browsers (Chrome, Firefox, Safari, Edge)",
+      "performance": {
+        "virtual_scrolling": "for large datasets",
+        "lazy_loading": "for images and complex components",
+        "memoization": "for expensive calculations"
+      }
+    },
+    "responsive_design": {
+      "breakpoints": {
+        "mobile": "< 768px",
+        "tablet": "768px - 1024px",
+        "desktop": "> 1024px"
+      },
+      "mobile_adaptations": {
+        "sidebar": "hidden by default, accessible via hamburger menu",
+        "secondary_sidebar": "hidden, content moved to main area",
+        "table": "horizontal scroll with sticky first column",
+        "toolbar": "simplified with dropdown for additional actions"
+      },
+      "tablet_adaptations": {
+        "sidebar": "collapsible with icon-only mode",
+        "secondary_sidebar": "overlay when needed",
+        "table": "responsive columns with priority hiding"
+      }
+    },
+    "accessibility": {
+      "keyboard_navigation": "full support",
+      "screen_reader": "proper ARIA labels and roles",
+      "color_contrast": "WCAG AA compliant",
+      "focus_management": "proper focus indicators and trapping",
+      "announcements": "screen reader announcements for dynamic content"
+    }
+  }
+}

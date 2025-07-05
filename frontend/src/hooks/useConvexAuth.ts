@@ -1,5 +1,6 @@
 import { useQuery } from 'convex/react'
 import { api } from '../convex/_generated/api'
+import { useEffect } from 'react'
 
 // Current implementation uses the mock auth from Convex backend
 // In the future, this will be replaced with proper Convex Auth
@@ -7,23 +8,42 @@ import { api } from '../convex/_generated/api'
 export const useCurrentUser = () => {
   const userProfile = useQuery(api.auth.getCurrentUserProfile)
   
-  if (userProfile === undefined) {
-    return {
-      _id: undefined,
-      email: undefined,
-      name: undefined,
-      isAuthenticated: false,
-      isLoading: true,
-    }
-  }
+  const userState = userProfile === undefined 
+    ? {
+        _id: undefined,
+        email: undefined,
+        name: undefined,
+        isAuthenticated: false,
+        isLoading: true,
+      }
+    : {
+        _id: userProfile._id,
+        email: userProfile.email,
+        name: userProfile.name,
+        isAuthenticated: true,
+        isLoading: false,
+      }
 
-  return {
-    _id: userProfile._id,
-    email: userProfile.email,
-    name: userProfile.name,
-    isAuthenticated: true,
-    isLoading: false,
-  }
+  // Update UAT health check with auth state
+  useEffect(() => {
+    if (import.meta.env.DEV && (window as any).__UAT_HEALTH__) {
+      (window as any).__convexAuthState = {
+        isAuthenticated: userState.isAuthenticated,
+        isLoading: userState.isLoading
+      };
+      (window as any).__userData = userProfile || null;
+      
+      if ((window as any).__UAT_HEALTH__.logAction) {
+        (window as any).__UAT_HEALTH__.logAction('auth_state_change', {
+          isAuthenticated: userState.isAuthenticated,
+          isLoading: userState.isLoading,
+          userId: userProfile?._id
+        });
+      }
+    }
+  }, [userState.isAuthenticated, userState.isLoading, userProfile]);
+
+  return userState;
 }
 
 export const useAuthActions = () => {

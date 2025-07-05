@@ -9,14 +9,17 @@ VRP System v4 is a production-ready Vehicle Routing Problem (VRP) management sys
 ## Architecture
 
 ### Monorepo Structure
-- **Root**: Project configuration and scripts
-- **frontend/**: React app with Vite + TypeScript + Tailwind CSS v4
-- **convex/**: Serverless backend with 70+ functions and 49 database indexes
-- **memory-bank/**: Documentation and development guides
+- **Root**: Project coordination with npm scripts managing frontend + backend
+- **frontend/**: React app (36 TypeScript files) with Vite + TypeScript + Tailwind CSS v4
+- **convex/**: Serverless backend (12 TypeScript files) with 70+ functions and 58 database indexes
+- **memory-bank/**: Structured documentation system with 9 organized categories
+- **dist/**: Build output (445KB bundle, 134KB gzipped)
 
 ### Technology Stack
-- **Frontend**: React 18, TypeScript, Vite, shadcn/ui, Tailwind CSS v4, React Router v6
-- **Backend**: Convex platform with real-time database and serverless functions
+- **Frontend**: React 18.3.1, TypeScript, Vite 5.3.1, shadcn/ui (15 components), Tailwind CSS v4.1.11, React Router v6.26.1
+- **Backend**: Convex platform with real-time WebSocket database and serverless functions
+- **State Management**: Zustand for local state, Convex for server state with real-time sync
+- **Authentication**: Mock auth system (development-ready)
 - **Deployment**: Convex Cloud (backend), Cloudflare Pages (frontend)
 
 ## Development Commands
@@ -116,13 +119,66 @@ npx @modelcontextprotocol/server-convex
 - **Data Fetching**: Custom hooks in frontend/src/hooks/ using Convex React client
 - **State Management**: Zustand for local state, Convex for server state
 - **Styling**: Tailwind CSS v4 with OKLCH color system
+- **Table Editing**: TableEditor component with inline cell editing and real-time updates
 
 ### File Organization
-- **Convex Functions**: One file per entity type with CRUD operations
-- **React Components**: Grouped by feature in frontend/src/components/
-- **Pages**: Route components in frontend/src/pages/
-- **Hooks**: Data fetching and state logic in frontend/src/hooks/
-- **Types**: Generated automatically by Convex in convex/_generated/
+
+#### Frontend Structure (frontend/src/)
+```
+components/
+├── auth/                    # Authentication components (placeholder)
+├── layout/                  # Layout system
+│   ├── MainLayout.tsx          # Main layout wrapper with dual sidebar
+│   ├── PrimarySidebar.tsx      # Collapsible primary navigation
+│   └── SecondarySidebar.tsx    # Context-sensitive secondary nav
+├── table-editor/            # Data table editing functionality
+│   └── TableEditor.tsx         # Main table editing component (504 lines)
+└── ui/                      # shadcn/ui components (15 components)
+
+pages/
+├── ProjectsPage.tsx         # Project listing/management
+├── ProjectDetailPage.tsx    # Project overview with scenarios
+├── ScenarioDetailPage.tsx   # Scenario details with datasets
+├── DatasetDetailPage.tsx    # Dataset management with tables
+├── TableEditorPage.tsx      # Table editing interface
+└── auth/LoginPage.tsx       # Authentication page
+
+hooks/
+├── useVRPData.ts           # Comprehensive VRP data hooks (338 lines)
+├── useHierarchy.ts         # Hierarchical navigation state
+├── useConvexAuth.ts        # Authentication hooks
+├── useResponsive.ts        # Responsive design hooks
+└── useSidebarStore.ts      # Sidebar state management (Zustand)
+```
+
+#### Backend Structure (convex/)
+```
+projects.ts          # Project CRUD operations
+scenarios.ts         # Scenario management
+datasets.ts          # Dataset versioning
+vehicles.ts          # Vehicle fleet management
+jobs.ts             # Job/task management
+locations.ts        # Location management
+routes.ts           # Route optimization results
+tasks.ts            # Task management
+auth.ts             # Authentication utilities
+validation.ts       # Input validation
+optimizerValidation.ts # Optimizer compatibility
+schema.ts           # Database schema (502 lines, 58 indexes)
+```
+
+#### Documentation Structure (memory-bank/documentation/)
+```
+01-getting-started/  # Setup and quick start guides
+02-architecture/     # System design documents
+03-integration/      # API and integration docs
+04-development/      # Development guidelines and patterns
+05-operations/       # Deployment and operations
+06-security/         # Security documentation
+07-archives/         # Deprecated documents
+08-plans/            # Future roadmaps and plans
+09-library/          # Reference materials
+```
 
 ## Database Schema
 
@@ -136,10 +192,11 @@ The VRP system uses a comprehensive schema (convex/schema.ts) with these core en
 - **routes**: Optimization results and route summaries
 
 All entities follow consistent patterns:
-- Required fields: projectId (for ownership), updatedAt (for audit), optimizerId (for optimization engines)
-- Optional fields: Extensive nullable fields for flexibility
-- Indexes: Efficient queries with by_project, by_optimizer_id patterns
-- Timestamps: _creationTime (auto) + updatedAt (manual)
+- **Required fields**: projectId (for ownership), updatedAt (for audit), optimizerId (for optimization engines)
+- **Optional fields**: Extensive nullable fields for VRP flexibility (58 total indexes)
+- **Indexes**: Efficient queries with by_project, by_optimizer_id, by_dataset patterns
+- **Timestamps**: _creationTime (auto) + updatedAt (manual)
+- **Hierarchical Relations**: Four-level hierarchy with denormalized projectId fields
 
 ## Key Development Considerations
 
@@ -172,13 +229,76 @@ All entities follow consistent patterns:
 3. Backend changes auto-deploy to development environment
 4. Frontend changes require manual build and deployment
 
+## Table Editor Architecture
+
+### Current Implementation
+The TableEditor component (`frontend/src/components/table-editor/TableEditor.tsx`) provides:
+- **Inline Cell Editing**: Click-to-edit functionality with type validation
+- **Schema-Driven Columns**: Dynamic column rendering based on VRP table schemas
+- **Real-time Updates**: Automatic synchronization via Convex WebSocket connections
+- **CRUD Operations**: Create, update, delete operations per table type
+- **Type Safety**: Full TypeScript integration with generated Convex types
+
+### Current Limitations
+- **Import/Export**: CSV import/export buttons are disabled (lines 352-359)
+- **Bulk Operations**: No multi-row selection or bulk editing capabilities
+- **Large Datasets**: No pagination or virtual scrolling optimization
+
+### Planned Enhancements
+Implementation roadmap for bulk editing features:
+1. **CSV Import/Export**: Leverage Convex file storage APIs with PapaParse
+2. **Bulk Selection**: Multi-row selection with checkbox interface
+3. **Bulk Editing**: Modal-based bulk field updates with validation
+4. **Performance**: Pagination and virtual scrolling for large datasets
+5. **Real-time Sync**: Maintain Convex automatic synchronization
+
+### Table Types Supported
+- **vehicles**: Fleet definitions with capacity and constraints
+- **jobs**: Individual tasks/stops with time windows and requirements
+- **locations**: Geographic points with coordinates and metadata
+- **routes**: Optimization results and route summaries (read-only)
+
+### Data Flow Architecture
+```
+Frontend TableEditor ←→ Custom Hooks ←→ Convex Functions ←→ Database
+     ↑                      ↑                ↑              ↑
+  User Actions         Zustand Store    Mutations/Queries  Schema (502 lines)
+  Cell Editing         Real-time        Validation         58 Indexes
+  Bulk Operations      WebSocket        Transactions       Hierarchical Relations
+  (Planned)            Updates          Error Handling     User Ownership
+```
+
+### Implementation Patterns
+- **Component Pattern**: Feature-based organization with shadcn/ui components
+- **Data Pattern**: Custom hooks (useVRPData.ts - 338 lines) centralize all VRP operations
+- **State Pattern**: Zustand for local state, Convex real-time for server state
+- **Routing Pattern**: Hierarchical navigation matching data structure
+- **Error Pattern**: Comprehensive error boundaries and loading states
+- **Type Pattern**: Full TypeScript with generated Convex types
+
 ## Important Files to Reference
 
 - **convex/schema.ts**: Complete VRP database schema and relationships
 - **convex/validation.ts**: Input validation utilities
 - **convex/optimizerValidation.ts**: Optimization engine compatibility validation
+- **frontend/src/components/table-editor/TableEditor.tsx**: Main table editing component
 - **frontend/src/components/layout/**: Dual sidebar navigation system
 - **frontend/src/hooks/**: Data fetching patterns and Convex integration
+- **memory-bank/documentation/09-library/convex-frontend-table-editing-capabilities.md**: Bulk editing implementation guide
 - **memory-bank/documentation/04-development/**: Development guides and best practices
 - **memory-bank/documentation/04-development/data-type-master-v1.0.md**: Optimization engine data type conversion guide
 - **DEPLOYMENT.md**: Production deployment instructions and configuration
+
+## UAT Testing Framework
+
+**IMPORTANT: UAT TESTING MUST USE THE PRESCRIBED UAT WORKFLOW AS PER `\uat\CLAUDE.md`**
+
+For all User Acceptance Testing (UAT) activities, Claude Code must follow the comprehensive UAT framework located in the `uat/` directory. This includes:
+
+- **UAT Commands**: Use the prescribed Node.js CLI commands for all testing activities
+- **Test Scenarios**: Follow the established scenario creation and execution patterns
+- **VERA Methodology**: Implement Verify, Execute, Record, Analyze testing approach
+- **Browser Integration**: Coordinate with Browser MCP for actual test execution
+- **Reporting**: Use the built-in reporting system for test results and screenshots
+
+**Reference**: See `uat/CLAUDE.md` for complete UAT framework instructions and Claude Code integration guidelines.

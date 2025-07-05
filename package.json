@@ -24,7 +24,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "convex": "^1.16.0"
+    "convex": "^1.16.0",
+    "playwright": "^1.53.2"
   },
   "devDependencies": {
     "@types/node": "^20.14.8"

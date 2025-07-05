@@ -27,7 +27,6 @@ export default defineSchema({
     notes: v.optional(v.string()),                 // ❓ Additional notes
   })
     .index("by_owner", ["ownerId"])
-    .index("by_created_at", ["createdAt"])
     .index("by_updated_at", ["updatedAt"]),
 
   // Scenarios - Project optimization scenarios
@@ -52,8 +51,7 @@ export default defineSchema({
     optimizationCount: v.optional(v.number()),        // ❓ Number of optimizations run
   })
     .index("by_project", ["projectId"])
-    .index("by_status", ["status"])
-    .index("by_created_at", ["createdAt"]),
+    .index("by_status", ["status"]),
 
   // Datasets - Data collections for optimization
   datasets: defineTable({
@@ -96,8 +94,9 @@ export default defineSchema({
   vehicles: defineTable({
     // REQUIRED FIELDS (Not Nullable)
     projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
+    // NOTE: Use _creationTime instead of createdAt (auto-managed by Convex)
     updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    optimizerId: v.number(),             // ✅ Numeric ID for optimization engines - required for API compatibility
     
     // OPTIONAL FIELDS (Nullable)
     scenarioId: v.optional(v.id("scenarios")),        // ❓ Optional scenario assignment
@@ -138,14 +137,15 @@ export default defineSchema({
     .index("by_scenario", ["scenarioId"])
     .index("by_dataset", ["datasetId"])
     .index("by_location", ["startLocationId"])
-    .index("by_created_at", ["createdAt"]),
+    .index("by_optimizer_id", ["optimizerId"]),  // Required for VROOM ID mapping
 
   // Jobs - Individual tasks/stops for vehicles
   jobs: defineTable({
     // REQUIRED FIELDS (Not Nullable)
     projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
+    // NOTE: Use _creationTime instead of createdAt (auto-managed by Convex)
     updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    optimizerId: v.number(),             // ✅ Numeric ID for optimization engines - required for API compatibility
     
     // OPTIONAL FIELDS (Nullable)
     scenarioId: v.optional(v.id("scenarios")),        // ❓ Optional scenario assignment
@@ -181,15 +181,15 @@ export default defineSchema({
     .index("by_scenario", ["scenarioId"])
     .index("by_dataset", ["datasetId"])
     .index("by_location", ["locationId"])
-    .index("by_priority", ["priority"])
-    .index("by_created_at", ["createdAt"]),
+    .index("by_priority", ["priority"])  // Optimization engines typically require 0-100 priority range
+    .index("by_optimizer_id", ["optimizerId"]),  // Required for optimization engine ID mapping
 
   // Locations - Geographic points of interest
   locations: defineTable({
     // REQUIRED FIELDS (Not Nullable)
     projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
     name: v.string(),                    // ✅ Location name - always required
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
+    // NOTE: Use _creationTime instead of createdAt (auto-managed by Convex)
     updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
     
     // OPTIONAL FIELDS (Nullable)
@@ -217,7 +217,7 @@ export default defineSchema({
   // Routes (derived from Route Summaries and Steps)
   routes: defineTable({
     // REQUIRED FIELDS (Not Nullable)
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
+    // NOTE: Use _creationTime instead of createdAt (auto-managed by Convex)
     updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
     
     // OPTIONAL FIELDS (Nullable) - Routes may be partial or in draft state
@@ -251,8 +251,65 @@ export default defineSchema({
   })
     .index("by_optimization_run", ["optimizationRunId"])
     .index("by_vehicle", ["vehicleId"])
+    .index("by_project", ["projectId"]),
+
+  // Shipments - Pickup and delivery pairs
+  shipments: defineTable({
+    // REQUIRED FIELDS (Not Nullable)
+    projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
+    optimizerId: v.number(),             // ✅ Numeric ID for optimization engines - required for API compatibility
+    // NOTE: Use _creationTime instead of createdAt (auto-managed by Convex)
+    updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
+    
+    // OPTIONAL FIELDS (Nullable)
+    scenarioId: v.optional(v.id("scenarios")),        // ❓ Optional scenario assignment
+    datasetId: v.optional(v.id("datasets")),          // ❓ Optional dataset assignment
+    description: v.optional(v.string()),              // ❓ Shipment description
+    
+    // Pickup location coordinates
+    pickupLon: v.optional(v.number()),                // ❓ Pickup longitude
+    pickupLat: v.optional(v.number()),                // ❓ Pickup latitude
+    pickupLocationId: v.optional(v.id("locations")),  // ❓ Pickup location reference
+    
+    // Delivery location coordinates
+    deliveryLon: v.optional(v.number()),              // ❓ Delivery longitude
+    deliveryLat: v.optional(v.number()),              // ❓ Delivery latitude
+    deliveryLocationId: v.optional(v.id("locations")), // ❓ Delivery location reference
+    
+    // Capacity requirements (must be exactly 3 elements for VROOM)
+    amount: v.optional(v.array(v.number())),          // ❓ Shipment quantities [weight, volume, count]
+    
+    // Job constraints
+    skills: v.optional(v.array(v.number())),          // ❓ Required skill IDs
+    priority: v.optional(v.number()),                 // ❓ Shipment priority (0-100 for VROOM)
+    
+    // Pickup timing
+    pickupSetup: v.optional(v.number()),              // ❓ Pickup setup time (seconds)
+    pickupService: v.optional(v.number()),            // ❓ Pickup service time (seconds)
+    pickupTimeWindows: v.optional(v.array(v.object({ // ❓ Pickup time windows
+      start: v.number(),                              // Required if pickupTimeWindows exists
+      end: v.number(),                                // Required if pickupTimeWindows exists
+    }))),
+    
+    // Delivery timing
+    deliverySetup: v.optional(v.number()),            // ❓ Delivery setup time (seconds)
+    deliveryService: v.optional(v.number()),          // ❓ Delivery service time (seconds)
+    deliveryTimeWindows: v.optional(v.array(v.object({ // ❓ Delivery time windows
+      start: v.number(),                              // Required if deliveryTimeWindows exists
+      end: v.number(),                                // Required if deliveryTimeWindows exists
+    }))),
+    
+    // Dataset metadata
+    datasetName: v.optional(v.string()),              // ❓ Source dataset name
+    datasetVersion: v.optional(v.number()),           // ❓ Source dataset version
+  })
     .index("by_project", ["projectId"])
-    .index("by_created_at", ["createdAt"]),
+    .index("by_scenario", ["scenarioId"])
+    .index("by_dataset", ["datasetId"])
+    .index("by_pickup_location", ["pickupLocationId"])
+    .index("by_delivery_location", ["deliveryLocationId"])
+    .index("by_priority", ["priority"])
+    .index("by_optimizer_id", ["optimizerId"]),
 
   // Supporting Tables
 
@@ -262,7 +319,7 @@ export default defineSchema({
     projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
     name: v.string(),                    // ✅ Product name - always required
     unitType: v.string(),                // ✅ Unit of measurement - required for calculations
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
+    // NOTE: Use _creationTime instead of createdAt (auto-managed by Convex)
     updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
     
     // OPTIONAL FIELDS (Nullable)
@@ -284,7 +341,7 @@ export default defineSchema({
   // Skills - Capabilities required for jobs or possessed by vehicles
   skills: defineTable({
     // REQUIRED FIELDS (Not Nullable)
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
+    // NOTE: Use _creationTime instead of createdAt (auto-managed by Convex)
     updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
     
     // OPTIONAL FIELDS (Nullable) - Note: Skills can be global or project-specific
@@ -299,7 +356,7 @@ export default defineSchema({
     requiresCertification: v.optional(v.boolean()),   // ❓ Certification required flag
     certificationAuthority: v.optional(v.string()),   // ❓ Certifying authority
     certificationExpiryRequired: v.optional(v.boolean()), // ❓ Expiry tracking required
-    vroomSkillId: v.optional(v.number()),             // ❓ VROOM solver skill ID
+    optimizerSkillId: v.optional(v.number()),         // ❓ Optimization engine skill ID
     isActive: v.optional(v.boolean()),                // ❓ Active skill flag
   })
     .index("by_project", ["projectId"])
@@ -323,7 +380,7 @@ export default defineSchema({
       minimizeVehicles: v.optional(v.boolean()),     // ❓ Minimize vehicle count
       allowSplitDeliveries: v.optional(v.boolean()), // ❓ Allow split deliveries
     }),
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
+    // NOTE: Use _creationTime instead of createdAt (auto-managed by Convex)
     updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
     
     // OPTIONAL FIELDS (Nullable)
@@ -405,7 +462,7 @@ export default defineSchema({
   locationClusterMembership: defineTable({
     locationId: v.id("locations"),
     clusterId: v.id("locationClusters"),
-    createdAt: v.number(),
+    // NOTE: Use _creationTime instead of createdAt (auto-managed by Convex)
     updatedAt: v.number(),
   })
     .index("by_location", ["locationId"])
@@ -419,7 +476,7 @@ export default defineSchema({
     centerLat: v.optional(v.number()),
     radius: v.optional(v.number()),
     color: v.optional(v.string()),
-    createdAt: v.number(),
+    // NOTE: Use _creationTime instead of createdAt (auto-managed by Convex)
     updatedAt: v.number(),
   })
     .index("by_project", ["projectId"]),

@@ -1,0 +1,319 @@
+{
+  "document": {
+    "title": "Convex Dashboard Design Profile",
+    "description": "Comprehensive design structure and layout analysis of Convex dashboard with double sidebar and table editor",
+    "url": "https://dashboard.convex.dev/t/gijsbertuskooy/vrp-system-v4/mild-elephant-70/data?table=jobs",
+    "page_title": "jobs | Data | Prod | vrp-system-v4 | Convex Dashboard",
+    "layout": {
+      "type": "dashboard",
+      "structure": "header + double-sidebar + main-content",
+      "theme": "dark",
+      "responsive": true,
+      "accessibility": {
+        "notifications": "alt+T shortcut",
+        "keyboard_shortcuts": "⌃ + ` for run functions"
+      }
+    },
+    "components": {
+      "header": {
+        "element": "banner",
+        "type": "top-banner",
+        "elements": [
+          {
+            "type": "logo",
+            "element": "link",
+            "content": "Convex logo",
+            "position": "left",
+            "url": "/"
+          },
+          {
+            "type": "breadcrumb",
+            "element": "button",
+            "content": "gt / vrp-system-v4",
+            "position": "left-center",
+            "interaction": "team selection dropdown"
+          },
+          {
+            "type": "environment-indicator",
+            "element": "button",
+            "content": "Production • mild-elephant-70",
+            "position": "left-center",
+            "interaction": "environment switcher"
+          },
+          {
+            "type": "action-buttons",
+            "content": ["Ask AI", "Support"],
+            "position": "right",
+            "support_icon": true
+          },
+          {
+            "type": "user-profile",
+            "element": "button",
+            "content": "User profile image",
+            "position": "right"
+          }
+        ],
+        "styling": {
+          "background": "dark",
+          "border": "bottom-border",
+          "height": "fixed"
+        }
+      },
+      "primary-sidebar": {
+        "element": "complementary",
+        "type": "navigation-sidebar",
+        "position": "left",
+        "width": "narrow",
+        "nav_items": ["Health", "Data", "Functions", "Files", "Schedules", "Logs", "History", "Settings"],
+        "nav_pattern": {
+          "element": "link/button",
+          "icon": true,
+          "active_state": "visual highlight",
+          "disabled_state": "History item disabled"
+        },
+        "footer": {
+          "type": "collapse-button",
+          "element": "button",
+          "label": "Collapse",
+          "icon": true
+        },
+        "styling": {
+          "background": "darker",
+          "border": "right-border",
+          "collapse": "collapsible"
+        }
+      },
+      "secondary-sidebar": {
+        "type": "content-sidebar",
+        "position": "left-secondary",
+        "width": "medium",
+        "elements": [
+          {
+            "type": "section-header",
+            "element": "heading",
+            "level": 5,
+            "content": "Tables",
+            "styling": "bold"
+          },
+          {
+            "type": "search-filter",
+            "element": "searchbox",
+            "placeholder": "Search tables...",
+            "styling": "input-field"
+          },
+          {
+            "type": "table-list",
+            "pattern": "dynamic list of database tables",
+            "url_pattern": "/data?table={table_name}",
+            "active_state": "highlighted item with visual indicator",
+            "sample_tables": ["datasets", "jobs", "locations", "vehicles", "routes"],
+            "styling": {
+              "hover": "highlight",
+              "active": "highlighted"
+            }
+          },
+          {
+            "type": "action-button",
+            "element": "button",
+            "label": "Create Table",
+            "icon": "plus",
+            "styling": "primary-button"
+          }
+        ],
+        "footer": {
+          "type": "schema-button",
+          "element": "button",
+          "label": "Schema",
+          "icon": true
+        },
+        "styling": {
+          "background": "medium-dark",
+          "border": "right-border",
+          "scrollable": true
+        }
+      },
+      "main-content": {
+        "type": "table-editor",
+        "position": "right",
+        "width": "flexible",
+        "elements": [
+          {
+            "type": "content-header",
+            "elements": [
+              {
+                "type": "title",
+                "element": "heading",
+                "level": 3,
+                "content": "jobs",
+                "styling": "large-text"
+              },
+              {
+                "type": "action-buttons",
+                "content": [
+                  {
+                    "type": "add-button",
+                    "element": "button",
+                    "label": "Add"
+                  },
+                  {
+                    "type": "settings-button",
+                    "element": "button",
+                    "label": "Open table settings",
+                    "icon": true
+                  }
+                ],
+                "position": "right"
+              }
+            ]
+          },
+          {
+            "type": "table-controls",
+            "elements": [
+              {
+                "type": "disabled-buttons",
+                "content": [
+                  {
+                    "element": "button",
+                    "disabled": true,
+                    "icon": true
+                  },
+                  {
+                    "element": "button", 
+                    "disabled": true,
+                    "icon": true
+                  }
+                ]
+              },
+              {
+                "type": "filter-sort",
+                "element": "button",
+                "label": "Filter & Sort",
+                "icon": true,
+                "styling": "dropdown"
+              },
+              {
+                "type": "document-count",
+                "content": "2 documents",
+                "position": "right"
+              }
+            ]
+          },
+          {
+            "type": "data-table",
+            "element": "table",
+            "structure": {
+              "columns": "dynamic based on table schema",
+              "column_types": {
+                "checkbox": "row selection column",
+                "text": "string values with sorting",
+                "datetime": "formatted timestamps with sorting indicators",
+                "reference": "clickable document IDs with icons",
+                "array": "formatted array notation",
+                "number": "numeric values"
+              },
+              "sorting": "clickable headers with visual indicators",
+              "rows": "dynamic data with clickable cells",
+              "pagination": true,
+              "selection": "checkbox",
+              "cell_interaction": "clickable buttons",
+              "data_types": {
+                "unset": "null/undefined values",
+                "document_id": "clickable reference with icon",
+                "datetime": "formatted timestamp",
+                "array": "formatted array notation",
+                "number": "numeric values",
+                "text": "quoted strings"
+              }
+            },
+            "styling": {
+              "striped": false,
+              "hover": "row-highlight",
+              "border": "cell-borders",
+              "cell_buttons": "individual cell clickable areas"
+            }
+          }
+        ],
+        "styling": {
+          "background": "light-dark",
+          "padding": "standard",
+          "overflow": "scroll"
+        }
+      }
+    },
+    "floating-elements": {
+      "run-functions": {
+        "type": "floating-button",
+        "element": "button",
+        "label": "Run functions",
+        "shortcut": "⌃ + `",
+        "icon": true,
+        "position": "bottom-right"
+      },
+      "notifications": {
+        "type": "region",
+        "shortcut": "alt+T",
+        "position": "accessible"
+      }
+    },
+    "interaction-patterns": {
+      "navigation": {
+        "primary-sidebar": "single-click navigation with active states",
+        "secondary-sidebar": "table selection with URL updates",
+        "breadcrumb": "hierarchical navigation with dropdowns"
+      },
+      "table-editing": {
+        "row-selection": "checkbox multi-select in first column",
+        "cell-editing": "clickable button per cell",
+        "column-sorting": "clickable column headers with sort indicators",
+        "filtering": "dropdown controls with icons",
+        "data-references": "clickable document IDs with icons"
+      },
+      "responsive": {
+        "sidebar-collapse": "primary sidebar collapsible with button",
+        "table-scroll": "horizontal scroll for wide tables",
+        "keyboard-shortcuts": "multiple keyboard shortcuts supported"
+      }
+    },
+    "semantic-structure": {
+      "accessibility": {
+        "roles": "proper ARIA roles (banner, complementary, table, etc.)",
+        "headings": "hierarchical heading structure (h3, h5)",
+        "keyboard": "keyboard navigation support",
+        "shortcuts": "documented keyboard shortcuts"
+      },
+      "html_elements": {
+        "navigation": "semantic nav elements with proper links",
+        "forms": "searchbox and button elements",
+        "tables": "proper table structure with headers and cells",
+        "regions": "landmark regions for screen readers"
+      }
+    },
+    "color-scheme": {
+      "background": {
+        "primary": "dark-gray",
+        "secondary": "medium-gray",
+        "content": "light-gray"
+      },
+      "accent": {
+        "primary": "purple/blue",
+        "secondary": "green (active states)"
+      },
+      "text": {
+        "primary": "white",
+        "secondary": "light-gray",
+        "muted": "medium-gray"
+      }
+    },
+    "typography": {
+      "headers": "sans-serif, medium-weight",
+      "body": "sans-serif, regular-weight",
+      "code": "monospace",
+      "sizing": "responsive scale"
+    },
+    "spacing": {
+      "layout": "grid-based",
+      "padding": "consistent hierarchy",
+      "margins": "proportional scaling"
+    }
+  }
+}

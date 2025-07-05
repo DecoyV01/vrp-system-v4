@@ -1,0 +1,216 @@
+{
+  "dashboard_profile": {
+    "name": "Convex Dashboard - VRP System V4",
+    "description": "Design profile for Convex dashboard interface with double sidebar and table editor",
+    "url": "https://dashboard.convex.dev/t/gijsbertuskooy/vrp-system-v4/mild-elephant-70/data?table=jobs",
+    "layout": {
+      "type": "triple_pane",
+      "structure": {
+        "main_sidebar": {
+          "position": "left",
+          "width": "240px",
+          "background": "#f8f9fa",
+          "sections": [
+            {
+              "name": "project_selector",
+              "type": "dropdown",
+              "content": "vrp-system-v4"
+            },
+            {
+              "name": "navigation_menu",
+              "type": "vertical_menu",
+              "items": [
+                "Data",
+                "Functions",
+                "Logs",
+                "Settings",
+                "Deploy"
+              ]
+            }
+          ]
+        },
+        "secondary_sidebar": {
+          "position": "left_secondary",
+          "width": "200px",
+          "background": "#ffffff",
+          "border": "1px solid #e5e7eb",
+          "sections": [
+            {
+              "name": "table_list",
+              "type": "scrollable_list",
+              "content": "Database tables",
+              "active_item": "jobs"
+            }
+          ]
+        },
+        "main_content": {
+          "position": "center",
+          "flex": "1",
+          "background": "#ffffff",
+          "sections": [
+            {
+              "name": "header",
+              "type": "toolbar",
+              "height": "60px",
+              "elements": [
+                "breadcrumb",
+                "search_bar",
+                "action_buttons"
+              ]
+            },
+            {
+              "name": "table_editor",
+              "type": "data_table",
+              "features": [
+                "sortable_columns",
+                "inline_editing",
+                "row_selection",
+                "pagination",
+                "column_filters"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "design_system": {
+      "colors": {
+        "primary": "#2563eb",
+        "secondary": "#6b7280",
+        "background": "#ffffff",
+        "sidebar_bg": "#f8f9fa",
+        "border": "#e5e7eb",
+        "text_primary": "#111827",
+        "text_secondary": "#6b7280",
+        "accent": "#10b981"
+      },
+      "typography": {
+        "font_family": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        "font_sizes": {
+          "small": "12px",
+          "medium": "14px",
+          "large": "16px",
+          "xlarge": "18px"
+        },
+        "font_weights": {
+          "regular": "400",
+          "medium": "500",
+          "semibold": "600"
+        }
+      },
+      "spacing": {
+        "xs": "4px",
+        "sm": "8px",
+        "md": "16px",
+        "lg": "24px",
+        "xl": "32px"
+      },
+      "borders": {
+        "radius": "6px",
+        "width": "1px",
+        "style": "solid"
+      }
+    },
+    "components": {
+      "sidebar": {
+        "type": "fixed_sidebar",
+        "width": "240px",
+        "collapse": "responsive",
+        "navigation": {
+          "type": "vertical_menu",
+          "highlight": "active_state",
+          "icons": true
+        }
+      },
+      "secondary_sidebar": {
+        "type": "contextual_sidebar",
+        "width": "200px",
+        "content": "dynamic_based_on_main_selection",
+        "scroll": "auto"
+      },
+      "table_editor": {
+        "type": "data_grid",
+        "features": {
+          "sorting": true,
+          "filtering": true,
+          "editing": "inline",
+          "selection": "multiple",
+          "pagination": true,
+          "search": true,
+          "column_resize": true,
+          "row_actions": true
+        },
+        "toolbar": {
+          "position": "top",
+          "actions": [
+            "add_row",
+            "delete_selected",
+            "export_data",
+            "import_data",
+            "refresh"
+          ]
+        }
+      },
+      "header": {
+        "type": "application_header",
+        "height": "60px",
+        "elements": {
+          "logo": "left",
+          "breadcrumb": "center_left",
+          "search": "center",
+          "user_menu": "right"
+        }
+      }
+    },
+    "interactions": {
+      "hover_states": {
+        "sidebar_items": "background_highlight",
+        "table_rows": "subtle_highlight",
+        "buttons": "color_shift"
+      },
+      "active_states": {
+        "sidebar_items": "left_border_accent",
+        "table_columns": "header_highlight",
+        "selected_rows": "row_highlight"
+      },
+      "transitions": {
+        "duration": "150ms",
+        "easing": "ease-in-out"
+      }
+    },
+    "responsive_behavior": {
+      "mobile": {
+        "sidebar": "overlay",
+        "secondary_sidebar": "hidden",
+        "table": "horizontal_scroll"
+      },
+      "tablet": {
+        "sidebar": "collapsible",
+        "secondary_sidebar": "overlay",
+        "table": "responsive_columns"
+      },
+      "desktop": {
+        "sidebar": "fixed",
+        "secondary_sidebar": "fixed",
+        "table": "full_featured"
+      }
+    },
+    "data_visualization": {
+      "table_context": "jobs",
+      "expected_columns": [
+        "id",
+        "status",
+        "created_at",
+        "updated_at",
+        "priority",
+        "assigned_to"
+      ],
+      "row_actions": [
+        "edit",
+        "delete",
+        "duplicate",
+        "view_details"
+      ]
+    }
+  }
+}
