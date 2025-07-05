@@ -291,14 +291,17 @@ Frontend TableEditor ←→ Custom Hooks ←→ Convex Functions ←→ Database
 
 ## UAT Testing Framework
 
-**IMPORTANT: UAT TESTING MUST USE THE PRESCRIBED UAT WORKFLOW AS PER `\uat\CLAUDE.md`**
+**🛑 MANDATORY: DO NOT use Browser MCP tools directly - you MUST use the UAT framework by running `node uat-test-runner.cjs` commands from the `uat/` directory as documented in `/UAT-TESTING-INSTRUCTIONS.md` and `uat/RUN-UAT-TESTS.md`.**
 
 For all User Acceptance Testing (UAT) activities, Claude Code must follow the comprehensive UAT framework located in the `uat/` directory. This includes:
 
-- **UAT Commands**: Use the prescribed Node.js CLI commands for all testing activities
-- **Test Scenarios**: Follow the established scenario creation and execution patterns
-- **VERA Methodology**: Implement Verify, Execute, Record, Analyze testing approach
-- **Browser Integration**: Coordinate with Browser MCP for actual test execution
+- **UAT Commands**: Use the prescribed Node.js CLI commands for all testing activities (e.g., `node uat-test-runner.cjs crud project create --debug`)
+- **Test Scenarios**: Follow the established multi-step scenario creation and execution patterns in `uat/scenarios/`
+- **VERA Methodology**: Implement Verify, Execute, Record, Analyze testing approach through the framework
+- **Browser Integration**: The UAT framework handles all Browser MCP integration - never call Browser MCP tools directly
 - **Reporting**: Use the built-in reporting system for test results and screenshots
 
-**Reference**: See `uat/CLAUDE.md` for complete UAT framework instructions and Claude Code integration guidelines.
+**References**: 
+- **MUST READ FIRST**: `/UAT-TESTING-INSTRUCTIONS.md` - Mandatory UAT framework usage guide
+- **Quick Start**: `uat/RUN-UAT-TESTS.md` - How to run UAT tests correctly
+- **Complete Guide**: `uat/CLAUDE.md` - Full UAT framework documentation
