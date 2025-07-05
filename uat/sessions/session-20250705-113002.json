@@ -1,7 +1,7 @@
 {
   "sessionId": "20250705-113002",
   "startTime": "2025-07-05T09:30:02.839Z",
-  "lastUpdated": "2025-07-05T10:16:22.077Z",
+  "lastUpdated": "2025-07-05T14:10:54.096Z",
   "tests": [
     {
       "id": "test_1751707802902",
@@ -1214,6 +1214,612 @@
         "duration": 25,
         "timestamp": "2025-07-05T10:16:22.077Z"
       }
+    },
+    {
+      "id": "test_1751713338506",
+      "timestamp": "2025-07-05T11:02:18.506Z",
+      "type": "command",
+      "name": "project_create",
+      "status": "failed",
+      "duration": 8,
+      "entity": "project",
+      "action": "create",
+      "error": "Failed to navigate to application: this.browserMCP.navigateToUrl is not a function",
+      "screenshots": [
+        {
+          "name": "project-create-failure",
+          "filename": "20250705-130218-project-create-failure.png",
+          "timestamp": "2025-07-05T11:02:18.504Z",
+          "description": "",
+          "method": "simulated",
+          "error": "Screenshot capture not available in current environment"
+        }
+      ],
+      "details": {
+        "success": false,
+        "type": "command",
+        "entity": "project",
+        "action": "create",
+        "name": "project_create",
+        "error": "Failed to navigate to application: this.browserMCP.navigateToUrl is not a function",
+        "screenshots": [
+          {
+            "name": "project-create-failure",
+            "filename": "20250705-130218-project-create-failure.png",
+            "timestamp": "2025-07-05T11:02:18.504Z",
+            "description": "",
+            "method": "simulated",
+            "error": "Screenshot capture not available in current environment"
+          }
+        ],
+        "duration": 8,
+        "timestamp": "2025-07-05T11:02:18.506Z"
+      }
+    },
+    {
+      "id": "test_1751713993214",
+      "timestamp": "2025-07-05T11:13:13.215Z",
+      "type": "command",
+      "name": "project_create",
+      "status": "failed",
+      "duration": 7,
+      "entity": "project",
+      "action": "create",
+      "error": "Failed to navigate to application: this.browserMCP.navigateToUrl is not a function",
+      "screenshots": [
+        {
+          "name": "project-create-failure",
+          "filename": "20250705-131313-project-create-failure.png",
+          "timestamp": "2025-07-05T11:13:13.214Z",
+          "description": "",
+          "method": "simulated",
+          "error": "Screenshot capture not available in current environment"
+        }
+      ],
+      "details": {
+        "success": false,
+        "type": "command",
+        "entity": "project",
+        "action": "create",
+        "name": "project_create",
+        "error": "Failed to navigate to application: this.browserMCP.navigateToUrl is not a function",
+        "screenshots": [
+          {
+            "name": "project-create-failure",
+            "filename": "20250705-131313-project-create-failure.png",
+            "timestamp": "2025-07-05T11:13:13.214Z",
+            "description": "",
+            "method": "simulated",
+            "error": "Screenshot capture not available in current environment"
+          }
+        ],
+        "duration": 7,
+        "timestamp": "2025-07-05T11:13:13.214Z"
+      }
+    },
+    {
+      "id": "test_1751714081071",
+      "timestamp": "2025-07-05T11:14:41.071Z",
+      "type": "command",
+      "name": "project_create",
+      "status": "failed",
+      "duration": 8,
+      "entity": "project",
+      "action": "create",
+      "error": "Click target not available: this.testRunner.browserMCP.waitForElement is not a function",
+      "screenshots": [
+        {
+          "name": "baseline",
+          "filename": "20250705-131441-baseline.png",
+          "timestamp": "2025-07-05T11:14:41.069Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "state-verification",
+          "filename": "20250705-131441-state-verification.png",
+          "timestamp": "2025-07-05T11:14:41.069Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "navigate--projects",
+          "filename": "20250705-131441-navigate--projects.png",
+          "timestamp": "2025-07-05T11:14:41.070Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "project-list-before-create",
+          "filename": "20250705-131441-project-list-before-create.png",
+          "timestamp": "2025-07-05T11:14:41.070Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "project-create-failure",
+          "filename": "20250705-131441-project-create-failure.png",
+          "timestamp": "2025-07-05T11:14:41.071Z",
+          "description": "",
+          "method": "local-playwright"
+        }
+      ],
+      "details": {
+        "success": false,
+        "type": "command",
+        "entity": "project",
+        "action": "create",
+        "name": "project_create",
+        "error": "Click target not available: this.testRunner.browserMCP.waitForElement is not a function",
+        "screenshots": [
+          {
+            "name": "baseline",
+            "filename": "20250705-131441-baseline.png",
+            "timestamp": "2025-07-05T11:14:41.069Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "state-verification",
+            "filename": "20250705-131441-state-verification.png",
+            "timestamp": "2025-07-05T11:14:41.069Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "navigate--projects",
+            "filename": "20250705-131441-navigate--projects.png",
+            "timestamp": "2025-07-05T11:14:41.070Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "project-list-before-create",
+            "filename": "20250705-131441-project-list-before-create.png",
+            "timestamp": "2025-07-05T11:14:41.070Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "project-create-failure",
+            "filename": "20250705-131441-project-create-failure.png",
+            "timestamp": "2025-07-05T11:14:41.071Z",
+            "description": "",
+            "method": "local-playwright"
+          }
+        ],
+        "duration": 8,
+        "timestamp": "2025-07-05T11:14:41.071Z"
+      }
+    },
+    {
+      "id": "test_1751714129786",
+      "timestamp": "2025-07-05T11:15:29.786Z",
+      "type": "command",
+      "name": "project_create",
+      "status": "passed",
+      "duration": 1012,
+      "entity": "project",
+      "action": "create",
+      "result": {
+        "operation": "create",
+        "data": {
+          "#project-name": "Test Project UAT",
+          "#project-description": "Automated test project created by UAT"
+        }
+      },
+      "screenshots": [
+        {
+          "name": "baseline",
+          "filename": "20250705-131528-baseline.png",
+          "timestamp": "2025-07-05T11:15:28.780Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "state-verification",
+          "filename": "20250705-131528-state-verification.png",
+          "timestamp": "2025-07-05T11:15:28.780Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "navigate--projects",
+          "filename": "20250705-131528-navigate--projects.png",
+          "timestamp": "2025-07-05T11:15:28.781Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "project-list-before-create",
+          "filename": "20250705-131528-project-list-before-create.png",
+          "timestamp": "2025-07-05T11:15:28.781Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "click--add-project-button",
+          "filename": "20250705-131528-click--add-project-button.png",
+          "timestamp": "2025-07-05T11:15:29.784Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "project-create-form",
+          "filename": "20250705-131528-project-create-form.png",
+          "timestamp": "2025-07-05T11:15:29.784Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "form-filled",
+          "filename": "20250705-131528-form-filled.png",
+          "timestamp": "2025-07-05T11:15:29.785Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "state-verification",
+          "filename": "20250705-131528-state-verification.png",
+          "timestamp": "2025-07-05T11:15:29.785Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "project-created",
+          "filename": "20250705-131528-project-created.png",
+          "timestamp": "2025-07-05T11:15:29.785Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "navigate--projects",
+          "filename": "20250705-131528-navigate--projects.png",
+          "timestamp": "2025-07-05T11:15:29.785Z",
+          "description": "",
+          "method": "local-playwright"
+        }
+      ],
+      "details": {
+        "success": true,
+        "type": "command",
+        "entity": "project",
+        "action": "create",
+        "name": "project_create",
+        "result": {
+          "operation": "create",
+          "data": {
+            "#project-name": "Test Project UAT",
+            "#project-description": "Automated test project created by UAT"
+          }
+        },
+        "screenshots": [
+          {
+            "name": "baseline",
+            "filename": "20250705-131528-baseline.png",
+            "timestamp": "2025-07-05T11:15:28.780Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "state-verification",
+            "filename": "20250705-131528-state-verification.png",
+            "timestamp": "2025-07-05T11:15:28.780Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "navigate--projects",
+            "filename": "20250705-131528-navigate--projects.png",
+            "timestamp": "2025-07-05T11:15:28.781Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "project-list-before-create",
+            "filename": "20250705-131528-project-list-before-create.png",
+            "timestamp": "2025-07-05T11:15:28.781Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "click--add-project-button",
+            "filename": "20250705-131528-click--add-project-button.png",
+            "timestamp": "2025-07-05T11:15:29.784Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "project-create-form",
+            "filename": "20250705-131528-project-create-form.png",
+            "timestamp": "2025-07-05T11:15:29.784Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "form-filled",
+            "filename": "20250705-131528-form-filled.png",
+            "timestamp": "2025-07-05T11:15:29.785Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "state-verification",
+            "filename": "20250705-131528-state-verification.png",
+            "timestamp": "2025-07-05T11:15:29.785Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "project-created",
+            "filename": "20250705-131528-project-created.png",
+            "timestamp": "2025-07-05T11:15:29.785Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "navigate--projects",
+            "filename": "20250705-131528-navigate--projects.png",
+            "timestamp": "2025-07-05T11:15:29.785Z",
+            "description": "",
+            "method": "local-playwright"
+          }
+        ],
+        "duration": 1012,
+        "timestamp": "2025-07-05T11:15:29.786Z"
+      }
+    },
+    {
+      "id": "test_1751714145746",
+      "timestamp": "2025-07-05T11:15:45.746Z",
+      "type": "command",
+      "name": "project_read",
+      "status": "passed",
+      "duration": 509,
+      "entity": "project",
+      "action": "read",
+      "result": {
+        "operation": "read",
+        "viewed": true
+      },
+      "screenshots": [
+        {
+          "name": "baseline",
+          "filename": "20250705-131545-baseline.png",
+          "timestamp": "2025-07-05T11:15:45.243Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "state-verification",
+          "filename": "20250705-131545-state-verification.png",
+          "timestamp": "2025-07-05T11:15:45.243Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "navigate--projects",
+          "filename": "20250705-131545-navigate--projects.png",
+          "timestamp": "2025-07-05T11:15:45.244Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "project-list",
+          "filename": "20250705-131545-project-list.png",
+          "timestamp": "2025-07-05T11:15:45.244Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "click--data-project-id--fi",
+          "filename": "20250705-131545-click--data-project-id--fi.png",
+          "timestamp": "2025-07-05T11:15:45.746Z",
+          "description": "",
+          "method": "local-playwright"
+        },
+        {
+          "name": "project-detail-view",
+          "filename": "20250705-131545-project-detail-view.png",
+          "timestamp": "2025-07-05T11:15:45.746Z",
+          "description": "",
+          "method": "local-playwright"
+        }
+      ],
+      "details": {
+        "success": true,
+        "type": "command",
+        "entity": "project",
+        "action": "read",
+        "name": "project_read",
+        "result": {
+          "operation": "read",
+          "viewed": true
+        },
+        "screenshots": [
+          {
+            "name": "baseline",
+            "filename": "20250705-131545-baseline.png",
+            "timestamp": "2025-07-05T11:15:45.243Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "state-verification",
+            "filename": "20250705-131545-state-verification.png",
+            "timestamp": "2025-07-05T11:15:45.243Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "navigate--projects",
+            "filename": "20250705-131545-navigate--projects.png",
+            "timestamp": "2025-07-05T11:15:45.244Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "project-list",
+            "filename": "20250705-131545-project-list.png",
+            "timestamp": "2025-07-05T11:15:45.244Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "click--data-project-id--fi",
+            "filename": "20250705-131545-click--data-project-id--fi.png",
+            "timestamp": "2025-07-05T11:15:45.746Z",
+            "description": "",
+            "method": "local-playwright"
+          },
+          {
+            "name": "project-detail-view",
+            "filename": "20250705-131545-project-detail-view.png",
+            "timestamp": "2025-07-05T11:15:45.746Z",
+            "description": "",
+            "method": "local-playwright"
+          }
+        ],
+        "duration": 509,
+        "timestamp": "2025-07-05T11:15:45.746Z"
+      }
+    },
+    {
+      "id": "test_1751724654096",
+      "timestamp": "2025-07-05T14:10:54.096Z",
+      "type": "command",
+      "name": "project_create",
+      "status": "failed",
+      "duration": 1124,
+      "entity": "project",
+      "action": "create",
+      "error": "Form field not found: #project-name",
+      "screenshots": [
+        {
+          "name": "baseline",
+          "filename": "20250705-161052-baseline.png",
+          "timestamp": "2025-07-05T14:10:53.029Z",
+          "description": "",
+          "method": "simulated",
+          "error": "Screenshot capture not available in current environment"
+        },
+        {
+          "name": "state-verification",
+          "filename": "20250705-161052-state-verification.png",
+          "timestamp": "2025-07-05T14:10:53.038Z",
+          "description": "",
+          "method": "simulated",
+          "error": "Screenshot capture not available in current environment"
+        },
+        {
+          "name": "navigate--projects",
+          "filename": "20250705-161052-navigate--projects.png",
+          "timestamp": "2025-07-05T14:10:53.051Z",
+          "description": "",
+          "method": "simulated",
+          "error": "Screenshot capture not available in current environment"
+        },
+        {
+          "name": "project-list-before-create",
+          "filename": "20250705-161052-project-list-before-create.png",
+          "timestamp": "2025-07-05T14:10:53.059Z",
+          "description": "",
+          "method": "simulated",
+          "error": "Screenshot capture not available in current environment"
+        },
+        {
+          "name": "click--add-project-button",
+          "filename": "20250705-161052-click--add-project-button.png",
+          "timestamp": "2025-07-05T14:10:54.077Z",
+          "description": "",
+          "method": "simulated",
+          "error": "Screenshot capture not available in current environment"
+        },
+        {
+          "name": "project-create-form",
+          "filename": "20250705-161052-project-create-form.png",
+          "timestamp": "2025-07-05T14:10:54.089Z",
+          "description": "",
+          "method": "simulated",
+          "error": "Screenshot capture not available in current environment"
+        },
+        {
+          "name": "project-create-failure",
+          "filename": "20250705-161052-project-create-failure.png",
+          "timestamp": "2025-07-05T14:10:54.095Z",
+          "description": "",
+          "method": "simulated",
+          "error": "Screenshot capture not available in current environment"
+        }
+      ],
+      "details": {
+        "success": false,
+        "type": "command",
+        "entity": "project",
+        "action": "create",
+        "name": "project_create",
+        "error": "Form field not found: #project-name",
+        "screenshots": [
+          {
+            "name": "baseline",
+            "filename": "20250705-161052-baseline.png",
+            "timestamp": "2025-07-05T14:10:53.029Z",
+            "description": "",
+            "method": "simulated",
+            "error": "Screenshot capture not available in current environment"
+          },
+          {
+            "name": "state-verification",
+            "filename": "20250705-161052-state-verification.png",
+            "timestamp": "2025-07-05T14:10:53.038Z",
+            "description": "",
+            "method": "simulated",
+            "error": "Screenshot capture not available in current environment"
+          },
+          {
+            "name": "navigate--projects",
+            "filename": "20250705-161052-navigate--projects.png",
+            "timestamp": "2025-07-05T14:10:53.051Z",
+            "description": "",
+            "method": "simulated",
+            "error": "Screenshot capture not available in current environment"
+          },
+          {
+            "name": "project-list-before-create",
+            "filename": "20250705-161052-project-list-before-create.png",
+            "timestamp": "2025-07-05T14:10:53.059Z",
+            "description": "",
+            "method": "simulated",
+            "error": "Screenshot capture not available in current environment"
+          },
+          {
+            "name": "click--add-project-button",
+            "filename": "20250705-161052-click--add-project-button.png",
+            "timestamp": "2025-07-05T14:10:54.077Z",
+            "description": "",
+            "method": "simulated",
+            "error": "Screenshot capture not available in current environment"
+          },
+          {
+            "name": "project-create-form",
+            "filename": "20250705-161052-project-create-form.png",
+            "timestamp": "2025-07-05T14:10:54.089Z",
+            "description": "",
+            "method": "simulated",
+            "error": "Screenshot capture not available in current environment"
+          },
+          {
+            "name": "project-create-failure",
+            "filename": "20250705-161052-project-create-failure.png",
+            "timestamp": "2025-07-05T14:10:54.095Z",
+            "description": "",
+            "method": "simulated",
+            "error": "Screenshot capture not available in current environment"
+          }
+        ],
+        "duration": 1124,
+        "timestamp": "2025-07-05T14:10:54.095Z"
+      }
     }
   ],
   "screenshots": [
@@ -1689,6 +2295,255 @@
       "description": "",
       "method": "simulated",
       "error": "Screenshot capture not available in current environment"
+    },
+    {
+      "id": "screenshot_1751713338511",
+      "timestamp": "2025-07-05T11:02:18.504Z",
+      "name": "project-create-failure",
+      "filename": "20250705-130218-project-create-failure.png",
+      "description": "",
+      "method": "simulated",
+      "error": "Screenshot capture not available in current environment"
+    },
+    {
+      "id": "screenshot_1751713993218",
+      "timestamp": "2025-07-05T11:13:13.214Z",
+      "name": "project-create-failure",
+      "filename": "20250705-131313-project-create-failure.png",
+      "description": "",
+      "method": "simulated",
+      "error": "Screenshot capture not available in current environment"
+    },
+    {
+      "id": "screenshot_1751714081074",
+      "timestamp": "2025-07-05T11:14:41.069Z",
+      "name": "baseline",
+      "filename": "20250705-131441-baseline.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714081086",
+      "timestamp": "2025-07-05T11:14:41.069Z",
+      "name": "state-verification",
+      "filename": "20250705-131441-state-verification.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714081096",
+      "timestamp": "2025-07-05T11:14:41.070Z",
+      "name": "navigate--projects",
+      "filename": "20250705-131441-navigate--projects.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714081110",
+      "timestamp": "2025-07-05T11:14:41.070Z",
+      "name": "project-list-before-create",
+      "filename": "20250705-131441-project-list-before-create.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714081121",
+      "timestamp": "2025-07-05T11:14:41.071Z",
+      "name": "project-create-failure",
+      "filename": "20250705-131441-project-create-failure.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714129792",
+      "timestamp": "2025-07-05T11:15:28.780Z",
+      "name": "baseline",
+      "filename": "20250705-131528-baseline.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714129808",
+      "timestamp": "2025-07-05T11:15:28.780Z",
+      "name": "state-verification",
+      "filename": "20250705-131528-state-verification.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714129821",
+      "timestamp": "2025-07-05T11:15:28.781Z",
+      "name": "navigate--projects",
+      "filename": "20250705-131528-navigate--projects.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714129836",
+      "timestamp": "2025-07-05T11:15:28.781Z",
+      "name": "project-list-before-create",
+      "filename": "20250705-131528-project-list-before-create.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714129849",
+      "timestamp": "2025-07-05T11:15:29.784Z",
+      "name": "click--add-project-button",
+      "filename": "20250705-131528-click--add-project-button.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714129861",
+      "timestamp": "2025-07-05T11:15:29.784Z",
+      "name": "project-create-form",
+      "filename": "20250705-131528-project-create-form.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714129873",
+      "timestamp": "2025-07-05T11:15:29.785Z",
+      "name": "form-filled",
+      "filename": "20250705-131528-form-filled.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714129892",
+      "timestamp": "2025-07-05T11:15:29.785Z",
+      "name": "state-verification",
+      "filename": "20250705-131528-state-verification.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714129905",
+      "timestamp": "2025-07-05T11:15:29.785Z",
+      "name": "project-created",
+      "filename": "20250705-131528-project-created.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714129917",
+      "timestamp": "2025-07-05T11:15:29.785Z",
+      "name": "navigate--projects",
+      "filename": "20250705-131528-navigate--projects.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714145751",
+      "timestamp": "2025-07-05T11:15:45.243Z",
+      "name": "baseline",
+      "filename": "20250705-131545-baseline.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714145764",
+      "timestamp": "2025-07-05T11:15:45.243Z",
+      "name": "state-verification",
+      "filename": "20250705-131545-state-verification.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714145779",
+      "timestamp": "2025-07-05T11:15:45.244Z",
+      "name": "navigate--projects",
+      "filename": "20250705-131545-navigate--projects.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714145789",
+      "timestamp": "2025-07-05T11:15:45.244Z",
+      "name": "project-list",
+      "filename": "20250705-131545-project-list.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714145799",
+      "timestamp": "2025-07-05T11:15:45.746Z",
+      "name": "click--data-project-id--fi",
+      "filename": "20250705-131545-click--data-project-id--fi.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751714145813",
+      "timestamp": "2025-07-05T11:15:45.746Z",
+      "name": "project-detail-view",
+      "filename": "20250705-131545-project-detail-view.png",
+      "description": "",
+      "method": "local-playwright"
+    },
+    {
+      "id": "screenshot_1751724654101",
+      "timestamp": "2025-07-05T14:10:53.029Z",
+      "name": "baseline",
+      "filename": "20250705-161052-baseline.png",
+      "description": "",
+      "method": "simulated",
+      "error": "Screenshot capture not available in current environment"
+    },
+    {
+      "id": "screenshot_1751724654162",
+      "timestamp": "2025-07-05T14:10:53.038Z",
+      "name": "state-verification",
+      "filename": "20250705-161052-state-verification.png",
+      "description": "",
+      "method": "simulated",
+      "error": "Screenshot capture not available in current environment"
+    },
+    {
+      "id": "screenshot_1751724654178",
+      "timestamp": "2025-07-05T14:10:53.051Z",
+      "name": "navigate--projects",
+      "filename": "20250705-161052-navigate--projects.png",
+      "description": "",
+      "method": "simulated",
+      "error": "Screenshot capture not available in current environment"
+    },
+    {
+      "id": "screenshot_1751724654199",
+      "timestamp": "2025-07-05T14:10:53.059Z",
+      "name": "project-list-before-create",
+      "filename": "20250705-161052-project-list-before-create.png",
+      "description": "",
+      "method": "simulated",
+      "error": "Screenshot capture not available in current environment"
+    },
+    {
+      "id": "screenshot_1751724654216",
+      "timestamp": "2025-07-05T14:10:54.077Z",
+      "name": "click--add-project-button",
+      "filename": "20250705-161052-click--add-project-button.png",
+      "description": "",
+      "method": "simulated",
+      "error": "Screenshot capture not available in current environment"
+    },
+    {
+      "id": "screenshot_1751724654233",
+      "timestamp": "2025-07-05T14:10:54.089Z",
+      "name": "project-create-form",
+      "filename": "20250705-161052-project-create-form.png",
+      "description": "",
+      "method": "simulated",
+      "error": "Screenshot capture not available in current environment"
+    },
+    {
+      "id": "screenshot_1751724654251",
+      "timestamp": "2025-07-05T14:10:54.095Z",
+      "name": "project-create-failure",
+      "filename": "20250705-161052-project-create-failure.png",
+      "description": "",
+      "method": "simulated",
+      "error": "Screenshot capture not available in current environment"
     }
   ],
   "metadata": {
@@ -1697,10 +2552,10 @@
     "environment": "development"
   },
   "summary": {
-    "totalTests": 12,
-    "passedTests": 10,
-    "failedTests": 2,
-    "totalScreenshots": 59,
-    "duration": 9788
+    "totalTests": 18,
+    "passedTests": 12,
+    "failedTests": 6,
+    "totalScreenshots": 89,
+    "duration": 12456
   }
 }

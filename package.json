@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "npm run dev:frontend",
-    "build": "npm run install:all && npm run build:frontend",
+    "build": "npm run install:all && npm run build:frontend && npm run copy:dist",
     "dev:frontend": "cd frontend && npm run dev",
     "build:frontend": "cd frontend && npm run build",
+    "copy:dist": "cp -r frontend/dist ./dist",
     "dev:convex": "convex dev",
     "build:convex": "convex build",
     "install:all": "npm install && cd frontend && npm install",

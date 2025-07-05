@@ -1,0 +1,40 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__playwright__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/mnt/c/projects/vrp-system/v4/hooks/uat-pre-hook.py",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "mcp__playwright__.*",
+        "hooks": [
+          {
+            "type": "command", 
+            "command": "/mnt/c/projects/vrp-system/v4/hooks/uat-post-hook.py",
+            "timeout": 20
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/mnt/c/projects/vrp-system/v4/hooks/uat-stop-hook.py",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}
