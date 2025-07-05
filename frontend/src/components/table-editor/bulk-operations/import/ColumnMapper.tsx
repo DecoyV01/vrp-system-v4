@@ -106,6 +106,11 @@ export function ColumnMapper({
 
   // Update mapping for a specific column
   const updateMapping = (sourceColumn: string, targetField: string) => {
+    // Handle "no mapping" special case
+    if (targetField === '__no_mapping__') {
+      targetField = sourceColumn // Reset to original column name (unmapped)
+    }
+    
     const schemaField = schemaFields.find(f => f.field === targetField)
     
     setMappingState(prev => {
@@ -116,7 +121,7 @@ export function ColumnMapper({
             targetField,
             dataType: schemaField?.dataType || 'string',
             isRequired: schemaField?.isRequired || false,
-            confidence: targetField === sourceColumn ? 1.0 : 0.8
+            confidence: targetField === sourceColumn ? 1.0 : (schemaField ? 0.8 : 0)
           }
         }
         return mapping
@@ -314,14 +319,14 @@ export function ColumnMapper({
                   {/* Target Field Selector */}
                   <div className="flex-1">
                     <Select
-                      value={mapping?.targetField || ''}
+                      value={mapping?.targetField === header ? '__no_mapping__' : (mapping?.targetField || '__no_mapping__')}
                       onValueChange={(value) => updateMapping(header, value)}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select target field" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">No mapping</SelectItem>
+                        <SelectItem value="__no_mapping__">No mapping</SelectItem>
                         <Separator />
                         {schemaFields.map((field) => (
                           <SelectItem key={field.field} value={field.field}>

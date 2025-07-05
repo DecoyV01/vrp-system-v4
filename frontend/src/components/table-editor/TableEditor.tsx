@@ -9,6 +9,7 @@ import { Plus, Trash2, Edit2, Upload, Download, X, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { useBulkSelection, TemplateDownload, CSVImportModal } from './bulk-operations'
+import { CSVExportModal } from './bulk-operations/export/CSVExportModal'
 import type { Id } from '../convex/_generated/dataModel'
 import {
   useVehicles,
@@ -701,6 +702,14 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
         tableType={tableType}
         existingData={currentData}
         onImport={handleImport}
+      />
+
+      {/* CSV Export Modal */}
+      <CSVExportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        tableType={tableType}
+        data={currentData}
       />
     </div>
   )
