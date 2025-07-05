@@ -47,6 +47,16 @@ interface CSVImportModalProps {
 
 type ImportStep = 'upload' | 'preview' | 'mapping' | 'validation' | 'duplicates' | 'importing' | 'complete'
 
+// Helper function to get required fields for each table type
+const getRequiredFieldsForTableType = (tableType: VRPTableType): string[] => {
+  const requiredFieldsMap = {
+    vehicles: ['name'],
+    jobs: ['name', 'locationId'],
+    locations: ['name', 'address']
+  }
+  return requiredFieldsMap[tableType] || []
+}
+
 interface ImportState {
   step: ImportStep
   file: File | null
@@ -300,8 +310,8 @@ export function CSVImportModal({
       case 'preview':
         return state.parseResult && state.parseResult.data.length > 0
       case 'mapping':
-        const requiredFieldsMapped = state.columnMappings.filter(m => m.isRequired).length > 0
-        return state.columnMappings.length > 0 && requiredFieldsMapped
+        // Allow proceeding if we have any mappings (ColumnMapper handles required field validation)
+        return state.columnMappings.length > 0
       case 'validation':
         return state.parseResult && state.parseResult.errors.length === 0
       case 'duplicates':
@@ -334,7 +344,7 @@ export function CSVImportModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className={`max-w-6xl max-h-[90vh] ${className}`}>
+      <DialogContent className={`max-w-6xl max-h-[90vh] ${className}`} aria-describedby="import-dialog-description">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -343,7 +353,7 @@ export function CSVImportModal({
               </div>
               <div>
                 <DialogTitle>{stepInfo.title}</DialogTitle>
-                <DialogDescription>{stepInfo.description}</DialogDescription>
+                <DialogDescription id="import-dialog-description">{stepInfo.description}</DialogDescription>
               </div>
             </div>
             <Badge variant="outline">

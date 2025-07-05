@@ -4,6 +4,7 @@ import {
   DialogContent, 
   DialogHeader, 
   DialogTitle,
+  DialogDescription,
   DialogFooter 
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
@@ -82,7 +83,7 @@ export function CSVExportModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`max-w-md ${className}`}>
+      <DialogContent className={`max-w-md ${className}`} aria-describedby="export-dialog-description">
         <DialogHeader>
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary/10 rounded-lg">
@@ -90,9 +91,9 @@ export function CSVExportModal({
             </div>
             <div>
               <DialogTitle>Export CSV</DialogTitle>
-              <p className="text-sm text-muted-foreground mt-1">
+              <DialogDescription id="export-dialog-description">
                 Export {tableType} data to CSV file
-              </p>
+              </DialogDescription>
             </div>
           </div>
         </DialogHeader>
