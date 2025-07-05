@@ -47,17 +47,54 @@ export function CSVExportModal({
       // Get all unique keys from the data
       const headers = [...new Set(data.flatMap(row => Object.keys(row)))]
       
+      // Helper function to format values for Excel compatibility
+      const formatValueForExcel = (value: any, header: string): string => {
+        if (value === null || value === undefined) return ''
+        
+        // Handle timestamp fields (Convex _creationTime and updatedAt)
+        if ((header === '_creationTime' || header === 'updatedAt') && typeof value === 'number') {
+          // Convert Unix timestamp (milliseconds) to Excel-compatible ISO date
+          const date = new Date(value)
+          return date.toISOString().replace('T', ' ').replace('Z', '')
+        }
+        
+        // Handle time window fields (seconds since midnight)
+        if ((header === 'twStart' || header === 'twEnd') && typeof value === 'number') {
+          // Convert seconds since midnight to HH:MM:SS format
+          const hours = Math.floor(value / 3600)
+          const minutes = Math.floor((value % 3600) / 60)
+          const seconds = value % 60
+          return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+        }
+        
+        // Handle arrays (convert to JSON for Excel)
+        if (typeof value === 'object' && Array.isArray(value)) {
+          return `"${JSON.stringify(value)}"`
+        }
+        
+        // Handle other objects
+        if (typeof value === 'object') {
+          return `"${JSON.stringify(value)}"`
+        }
+        
+        // Handle strings with commas (quote them)
+        if (typeof value === 'string' && value.includes(',')) {
+          return `"${value}"`
+        }
+        
+        // Handle strings with quotes (escape them)
+        if (typeof value === 'string' && value.includes('"')) {
+          return `"${value.replace(/"/g, '""')}"`
+        }
+        
+        return String(value)
+      }
+      
       // Create CSV content
       const csvContent = [
         headers.join(','), // Header row
         ...data.map(row => 
-          headers.map(header => {
-            const value = row[header]
-            if (value === null || value === undefined) return ''
-            if (typeof value === 'object') return JSON.stringify(value)
-            if (typeof value === 'string' && value.includes(',')) return `"${value}"`
-            return String(value)
-          }).join(',')
+          headers.map(header => formatValueForExcel(row[header], header)).join(',')
         )
       ].join('\n')
 
