@@ -48,7 +48,7 @@ export function TemplateDownload({
     includeSystemFields: true,
     includeSampleData: true,
     sampleRowCount: 3,
-    includeDescriptions: true
+    includeDescriptions: false
   })
 
   const downloadTemplate = (customOptions?: Partial<TemplateOptions>) => {

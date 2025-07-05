@@ -356,9 +356,6 @@ export class CSVProcessor {
       // If it's a string, try to parse it as JSON
       if (typeof row.capacity === 'string') {
         try {
-          // Debug logging to see exact value
-          console.log('Parsing capacity string:', JSON.stringify(row.capacity), 'length:', row.capacity.length)
-          
           // Clean the string of potential CSV artifacts
           let cleanCapacity = row.capacity.trim()
           
@@ -368,11 +365,8 @@ export class CSVProcessor {
             cleanCapacity = cleanCapacity.slice(1, -1)
           }
           
-          console.log('Cleaned capacity string:', JSON.stringify(cleanCapacity))
           capacityArray = JSON.parse(cleanCapacity)
-          console.log('Successfully parsed capacity:', capacityArray)
         } catch (error) {
-          console.error('Failed to parse capacity:', JSON.stringify(row.capacity), 'Error:', error.message)
           
           // Try alternate parsing method for common formats
           try {
@@ -383,7 +377,6 @@ export class CSVProcessor {
               const numbers = innerContent.split(/[\s,]+/).filter(s => s.length > 0).map(s => parseFloat(s))
               if (numbers.every(n => !isNaN(n))) {
                 capacityArray = numbers
-                console.log('Fallback parsing succeeded:', capacityArray)
               } else {
                 throw new Error('Contains non-numeric values')
               }
