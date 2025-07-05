@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator'
 import { Plus, Trash2, Edit2, Upload, Download, X, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { useBulkSelection, TemplateDownload } from './bulk-operations'
+import { useBulkSelection, TemplateDownload, CSVImportModal } from './bulk-operations'
 import type { Id } from '../convex/_generated/dataModel'
 import {
   useVehicles,
@@ -296,6 +296,54 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
       toast.error(`Failed to create ${tableType.slice(0, -1)}`)
     } finally {
       setIsCreating(false)
+    }
+  }
+
+  const handleImport = async (data: any[], mappings: any[]) => {
+    try {
+      let successCount = 0
+      let errorCount = 0
+
+      for (const row of data) {
+        try {
+          const baseData = {
+            projectId,
+            scenarioId,
+            datasetId
+          }
+
+          switch (tableType) {
+            case 'vehicles':
+              await createVehicle({ ...baseData, ...row })
+              break
+            case 'jobs':
+              await createJob({ ...baseData, ...row })
+              break
+            case 'locations':
+              await createLocation({ ...baseData, ...row })
+              break
+            default:
+              throw new Error(`Import not supported for ${tableType}`)
+          }
+          successCount++
+        } catch (error) {
+          console.error('Failed to import row:', error)
+          errorCount++
+        }
+      }
+
+      if (successCount > 0) {
+        toast.success(`Successfully imported ${successCount} row${successCount !== 1 ? 's' : ''}`)
+      }
+      
+      if (errorCount > 0) {
+        toast.error(`Failed to import ${errorCount} row${errorCount !== 1 ? 's' : ''}`)
+      }
+
+      setShowImportModal(false)
+    } catch (error) {
+      console.error('Import failed:', error)
+      toast.error('Import failed')
     }
   }
 
@@ -645,6 +693,15 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
           </Button>
         </div>
       )}
+
+      {/* CSV Import Modal */}
+      <CSVImportModal
+        isOpen={showImportModal}
+        onClose={() => setShowImportModal(false)}
+        tableType={tableType}
+        existingData={currentData}
+        onImport={handleImport}
+      />
     </div>
   )
 }
