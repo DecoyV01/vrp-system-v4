@@ -310,7 +310,8 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
           const baseData = {
             projectId,
             scenarioId,
-            datasetId
+            datasetId,
+            optimizerId: Math.floor(Math.random() * 1000000) // Generate unique optimizer ID
           }
 
           switch (tableType) {

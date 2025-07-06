@@ -1,27 +1,34 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { 
   Dialog, 
   DialogContent, 
   DialogHeader, 
   DialogTitle,
-  DialogDescription,
-  DialogFooter 
+  DialogDescription
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
+import { Progress } from '@/components/ui/progress'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { 
   Download, 
-  FileText, 
-  CheckCircle2
+  X, 
+  CheckCircle2,
+  AlertCircle,
+  FileText,
+  Settings
 } from 'lucide-react'
+import { ExportOptionsForm } from './ExportOptionsForm'
+import { useBulkExport } from '../hooks/useBulkExport'
 import type { VRPTableType } from '../types/shared.types'
+import type { BulkExportOptions } from '../types/bulk-export.types'
 
 interface CSVExportModalProps {
   isOpen: boolean
   onClose: () => void
   tableType: VRPTableType
   data: any[]
+  selectedRows: any[]
+  filteredData: any[]
   className?: string
 }
 
@@ -30,175 +37,236 @@ export function CSVExportModal({
   onClose,
   tableType,
   data,
+  selectedRows,
+  filteredData,
   className
 }: CSVExportModalProps) {
-  const [isExporting, setIsExporting] = useState(false)
+  const [currentView, setCurrentView] = useState<'options' | 'progress' | 'complete'>('options')
+  const [exportOptions, setExportOptions] = useState<BulkExportOptions>({
+    scope: 'all',
+    format: 'csv',
+    includeSystemFields: false,
+    includeConvexIds: false,
+    selectedColumns: [],
+    compression: false
+  })
 
-  const handleExport = async () => {
+  const { 
+    exportState, 
+    startExport, 
+    cancelExport, 
+    resetExport, 
+    isExporting, 
+    isCompleted, 
+    hasError 
+  } = useBulkExport()
+
+  // Get available columns from data
+  const availableColumns = data.length > 0 ? Object.keys(data[0]) : []
+
+  // Reset state when modal opens/closes
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentView('options')
+      resetExport()
+    }
+  }, [isOpen, resetExport])
+
+  // Update view based on export state
+  useEffect(() => {
+    if (isExporting) {
+      setCurrentView('progress')
+    } else if (isCompleted) {
+      setCurrentView('complete')
+    } else if (hasError) {
+      setCurrentView('options')
+    }
+  }, [isExporting, isCompleted, hasError])
+
+  const handleStartExport = async () => {
     try {
-      setIsExporting(true)
-      
-      // Simple CSV export logic
-      if (data.length === 0) {
+      // Get data based on scope
+      let exportData = data
+      switch (exportOptions.scope) {
+        case 'filtered':
+          exportData = filteredData
+          break
+        case 'selected':
+          exportData = selectedRows
+          break
+        default:
+          exportData = data
+      }
+
+      if (exportData.length === 0) {
         alert('No data to export')
         return
       }
 
-      // Get all unique keys from the data
-      const headers = [...new Set(data.flatMap(row => Object.keys(row)))]
-      
-      // Helper function to format values for Excel compatibility
-      const formatValueForExcel = (value: any, header: string): string => {
-        if (value === null || value === undefined) return ''
-        
-        // Handle timestamp fields (Convex _creationTime and updatedAt)
-        if ((header === '_creationTime' || header === 'updatedAt') && typeof value === 'number') {
-          // Convert Unix timestamp (milliseconds) to Excel-compatible ISO date
-          const date = new Date(value)
-          return date.toISOString().replace('T', ' ').replace('Z', '')
-        }
-        
-        // Handle time window fields (seconds since midnight)
-        if ((header === 'twStart' || header === 'twEnd') && typeof value === 'number') {
-          // Convert seconds since midnight to HH:MM:SS format
-          const hours = Math.floor(value / 3600)
-          const minutes = Math.floor((value % 3600) / 60)
-          const seconds = value % 60
-          return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-        }
-        
-        // Handle arrays (convert to JSON for Excel)
-        if (typeof value === 'object' && Array.isArray(value)) {
-          return `"${JSON.stringify(value)}"`
-        }
-        
-        // Handle other objects
-        if (typeof value === 'object') {
-          return `"${JSON.stringify(value)}"`
-        }
-        
-        // Handle strings with commas (quote them)
-        if (typeof value === 'string' && value.includes(',')) {
-          return `"${value}"`
-        }
-        
-        // Handle strings with quotes (escape them)
-        if (typeof value === 'string' && value.includes('"')) {
-          return `"${value.replace(/"/g, '""')}"`
-        }
-        
-        return String(value)
-      }
-      
-      // Create CSV content
-      const csvContent = [
-        headers.join(','), // Header row
-        ...data.map(row => 
-          headers.map(header => formatValueForExcel(row[header], header)).join(',')
-        )
-      ].join('\n')
+      await startExport(exportData, tableType, exportOptions)
+    } catch (error) {
+      console.error('Export failed:', error)
+    }
+  }
 
-      // Create and download file
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+  const handleDownload = () => {
+    if (exportState.downloadUrl) {
       const link = document.createElement('a')
-      const url = URL.createObjectURL(blob)
-      link.setAttribute('href', url)
-      link.setAttribute('download', `${tableType}_export_${new Date().toISOString().split('T')[0]}.csv`)
-      link.style.visibility = 'hidden'
+      link.href = exportState.downloadUrl
+      link.download = `${tableType}_export_${new Date().toISOString().split('T')[0]}.${exportOptions.format}`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
-
       onClose()
-    } catch (error) {
-      console.error('Export failed:', error)
-      alert('Export failed. Please try again.')
-    } finally {
-      setIsExporting(false)
+    }
+  }
+
+  const handleCancel = () => {
+    if (isExporting) {
+      cancelExport()
+    }
+    onClose()
+  }
+
+  const renderContent = () => {
+    switch (currentView) {
+      case 'options':
+        return (
+          <ExportOptionsForm
+            options={exportOptions}
+            onOptionsChange={setExportOptions}
+            availableColumns={availableColumns}
+            selectedRowsCount={selectedRows.length}
+            totalRowsCount={data.length}
+            filteredRowsCount={filteredData.length}
+            onStartExport={handleStartExport}
+            isExporting={isExporting}
+          />
+        )
+
+      case 'progress':
+        return (
+          <div className="space-y-6">
+            <div className="text-center">
+              <div className="p-4 bg-primary/10 rounded-lg inline-block mb-4">
+                <FileText className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Exporting Data</h3>
+              <p className="text-muted-foreground">
+                Please wait while we prepare your export...
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span>Progress</span>
+                  <span>{exportState.progress.current}/{exportState.progress.total}</span>
+                </div>
+                <Progress 
+                  value={exportState.progress.total > 0 ? (exportState.progress.current / exportState.progress.total) * 100 : 0}
+                  className="h-2"
+                />
+              </div>
+              
+              <div className="text-center text-sm text-muted-foreground">
+                {exportState.progress.message}
+              </div>
+            </div>
+
+            <div className="flex justify-center">
+              <Button variant="outline" onClick={handleCancel}>
+                Cancel Export
+              </Button>
+            </div>
+          </div>
+        )
+
+      case 'complete':
+        return (
+          <div className="space-y-6">
+            <div className="text-center">
+              <div className="p-4 bg-green-100 rounded-lg inline-block mb-4">
+                <CheckCircle2 className="h-8 w-8 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Export Complete</h3>
+              <p className="text-muted-foreground">
+                Your export has been prepared successfully
+              </p>
+            </div>
+
+            <div className="p-4 bg-muted/50 rounded-lg">
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-muted-foreground">Records:</span>
+                  <span className="ml-2 font-semibold">{exportState.progress.current}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Format:</span>
+                  <span className="ml-2 font-semibold">{exportOptions.format.toUpperCase()}</span>
+                </div>
+              </div>
+            </div>
+
+            {hasError && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  {exportState.progress.message}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <div className="flex items-center justify-between">
+              <Button variant="outline" onClick={onClose}>
+                Close
+              </Button>
+              <Button onClick={handleDownload} disabled={!exportState.downloadUrl}>
+                <Download className="h-4 w-4 mr-2" />
+                Download Export
+              </Button>
+            </div>
+          </div>
+        )
+
+      default:
+        return null
     }
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`max-w-md ${className}`} aria-describedby="export-dialog-description">
+      <DialogContent className={`max-w-4xl max-h-[90vh] overflow-y-auto ${className}`}>
         <DialogHeader>
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <Download className="h-5 w-5 text-primary" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                {currentView === 'options' && <Settings className="h-5 w-5 text-primary" />}
+                {currentView === 'progress' && <FileText className="h-5 w-5 text-primary" />}
+                {currentView === 'complete' && <CheckCircle2 className="h-5 w-5 text-green-600" />}
+              </div>
+              <div>
+                <DialogTitle>
+                  {currentView === 'options' && 'Export Options'}
+                  {currentView === 'progress' && 'Exporting Data'}
+                  {currentView === 'complete' && 'Export Complete'}
+                </DialogTitle>
+                <DialogDescription>
+                  {currentView === 'options' && `Configure export settings for ${tableType} data`}
+                  {currentView === 'progress' && 'Please wait while we prepare your export'}
+                  {currentView === 'complete' && 'Your export is ready for download'}
+                </DialogDescription>
+              </div>
             </div>
-            <div>
-              <DialogTitle>Export CSV</DialogTitle>
-              <DialogDescription id="export-dialog-description">
-                Export {tableType} data to CSV file
-              </DialogDescription>
-            </div>
+            <Button variant="ghost" size="sm" onClick={handleCancel}>
+              <X className="h-4 w-4" />
+            </Button>
           </div>
         </DialogHeader>
 
         <div className="py-4">
-          <div className="space-y-4">
-            {/* Export Summary */}
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="font-medium">Export Summary</h4>
-                <Badge variant="outline">{tableType}</Badge>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-muted-foreground">Records:</span>
-                  <span className="ml-2 font-semibold">{data.length}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Format:</span>
-                  <span className="ml-2 font-semibold">CSV</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Export Info */}
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                <span>All table columns will be included</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4" />
-                <span>Data will be formatted for Excel compatibility</span>
-              </div>
-            </div>
-          </div>
+          {renderContent()}
         </div>
-
-        <Separator />
-
-        <DialogFooter>
-          <div className="flex items-center justify-between w-full">
-            <div className="text-sm text-muted-foreground">
-              Export will download immediately
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <Button variant="outline" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button 
-                onClick={handleExport} 
-                disabled={isExporting || data.length === 0}
-                className="gap-2"
-              >
-                {isExporting ? (
-                  <>Exporting...</>
-                ) : (
-                  <>
-                    <Download className="h-4 w-4" />
-                    Export CSV
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   )
