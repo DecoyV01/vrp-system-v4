@@ -26,9 +26,9 @@ interface CSVExportModalProps {
   isOpen: boolean
   onClose: () => void
   tableType: VRPTableType
-  data: any[]
-  selectedRows: any[]
-  filteredData: any[]
+  data?: any[]
+  selectedRows?: any[]
+  filteredData?: any[]
   className?: string
 }
 
@@ -36,9 +36,9 @@ export function CSVExportModal({
   isOpen,
   onClose,
   tableType,
-  data,
-  selectedRows,
-  filteredData,
+  data = [],
+  selectedRows = [],
+  filteredData = [],
   className
 }: CSVExportModalProps) {
   const [currentView, setCurrentView] = useState<'options' | 'progress' | 'complete'>('options')
@@ -61,8 +61,8 @@ export function CSVExportModal({
     hasError 
   } = useBulkExport()
 
-  // Get available columns from data
-  const availableColumns = data.length > 0 ? Object.keys(data[0]) : []
+  // Get available columns from data with safe access
+  const availableColumns = data && data.length > 0 ? Object.keys(data[0]) : []
 
   // Reset state when modal opens/closes
   useEffect(() => {
@@ -85,20 +85,20 @@ export function CSVExportModal({
 
   const handleStartExport = async () => {
     try {
-      // Get data based on scope
-      let exportData = data
+      // Get data based on scope with safe access
+      let exportData = data || []
       switch (exportOptions.scope) {
         case 'filtered':
-          exportData = filteredData
+          exportData = filteredData || []
           break
         case 'selected':
-          exportData = selectedRows
+          exportData = selectedRows || []
           break
         default:
-          exportData = data
+          exportData = data || []
       }
 
-      if (exportData.length === 0) {
+      if (!exportData || exportData.length === 0) {
         alert('No data to export')
         return
       }
@@ -136,9 +136,9 @@ export function CSVExportModal({
             options={exportOptions}
             onOptionsChange={setExportOptions}
             availableColumns={availableColumns}
-            selectedRowsCount={selectedRows.length}
-            totalRowsCount={data.length}
-            filteredRowsCount={filteredData.length}
+            selectedRowsCount={selectedRows?.length || 0}
+            totalRowsCount={data?.length || 0}
+            filteredRowsCount={filteredData?.length || 0}
             onStartExport={handleStartExport}
             isExporting={isExporting}
           />
