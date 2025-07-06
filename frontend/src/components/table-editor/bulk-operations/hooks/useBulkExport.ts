@@ -102,8 +102,10 @@ export function useBulkExport() {
   ) => {
     // Filter data based on scope
     let exportData = data
-    if (options.scope === 'selected' && options.selectedColumns.length > 0) {
-      exportData = data.map(row => 
+
+    // Apply column filtering if specific columns are selected
+    if (options.selectedColumns.length > 0) {
+      exportData = exportData.map(row => 
         options.selectedColumns.reduce((acc, col) => {
           if (row.hasOwnProperty(col)) {
             acc[col] = row[col]
@@ -140,7 +142,7 @@ export function useBulkExport() {
       case 'excel':
         content = generateExcelCompatibleCSV(exportData)
         mimeType = 'text/csv;charset=utf-8;'
-        extension = 'csv'
+        extension = 'xlsx'
         break
       case 'json':
         content = JSON.stringify(exportData, null, 2)
@@ -157,7 +159,10 @@ export function useBulkExport() {
 
     // Generate filename
     const timestamp = new Date().toISOString().split('T')[0]
-    const filename = options.filename || `${tableType}_export_${timestamp}.${extension}`
+    const finalExtension = options.format === 'excel' ? 'xlsx' : extension
+    const filename = options.filename 
+      ? `${options.filename}.${finalExtension}`
+      : `${tableType}_export_${timestamp}.${finalExtension}`
 
     return {
       downloadUrl,

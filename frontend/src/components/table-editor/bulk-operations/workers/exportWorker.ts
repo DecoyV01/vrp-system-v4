@@ -124,7 +124,7 @@ async function generateExportContent(
     case 'excel':
       content = generateExcelCompatibleCSV(data)
       mimeType = 'text/csv;charset=utf-8;'
-      extension = 'csv'
+      extension = 'xlsx'
       break
     case 'json':
       content = JSON.stringify(data, null, 2)
@@ -141,7 +141,10 @@ async function generateExportContent(
 
   // Generate filename
   const timestamp = new Date().toISOString().split('T')[0]
-  const filename = options.filename || `${tableType}_export_${timestamp}.${extension}`
+  const finalExtension = options.format === 'excel' ? 'xlsx' : extension
+  const filename = options.filename 
+    ? `${options.filename}.${finalExtension}`
+    : `${tableType}_export_${timestamp}.${finalExtension}`
 
   return {
     downloadUrl,

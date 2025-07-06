@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { useBulkSelection, TemplateDownload, CSVImportModal } from './bulk-operations'
 import { CSVExportModal } from './bulk-operations/export/CSVExportModal'
+import { BulkEditModal } from './bulk-operations/edit/BulkEditModal'
 import type { Id } from '../convex/_generated/dataModel'
 import {
   useVehicles,
@@ -711,6 +712,23 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
         onClose={() => setShowExportModal(false)}
         tableType={tableType}
         data={currentData}
+        selectedRows={getSelectedRows()}
+        filteredData={currentData}
+      />
+
+      {/* Bulk Edit Modal */}
+      <BulkEditModal
+        isOpen={showBulkEditModal}
+        onClose={() => setShowBulkEditModal(false)}
+        tableType={tableType}
+        selectedRows={getSelectedRows()}
+        onEditComplete={(updatedRows) => {
+          // Handle the updated rows - this would typically update the data
+          console.log('Updated rows:', updatedRows)
+          toast.success(`Updated ${updatedRows.length} records`)
+          setShowBulkEditModal(false)
+        }}
+        availableFields={schema.columns.map(col => col.key)}
       />
     </div>
   )

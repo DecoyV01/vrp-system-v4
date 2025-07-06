@@ -113,7 +113,15 @@ export function CSVExportModal({
     if (exportState.downloadUrl) {
       const link = document.createElement('a')
       link.href = exportState.downloadUrl
-      link.download = `${tableType}_export_${new Date().toISOString().split('T')[0]}.${exportOptions.format}`
+      
+      // Use custom filename if provided, otherwise use auto-generated name
+      const timestamp = new Date().toISOString().split('T')[0]
+      const extension = exportOptions.format === 'excel' ? 'xlsx' : exportOptions.format
+      const filename = exportOptions.filename 
+        ? `${exportOptions.filename}.${extension}`
+        : `${tableType}_export_${timestamp}.${extension}`
+      
+      link.download = filename
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)

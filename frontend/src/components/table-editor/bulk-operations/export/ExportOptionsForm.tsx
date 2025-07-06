@@ -354,7 +354,27 @@ export function ExportOptionsForm({
                       <Checkbox
                         id={`column-${column}`}
                         checked={options.selectedColumns.length === 0 || options.selectedColumns.includes(column)}
-                        onCheckedChange={(checked) => handleColumnToggle(column, checked as boolean)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            // If currently all columns are selected (selectedColumns is empty), initialize with all columns first
+                            if (options.selectedColumns.length === 0) {
+                              const allExceptThis = availableColumns.filter(col => col !== column)
+                              onOptionsChange({ ...options, selectedColumns: [...allExceptThis, column] })
+                            } else {
+                              // Add this column
+                              handleColumnToggle(column, true)
+                            }
+                          } else {
+                            // If currently all columns are selected (selectedColumns is empty), initialize with all except this one
+                            if (options.selectedColumns.length === 0) {
+                              const allExceptThis = availableColumns.filter(col => col !== column)
+                              onOptionsChange({ ...options, selectedColumns: allExceptThis })
+                            } else {
+                              // Remove this column
+                              handleColumnToggle(column, false)
+                            }
+                          }
+                        }}
                       />
                       <Label 
                         htmlFor={`column-${column}`}
