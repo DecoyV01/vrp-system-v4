@@ -19,29 +19,42 @@ const LoginPage = () => {
 
   // Clear any stale auth tokens on mount to prevent token mismatch errors
   useEffect(() => {
-    // Check if there are auth-related items in localStorage that might be stale
-    const authKeys = Object.keys(localStorage).filter(
+    // Always clear all auth-related storage on login page to ensure clean state
+    const allKeys = [
+      ...Object.keys(localStorage),
+      ...Object.keys(sessionStorage),
+    ]
+
+    const authKeys = allKeys.filter(
       key =>
-        key.includes('convex') || key.includes('auth') || key.includes('token')
+        key.includes('convex') ||
+        key.includes('auth') ||
+        key.includes('token') ||
+        key.includes('session')
     )
 
     if (authKeys.length > 0) {
-      console.log('🧹 Clearing potentially stale auth tokens:', authKeys)
-      authKeys.forEach(key => localStorage.removeItem(key))
+      console.log('🧹 Clearing all auth tokens for clean state:', authKeys)
+      authKeys.forEach(key => {
+        localStorage.removeItem(key)
+        sessionStorage.removeItem(key)
+      })
 
-      // Also clear sessionStorage
-      const sessionAuthKeys = Object.keys(sessionStorage).filter(
-        key =>
-          key.includes('convex') ||
-          key.includes('auth') ||
-          key.includes('token')
-      )
-      sessionAuthKeys.forEach(key => sessionStorage.removeItem(key))
+      // Also clear any cookies that might contain auth tokens
+      document.cookie.split(';').forEach(cookie => {
+        const eqPos = cookie.indexOf('=')
+        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim()
+        if (
+          name.includes('convex') ||
+          name.includes('auth') ||
+          name.includes('token')
+        ) {
+          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`
+        }
+      })
 
-      // Force a page reload to ensure clean state
-      if (authKeys.length > 0) {
-        window.location.reload()
-      }
+      console.log('🔄 Forcing reload for completely clean auth state')
+      window.location.reload()
     }
   }, [])
 
