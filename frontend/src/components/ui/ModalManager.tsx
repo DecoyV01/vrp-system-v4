@@ -65,11 +65,12 @@ export const ModalManager = ({
     isCloning
   } = useHierarchyOperations()
 
+  const confirmationDialog = useConfirmation()
   const {
     confirmDelete,
     confirmClone,
     confirmSave
-  } = useConfirmation()
+  } = confirmationDialog || {}
 
   const {
     notifyOperationResult,
@@ -172,10 +173,10 @@ export const ModalManager = ({
     const entityName = modalState.data.name || 'Unknown'
     const entityType = modalState.data.type
     
-    if (entityType === 'scenario') {
+    if (confirmClone && entityType === 'scenario') {
       const message = confirmationMessages.scenario.clone(entityName)
       confirmClone(entityName, entityType, performClone)
-    } else if (entityType === 'dataset') {
+    } else if (confirmClone && entityType === 'dataset') {
       const message = confirmationMessages.dataset.clone(entityName)
       confirmClone(entityName, entityType, performClone)
     } else {

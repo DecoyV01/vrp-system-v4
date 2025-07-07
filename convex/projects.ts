@@ -59,7 +59,6 @@ export const create = mutation({
     const projectId = await ctx.db.insert("projects", {
       ...args,
       ownerId: user._id,
-      createdAt: now,
       updatedAt: now,
     });
     

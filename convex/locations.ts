@@ -110,7 +110,6 @@ export const create = mutation({
     
     const locationId = await ctx.db.insert("locations", {
       ...args,
-      createdAt: now,
       updatedAt: now,
     });
     
@@ -302,7 +301,6 @@ export const bulkImport = mutation({
         scenarioId: args.scenarioId,
         datasetId: args.datasetId,
         ...locationData,
-        createdAt: now,
         updatedAt: now,
       });
       locationIds.push(locationId);
@@ -433,7 +431,6 @@ export const duplicate = mutation({
         timezone: originalLocation.timezone,
         datasetName: originalLocation.datasetName,
         datasetVersion: originalLocation.datasetVersion,
-        createdAt: now,
         updatedAt: now,
       });
       

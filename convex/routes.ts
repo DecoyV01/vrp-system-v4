@@ -166,7 +166,6 @@ export const storeOptimizationResults = mutation({
         optimizationRunId: args.optimizationRunId,
         projectId: args.projectId,
         ...routeData,
-        createdAt: now,
         updatedAt: now,
       });
       routeIds.push(routeId);

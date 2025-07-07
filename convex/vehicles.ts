@@ -113,7 +113,6 @@ export const create = mutation({
     const vehicleId = await ctx.db.insert("vehicles", {
       ...args,
       optimizerId: args.optimizerId || Math.floor(Math.random() * 1000000),
-      createdAt: now,
       updatedAt: now,
     });
     
@@ -284,7 +283,6 @@ export const bulkImport = mutation({
         scenarioId: args.scenarioId,
         datasetId: args.datasetId,
         ...vehicleData,
-        createdAt: now,
         updatedAt: now,
       });
       vehicleIds.push(vehicleId);
@@ -408,7 +406,6 @@ export const duplicate = mutation({
         costPerKm: originalVehicle.costPerKm,
         datasetName: originalVehicle.datasetName,
         datasetVersion: originalVehicle.datasetVersion,
-        createdAt: now,
         updatedAt: now,
       });
       

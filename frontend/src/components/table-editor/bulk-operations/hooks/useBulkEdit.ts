@@ -305,9 +305,16 @@ async function validateOperations(
 
   // Validate each operation
   for (const operation of operations) {
-    // Check if field exists in data
-    if (data.length > 0 && !data[0].hasOwnProperty(operation.field)) {
-      errors.push(`Field '${operation.field}' does not exist`)
+    // Check if field exists in data - handle nested properties and arrays
+    if (data.length > 0) {
+      const sampleRow = data[0]
+      const fieldExists = operation.field in sampleRow || 
+                         sampleRow.hasOwnProperty(operation.field) ||
+                         operation.field.includes('.') // Allow dot notation for nested fields
+      
+      if (!fieldExists) {
+        errors.push(`Field '${operation.field}' does not exist`)
+      }
     }
 
     // Validate operation type vs value type

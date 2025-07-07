@@ -60,7 +60,6 @@ export const create = mutation({
     
     const scenarioId = await ctx.db.insert("scenarios", {
       ...args,
-      createdAt: now,
       updatedAt: now,
       optimizationCount: 0,
     });
@@ -306,7 +305,6 @@ export const clone = mutation({
       status: "draft",
       tags: originalScenario.tags,
       isActive: false,
-      createdAt: now,
       updatedAt: now,
       optimizationCount: 0,
     });

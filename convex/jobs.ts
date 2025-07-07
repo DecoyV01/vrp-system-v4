@@ -114,7 +114,6 @@ export const create = mutation({
     
     const jobId = await ctx.db.insert("jobs", {
       ...args,
-      createdAt: now,
       updatedAt: now,
     });
     
@@ -284,7 +283,6 @@ export const bulkImport = mutation({
         scenarioId: args.scenarioId,
         datasetId: args.datasetId,
         ...jobData,
-        createdAt: now,
         updatedAt: now,
       });
       jobIds.push(jobId);
@@ -414,7 +412,6 @@ export const duplicate = mutation({
         timeWindows: originalJob.timeWindows,
         datasetName: originalJob.datasetName,
         datasetVersion: originalJob.datasetVersion,
-        createdAt: now,
         updatedAt: now,
       });
       

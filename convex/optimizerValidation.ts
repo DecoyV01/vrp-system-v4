@@ -292,7 +292,7 @@ export const generateNextOptimizerId = async (
   // Query all entities of this type to find the highest optimizer ID
   const entities = await ctx.db.query(entityType).collect();
   
-  const maxOptimizerId = entities.reduce((max, entity) => {
+  const maxOptimizerId = entities.reduce((max: number, entity: any) => {
     return Math.max(max, entity.optimizerId || 0);
   }, 0);
   
