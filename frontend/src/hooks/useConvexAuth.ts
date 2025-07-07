@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 
 // Current implementation uses the official Convex Auth
 export const useCurrentUser = () => {
-  const userProfile = useQuery(api.auth.getCurrentUserProfile)
+  const userProfile = useQuery(api.auth.currentUser)
 
   // Determine authentication state based on userProfile
   const isAuthenticated = userProfile !== undefined && userProfile !== null
@@ -150,8 +150,7 @@ export const useAuth = () => {
 // Helper hook to check if user has access to a project
 export const useProjectAccess = (projectId: string | undefined) => {
   const { isAuthenticated } = useCurrentUser()
-  return useQuery(
-    api.auth.validateProjectAccess,
-    isAuthenticated && projectId ? { projectId: projectId as any } : 'skip'
-  )
+  // Note: Project access validation moved to backend functions
+  // Each project query now validates access internally
+  return { hasAccess: isAuthenticated, isLoading: false }
 }
