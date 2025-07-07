@@ -25,6 +25,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@auth/core": "^0.37.0",
+    "@convex-dev/auth": "^0.0.87",
     "convex": "^1.16.0",
     "playwright": "^1.53.2"
   },

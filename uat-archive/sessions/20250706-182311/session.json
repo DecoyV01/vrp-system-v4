@@ -1,0 +1,209 @@
+{
+  "sessionId": "20250706-182311",
+  "scenario": "login-flow",
+  "startTime": "2025-07-06T18:23:11.329443",
+  "status": "completed",
+  "phase": "analyzing",
+  "userMessage": null,
+  "steps": [
+    {
+      "timestamp": "2025-07-06T18:23:36.734388",
+      "phase": "initialization",
+      "tool": "Bash",
+      "action": "screenshot",
+      "status": "completed",
+      "details": {}
+    },
+    {
+      "timestamp": "2025-07-06T18:24:03.763718",
+      "phase": "recording",
+      "tool": "Bash",
+      "action": "screenshot",
+      "status": "completed",
+      "details": {}
+    },
+    {
+      "timestamp": "2025-07-06T18:24:29.252121",
+      "phase": "analyzing",
+      "tool": "Bash",
+      "action": "screenshot",
+      "status": "completed",
+      "details": {}
+    },
+    {
+      "timestamp": "2025-07-06T18:24:59.617420",
+      "phase": "analyzing",
+      "tool": "Bash",
+      "action": "unknown",
+      "status": "completed",
+      "details": {}
+    },
+    {
+      "timestamp": "2025-07-06T18:25:26.746843",
+      "phase": "analyzing",
+      "tool": "Bash",
+      "action": "unknown",
+      "status": "completed",
+      "details": {}
+    },
+    {
+      "timestamp": "2025-07-06T18:25:52.769830",
+      "phase": "analyzing",
+      "tool": "Bash",
+      "action": "unknown",
+      "status": "completed",
+      "details": {}
+    }
+  ],
+  "artifacts": {
+    "screenshots": [],
+    "logs": [],
+    "reports": []
+  },
+  "metrics": {
+    "totalSteps": 6,
+    "completedSteps": 6,
+    "failedSteps": 0,
+    "duration": 196.152259
+  },
+  "execution_progress": {
+    "current_step": 1,
+    "completed_steps": [],
+    "total_steps": 0,
+    "last_executed_tool": "",
+    "status": "ready",
+    "execution_plan_loaded": false
+  },
+  "objectives": {
+    "definitions": [
+      {
+        "id": "auth_validation",
+        "title": "User Authentication Validation",
+        "description": "Verify user can successfully authenticate with the VRP system",
+        "category": "Authentication",
+        "priority": "Critical",
+        "acceptance_criteria": [
+          "User can access login page",
+          "User can log in with valid credentials",
+          "User authentication state is properly managed",
+          "User can successfully log out",
+          "User is redirected to login page after logout"
+        ],
+        "steps": [
+          "navigate",
+          "verify_state",
+          "navigate",
+          "fill",
+          "click",
+          "verify_state",
+          "logout"
+        ],
+        "dependencies": []
+      },
+      {
+        "id": "session_management",
+        "title": "Session Management Validation",
+        "description": "Verify proper session lifecycle management",
+        "category": "Authentication",
+        "priority": "High",
+        "acceptance_criteria": [
+          "Initial state shows user logged out",
+          "Login creates valid authenticated session",
+          "Session state persists during navigation",
+          "Logout properly clears session"
+        ],
+        "steps": [
+          "verify_state",
+          "verify_state",
+          "logout"
+        ],
+        "dependencies": [
+          "auth_validation"
+        ]
+      },
+      {
+        "id": "ui_interaction",
+        "title": "User Interface Interaction",
+        "description": "Verify UI components respond correctly to user actions",
+        "category": "UI/UX",
+        "priority": "Medium",
+        "acceptance_criteria": [
+          "Login form accepts user input",
+          "Form validation works correctly",
+          "Navigation transitions work smoothly",
+          "Visual feedback is provided for actions"
+        ],
+        "steps": [
+          "fill",
+          "click",
+          "screenshot"
+        ],
+        "dependencies": []
+      },
+      {
+        "id": "ui_interaction",
+        "title": "User Interface Interaction",
+        "description": "Verify UI components respond correctly to user actions",
+        "category": "UI/UX",
+        "priority": "Medium",
+        "acceptance_criteria": [
+          "Login form accepts user input",
+          "Form validation works correctly",
+          "Navigation transitions work smoothly",
+          "Visual feedback is provided for actions"
+        ],
+        "steps": [
+          "fill",
+          "click",
+          "screenshot"
+        ],
+        "dependencies": []
+      }
+    ],
+    "status": {
+      "auth_validation": {
+        "id": "auth_validation",
+        "title": "User Authentication Validation",
+        "status": "pending",
+        "progress": 0,
+        "startTime": null,
+        "endTime": null,
+        "failedCriteria": [],
+        "completedSteps": [],
+        "totalSteps": 7
+      },
+      "session_management": {
+        "id": "session_management",
+        "title": "Session Management Validation",
+        "status": "pending",
+        "progress": 0,
+        "startTime": null,
+        "endTime": null,
+        "failedCriteria": [],
+        "completedSteps": [],
+        "totalSteps": 3
+      },
+      "ui_interaction": {
+        "id": "ui_interaction",
+        "title": "User Interface Interaction",
+        "status": "pending",
+        "progress": 0,
+        "startTime": null,
+        "endTime": null,
+        "failedCriteria": [],
+        "completedSteps": [],
+        "totalSteps": 3
+      }
+    },
+    "summary": {
+      "total": 4,
+      "completed": 0,
+      "failed": 0,
+      "in_progress": 0,
+      "pending": 4,
+      "blocked": 0,
+      "successRate": 0
+    }
+  },
+  "endTime": "2025-07-06T18:26:27.481717"
+}

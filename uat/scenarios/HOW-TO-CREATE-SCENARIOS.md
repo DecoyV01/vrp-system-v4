@@ -32,6 +32,22 @@ module.exports = {
     'user must be logged in',
     'specific data must exist'
   ],
+  objectives: [ // Define business objectives this scenario validates
+    {
+      id: "feature_functionality",
+      title: "New Feature Core Functionality",
+      description: "Verify the new feature works as intended for end users",
+      category: "CRUD Operations", // Authentication|CRUD Operations|Error Handling|UI/UX|Data Integrity
+      priority: "Critical", // Critical|High|Medium|Low
+      acceptance_criteria: [
+        "Feature can be accessed by authenticated users",
+        "Feature performs expected operations correctly",
+        "Feature provides appropriate user feedback"
+      ],
+      steps: ["navigate", "click", "verify_state"], // Link to test steps
+      dependencies: [] // Other objectives this depends on
+    }
+  ],
   steps: [
     // Test steps go here
   ]
@@ -79,6 +95,38 @@ module.exports = {
   preconditions: [
     'user must be logged in',
     'project with vehicles and jobs must exist'
+  ],
+  objectives: [
+    {
+      id: "optimization_execution",
+      title: "Route Optimization Execution",
+      description: "Verify route optimization algorithm executes successfully",
+      category: "CRUD Operations",
+      priority: "Critical",
+      acceptance_criteria: [
+        "User can access optimization interface",
+        "Optimization settings can be configured",
+        "Optimization process executes without errors",
+        "Results are generated and displayed"
+      ],
+      steps: ["navigate", "fill", "click", "verify_state"],
+      dependencies: []
+    },
+    {
+      id: "optimization_results",
+      title: "Optimization Results Validation",
+      description: "Verify optimization produces valid and useful results",
+      category: "Data Integrity",
+      priority: "High",
+      acceptance_criteria: [
+        "Route results are mathematically valid",
+        "Results include required data fields",
+        "Results are properly formatted and displayed",
+        "Visual representation matches data"
+      ],
+      steps: ["verify_state", "screenshot"],
+      dependencies: ["optimization_execution"]
+    }
   ],
   steps: [
     // Navigate to optimization page
@@ -392,41 +440,95 @@ SCENARIOS=(
 )
 ```
 
+## 🎯 Defining Test Objectives
+
+### Purpose of Objectives
+Objectives provide business-focused tracking of what your scenario validates. While steps focus on technical execution, objectives track business goals and user outcomes.
+
+### Objective Structure
+```javascript
+{
+  id: "unique_objective_id", // Must be unique within scenario
+  title: "Business-Focused Title", // What business value is being tested
+  description: "Detailed explanation of the objective", // Why this matters
+  category: "CRUD Operations", // See categories below
+  priority: "Critical", // Business impact level
+  acceptance_criteria: [ // Specific requirements that must be met
+    "Specific, measurable criterion",
+    "Another measurable criterion"
+  ],
+  steps: ["step1", "step2"], // Which test steps contribute to this objective
+  dependencies: ["other_objective_id"] // Prerequisites (optional)
+}
+```
+
+### Objective Categories
+- **Authentication** - Login, logout, session management, security
+- **CRUD Operations** - Create, read, update, delete functionality
+- **Error Handling** - Error scenarios, validation, recovery mechanisms  
+- **UI/UX** - User interface, user experience, usability
+- **Data Integrity** - Data validation, business rules, consistency
+
+### Priority Levels
+- **Critical** - Must pass for system acceptance (blocking issues)
+- **High** - Important functionality that should work (major issues)
+- **Medium** - Enhanced features that improve UX (minor issues) 
+- **Low** - Nice-to-have functionality (cosmetic issues)
+
+### Writing Good Acceptance Criteria
+✅ **Good**: "User can log in with valid credentials and access dashboard"
+❌ **Bad**: "Login works"
+
+✅ **Good**: "Form validation prevents submission with invalid email format"
+❌ **Bad**: "Validation works"
+
+✅ **Good**: "Vehicle creation form accepts all required fields and saves to database"
+❌ **Bad**: "Can create vehicles"
+
+### Linking Steps to Objectives
+Only include steps that directly contribute to proving the objective:
+- **Include**: Actions that demonstrate the objective's functionality
+- **Exclude**: Setup steps, navigation, cleanup steps
+- **Focus**: On steps that would cause objective failure if they fail
+
+### Example: Login Objective
+```javascript
+{
+  id: "user_authentication",
+  title: "User Authentication Validation",
+  description: "Verify users can successfully authenticate with the system",
+  category: "Authentication",
+  priority: "Critical",
+  acceptance_criteria: [
+    "User can access login form",
+    "Valid credentials allow successful authentication",
+    "User is redirected to dashboard after login",
+    "Authentication state is properly maintained"
+  ],
+  steps: ["fill", "click", "verify_state"], // Only auth-related steps
+  dependencies: []
+}
+```
+
 ## ✅ Best Practices
 
-### 1. **Descriptive Naming**
-- Use kebab-case: `feature-name.js`
-- Be specific: `route-optimization.js` not `test.js`
+### General Practices
+1. **Descriptive Naming** - Use kebab-case: `feature-name.js`
+2. **Clear Structure** - Add meaningful descriptions and preconditions
+3. **Comprehensive Validation** - Validate each action result with health checks
+4. **Error Handling** - Test error scenarios and recovery actions
+5. **Screenshots** - Capture key states with descriptive names
+6. **Selector Strategy** - Use stable selectors (IDs preferred)
+7. **Wait Strategies** - Use `waitFor: 'networkIdle'` for API calls
 
-### 2. **Clear Structure**
-- Add meaningful descriptions
-- Include preconditions
-- Use descriptive step names
-
-### 3. **Comprehensive Validation**
-- Validate each action result
-- Use health checks for state verification
-- Include both positive and negative test cases
-
-### 4. **Error Handling**
-- Test error scenarios
-- Validate error messages
-- Test recovery actions
-
-### 5. **Screenshots**
-- Capture key states
-- Use descriptive screenshot names
-- Include failure and success states
-
-### 6. **Selector Strategy**
-- Use stable selectors (IDs preferred)
-- Avoid fragile CSS selectors
-- Use data attributes for test elements
-
-### 7. **Wait Strategies**
-- Use `waitFor: 'networkIdle'` for API calls
-- Add explicit waits for animations
-- Use health checks to verify state changes
+### Objective Best Practices
+1. **Business Focus** - Write from stakeholder perspective, not technical
+2. **Measurable Criteria** - Each criterion should be specific and testable
+3. **Logical Dependencies** - Map prerequisite relationships between objectives
+4. **Appropriate Categorization** - Use consistent categories across scenarios
+5. **Priority Based on Impact** - Critical = system unusable, High = major issues
+6. **Step Mapping Precision** - Link only steps that directly prove the objective
+7. **Clear Titles** - Objective titles should convey business value being tested
 
 ## 🚀 Quick Summary
 

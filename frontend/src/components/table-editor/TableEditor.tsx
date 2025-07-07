@@ -164,7 +164,7 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
     data: currentData,
     maxSelection: 1000,
     onSelectionChange: (selectedIds) => {
-      console.log('Selection changed:', selectedIds.length, 'rows selected')
+      // Selection state managed by the hook
     }
   })
 
@@ -724,7 +724,6 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
         selectedRows={getSelectedRows()}
         onEditComplete={(updatedRows) => {
           // Handle the updated rows - this would typically update the data
-          console.log('Updated rows:', updatedRows)
           toast.success(`Updated ${updatedRows.length} records`)
           setShowBulkEditModal(false)
         }}

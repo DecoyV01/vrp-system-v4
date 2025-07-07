@@ -1,0 +1,26 @@
+======================================================================
+UAT Test Summary - Session 20250706-164421
+======================================================================
+
+Scenario: general-test
+Start Time: 2025-07-06T16:44:21.510334
+End Time: 2025-07-06T16:47:24.758169
+Duration: 183.25 seconds
+
+Test Execution Results:
+  Total Steps: 7
+  Completed: 6
+  Failed: 1
+
+VERA Phase Breakdown:
+  Verify: 3/3 passed
+  Execute: 0/0 passed
+  Record: 0/0 passed
+  Analyze: 3/4 passed
+
+Captured Artifacts:
+  Screenshots: 0
+  Logs: 0
+
+Full report: /mnt/c/projects/vrp-system/v4/uat/reports/uat-report-20250706-164421.json
+======================================================================

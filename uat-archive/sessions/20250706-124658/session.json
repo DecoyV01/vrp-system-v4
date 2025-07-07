@@ -1,0 +1,43 @@
+{
+  "sessionId": "20250706-124658",
+  "scenario": "login-flow",
+  "startTime": "2025-07-06T12:46:58.042949",
+  "status": "failed",
+  "phase": "executing",
+  "userMessage": null,
+  "steps": [
+    {
+      "timestamp": "2025-07-06T12:47:05.721453",
+      "phase": "initialization",
+      "tool": "Bash",
+      "action": "uat-login",
+      "status": "failed",
+      "details": {
+        "successes": [
+          "Node.js version\\n  \u2705 UAT directories\\n  \u2705 Scenario files\\n  \u2705 Helper scripts\\n\\n\u2705 Environment validation passed\\n\\n\ud83e\uddea Executing scenario: login-flow\\n[12:46:59 PM] \ud83d\ude80 Initializing UAT environment...\\n[12:47:00 PM] \ud83d\udd0d Checking browser automation availability...\\n[12:47:00 PM] \u2705 UAT ready for browser automation via Claude Code MCP tools\\n[12:47:00 PM] \ud83c\udf10 Navigating to https://vrp-system-v4.pages.dev...\\n[12:47:00 PM] \u2705 Ready for navigation via Claude Code MCP tools\\n[12:47:00 PM] \ud83d\udc89 Injecting validation framework...\\n[12:47:00 PM] \u2705 Validation framework ready for injection via Claude Code\\n[12:47:00 PM] \ud83d\udd0d Verifying health check system...\\n[12:47:00 PM] \u2705 Health check system ready for verification\\n[12:47:00 PM] \ud83d\udcf8 Screenshot request: baseline\\n[12:47:00 PM] \u2705 Screenshot request prepared: 20250706-124659-2025-07-06T10-47-00-027Z-baseline.png\\n[12:47:00 PM] \u2705 UAT environment initialized successfully\\n[12:47:00 PM] \ud83e\uddea Executing scenario: login-flow\\n[12:47:00 PM] \ud83d\udccb Loaded scenario: login-flow\\n[12:47:00 PM] \ud83d\udcdd Description: Complete login and logout flow with validation\\n[12:47:00 PM] \ud83d\udcdd Executing step: navigate\\n[12:47:00 PM] \ud83d\udd17 Navigating to: https://vrp-system-v4.pages.dev/\\n[12:47:00 PM] \ud83d\udd27 Requesting MCP Tool: mcp__playwright__playwright_evaluate\\n[12:47:00 PM] \ud83d\udccb Description: Get current URL\\n[12:47:00 PM] \u2699\ufe0f Params: {\"script\":\"window.location.href\"}\\n\\n=== UAT MCP EXECUTION REQUEST ===\\n{\\n  \"type\": \"UAT_MCP_EXECUTION_REQUEST\",\\n  \"tool\": \"mcp__playwright__playwright_evaluate\",\\n  \"params\": {\\n    \"script\": \"window.location.href\"\\n  },\\n  \"description\": \"Get current URL\",\\n  \"timestamp\": \"2025-07-06T10:47:00.047Z\",\\n  \"sessionId\": \"20250706-124659\"\\n}\\n=== END UAT MCP REQUEST ===\\n\\n[12:47:00 PM] \ud83d\udce4 MCP request output for Claude Code execution\\n[12:47:00 PM] \u2705 MCP Tool request prepared: mcp__playwright__playwright_evaluate\\n[12:47:00 PM] \ud83d\udd27 Requesting MCP Tool: mcp__playwright__playwright_navigate\\n[12:47:00 PM] \ud83d\udccb Description: Navigate to https://vrp-system-v4.pages.dev/\\n[12:47:00 PM] \u2699\ufe0f Params: {\"url\":\"https://vrp-system-v4.pages.dev/\",\"timeout\":10000,\"waitUntil\":\"networkidle\"}\\nnode:events:495\\n      throw er; // Unhandled \\'error\\' event\\n      ^\\n\\nError: write EPIPE\\n    at afterWriteDispatched (node:internal/stream_base_commons:160:15)\\n    at writeGeneric (node:internal/stream_base_commons:151:3)\\n    at Socket._writeGeneric (node:net:963:11)\\n    at Socket._write (node:net:975:8)\\n    at writeOrBuffer (node:internal/streams/writable:392:12)\\n    at _write (node:internal/streams/writable:333:10)\\n    at Writable.write (node:internal/streams/writable:337:10)\\n    at console.value (node:internal/console/constructor:305:16)\\n    at console.log (node:internal/console/constructor:380:26)\\n    at UATTestRunner.log (/mnt/c/projects/vrp-system/v4/uat/engine/test-runner.cjs:383:15)\\nEmitted \\'error\\' event on Socket instance at:\\n    at emitErrorNT (node:internal/streams/destroy:151:8)\\n    at emitErrorCloseNT (node:internal/streams/destroy:116:3)\\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {\\n  errno: -32,\\n  code: \\'EPIPE\\',\\n  syscall: \\'write\\'\\n}\\n\\nNode.js v18.19.1', 'stderr': '', 'interrupted': False, 'isImage': False}"
+        ]
+      },
+      "error": "write EPIPE\\n    at afterWriteDispatched (node:internal/stream_base_commons:160:15)\\n    at writeGeneric (node:internal/stream_base_commons:151:3)\\n    at Socket._writeGeneric (node:net:963:11)\\n    at Socket._write (node:net:975:8)\\n    at writeOrBuffer (node:internal/streams/writable:392:12)\\n    at _write (node:internal/streams/writable:333:10)\\n    at Writable.write (node:internal/streams/writable:337:10)\\n    at console.value (node:internal/console/constructor:305:16)\\n    at console.log (node:internal/console/constructor:380:26)\\n    at UATTestRunner.log (/mnt/c/projects/vrp-system/v4/uat/engine/test-runner.cjs:383:15)\\nEmitted \\'error\\' event on Socket instance at:\\n    at emitErrorNT (node:internal/streams/destroy:151:8)\\n    at emitErrorCloseNT (node:internal/streams/destroy:116:3)\\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {\\n  errno: -32,\\n  code: \\'EPIPE\\',\\n  syscall: \\'write\\'\\n}\\n\\nNode.js v18.19.1', 'stderr': '', 'interrupted': False, 'isImage': False}"
+    },
+    {
+      "timestamp": "2025-07-06T12:47:27.940111",
+      "phase": "executing",
+      "tool": "Bash",
+      "action": "uat-login",
+      "status": "completed",
+      "details": {}
+    }
+  ],
+  "artifacts": {
+    "screenshots": [],
+    "logs": [],
+    "reports": []
+  },
+  "metrics": {
+    "totalSteps": 2,
+    "completedSteps": 1,
+    "failedSteps": 1,
+    "duration": 90.278124
+  },
+  "endTime": "2025-07-06T12:48:28.321085"
+}

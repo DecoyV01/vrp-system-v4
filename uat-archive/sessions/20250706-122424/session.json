@@ -1,0 +1,120 @@
+{
+  "sessionId": "20250706-122424",
+  "scenario": "general-test",
+  "startTime": "2025-07-06T12:24:24.553677",
+  "status": "failed",
+  "phase": "analyzing",
+  "userMessage": null,
+  "steps": [
+    {
+      "timestamp": "2025-07-06T12:24:26.266946",
+      "phase": "initialization",
+      "tool": "Bash",
+      "action": "uat-init",
+      "status": "completed",
+      "details": {
+        "successes": [
+          "Node.js version\\n  \u2705 UAT directories\\n  \u2705 Scenario files\\n  \u2705 Helper scripts\\n\\n\u2705 Environment validation passed\\n\\n\ud83d\ude80 Initializing UAT environment...\\n\ud83c\udf89 UAT environment ready!\\n\\nAvailable commands:\\n  /uat-login [email] [password]   - Test login functionality\\n  /uat-crud [entity] [action]     - Test CRUD operations\\n  /uat-scenario [scenario-name]   - Run predefined scenarios\\n  /uat-report                     - Generate test report\\n\\nHealth check system: \u2705 Active', 'stderr': '', 'interrupted': False, 'isImage': False}"
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-07-06T12:24:41.007528",
+      "phase": "execution",
+      "tool": "mcp__browsermcp__browser_navigate",
+      "action": "browser-navigate",
+      "status": "completed",
+      "details": {
+        "url": "https://vrp-system-v4.pages.dev"
+      }
+    },
+    {
+      "timestamp": "2025-07-06T12:24:49.941384",
+      "phase": "execution",
+      "tool": "mcp__browsermcp__browser_navigate",
+      "action": "browser-navigate",
+      "status": "completed",
+      "details": {
+        "url": "https://vrp-system-v4.pages.dev/auth/login"
+      }
+    },
+    {
+      "timestamp": "2025-07-06T12:25:03.682004",
+      "phase": "analyzing",
+      "tool": "mcp__browsermcp__browser_type",
+      "action": "unknown",
+      "status": "completed",
+      "details": {}
+    },
+    {
+      "timestamp": "2025-07-06T12:25:12.295260",
+      "phase": "analyzing",
+      "tool": "mcp__browsermcp__browser_type",
+      "action": "unknown",
+      "status": "completed",
+      "details": {}
+    },
+    {
+      "timestamp": "2025-07-06T12:25:27.191181",
+      "phase": "analyzing",
+      "tool": "mcp__browsermcp__browser_click",
+      "action": "browser-click",
+      "status": "completed",
+      "details": {
+        "selector": ""
+      }
+    },
+    {
+      "timestamp": "2025-07-06T12:25:39.855199",
+      "phase": "analyzing",
+      "tool": "mcp__browsermcp__browser_wait",
+      "action": "unknown",
+      "status": "completed",
+      "details": {}
+    },
+    {
+      "timestamp": "2025-07-06T12:25:48.238269",
+      "phase": "analyzing",
+      "tool": "mcp__browsermcp__browser_snapshot",
+      "action": "unknown",
+      "status": "completed",
+      "details": {}
+    },
+    {
+      "timestamp": "2025-07-06T12:26:00.284104",
+      "phase": "recording",
+      "tool": "mcp__browsermcp__browser_screenshot",
+      "action": "browser-screenshot",
+      "status": "completed",
+      "details": {
+        "name": ""
+      }
+    },
+    {
+      "timestamp": "2025-07-06T12:26:15.293220",
+      "phase": "analyzing",
+      "tool": "Bash",
+      "action": "uat-command",
+      "status": "failed",
+      "details": {
+        "successes": [
+          "Node.js version\\n  \u2705 UAT directories\\n  \u2705 Scenario files\\n  \u2705 Helper scripts\\n\\n\u2705 Environment validation passed\\n\\n\ud83d\udcca Generating UAT test report...\\n\ud83d\udccb Collecting test data from session...\\n\ud83c\udfac Creating video from screenshots...\\n\u2705 Report generation completed!\\n\ud83d\udcc4 Markdown report: /mnt/c/projects/vrp-system/v4/uat/reports/report-20250705-113002.md\\n\ud83d\udd22 JSON report: /mnt/c/projects/vrp-system/v4/uat/reports/report-20250705-113002.json\\n\\n\ud83d\udcca Test Session Summary\\n==============================\\nTests Run: 22\\nPassed: 14 \u2705\\nFailed: 8 \u274c\\nSuccess Rate: 63.6%\\nScreenshots: 107\\nDuration: 17s\\n\u26a0\ufe0f Video creation failed: The \"src\" argument must be of type string or an instance of Buffer or URL. Received undefined', 'stderr': '', 'interrupted': False, 'isImage': False}",
+          "14 \u2705\\nFailed: 8 \u274c\\nSuccess Rate: 63.6%\\nScreenshots: 107\\nDuration: 17s\\n\u26a0\ufe0f Video creation failed: The \"src\" argument must be of type string or an instance of Buffer or URL. Received undefined', 'stderr': '', 'interrupted': False, 'isImage': False}"
+        ]
+      },
+      "error": "\\nSuccess Rate: 63.6%\\nScreenshots: 107\\nDuration: 17s\\n\u26a0\ufe0f Video creation failed: The \"src\" argument must be of type string or an instance of Buffer or URL. Received undefined', 'stderr': '', 'interrupted': False, 'isImage': False}"
+    }
+  ],
+  "artifacts": {
+    "screenshots": [],
+    "logs": [],
+    "reports": []
+  },
+  "metrics": {
+    "totalSteps": 10,
+    "completedSteps": 9,
+    "failedSteps": 1,
+    "duration": 134.18145
+  },
+  "endTime": "2025-07-06T12:26:38.735139"
+}

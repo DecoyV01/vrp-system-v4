@@ -1,0 +1,37 @@
+{
+  "sessionId": "20250706-190522",
+  "scenario": "general-test",
+  "startTime": "2025-07-06T19:05:22.681771",
+  "status": "active",
+  "phase": "initialization",
+  "userMessage": null,
+  "steps": [
+    {
+      "timestamp": "2025-07-06T19:06:29.160261",
+      "phase": "initialization",
+      "tool": "Bash",
+      "action": "unknown",
+      "status": "completed",
+      "details": {}
+    }
+  ],
+  "artifacts": {
+    "screenshots": [],
+    "logs": [],
+    "reports": []
+  },
+  "metrics": {
+    "totalSteps": 1,
+    "completedSteps": 1,
+    "failedSteps": 0,
+    "duration": 0
+  },
+  "execution_progress": {
+    "current_step": 1,
+    "completed_steps": [],
+    "total_steps": 0,
+    "last_executed_tool": "",
+    "status": "ready",
+    "execution_plan_loaded": false
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "sessionId": "2025-07-06T18-40-31",
+  "scenario": "login-flow",
+  "description": "Complete login and logout flow with validation",
+  "startTime": "2025-07-06T18:40:31.174Z",
+  "sessionScreenshotsDir": "/mnt/c/projects/vrp-system/v4/uat/screenshots/2025-07-06T18-40-31",
+  "sessionReportsDir": "/mnt/c/projects/vrp-system/v4/uat/reports/2025-07-06T18-40-31",
+  "objectives": [
+    {
+      "id": "auth_validation",
+      "title": "User Authentication Validation",
+      "description": "Verify user can successfully authenticate with the VRP system",
+      "category": "Authentication",
+      "priority": "Critical",
+      "acceptance_criteria": [
+        "User can access login page",
+        "User can log in with valid credentials",
+        "User authentication state is properly managed",
+        "User can successfully log out",
+        "User is redirected to login page after logout"
+      ],
+      "steps": [
+        "navigate",
+        "verify_state",
+        "navigate",
+        "fill",
+        "click",
+        "verify_state",
+        "logout"
+      ],
+      "dependencies": []
+    },
+    {
+      "id": "session_management",
+      "title": "Session Management Validation",
+      "description": "Verify proper session lifecycle management",
+      "category": "Authentication",
+      "priority": "High",
+      "acceptance_criteria": [
+        "Initial state shows user logged out",
+        "Login creates valid authenticated session",
+        "Session state persists during navigation",
+        "Logout properly clears session"
+      ],
+      "steps": [
+        "verify_state",
+        "verify_state",
+        "logout"
+      ],
+      "dependencies": [
+        "auth_validation"
+      ]
+    },
+    {
+      "id": "ui_interaction",
+      "title": "User Interface Interaction",
+      "description": "Verify UI components respond correctly to user actions",
+      "category": "UI/UX",
+      "priority": "Medium",
+      "acceptance_criteria": [
+        "Login form accepts user input",
+        "Form validation works correctly",
+        "Navigation transitions work smoothly",
+        "Visual feedback is provided for actions"
+      ],
+      "steps": [
+        "fill",
+        "click",
+        "screenshot"
+      ],
+      "dependencies": []
+    }
+  ],
+  "steps": [
+    {
+      "stepNumber": 1,
+      "description": "Navigate to https://vrp-system-v4.pages.dev/",
+      "functionCall": "mcp__playwright__playwright_navigate({\"url\": \"https://vrp-system-v4.pages.dev/\"})",
+      "tool": "mcp__playwright__playwright_navigate"
+    },
+    {
+      "stepNumber": 2,
+      "description": "Verify state: Ensure user starts logged out",
+      "functionCall": "mcp__playwright__playwright_get_visible_text({})",
+      "tool": "mcp__playwright__playwright_get_visible_text"
+    },
+    {
+      "stepNumber": 3,
+      "description": "Navigate to https://vrp-system-v4.pages.dev/auth/login",
+      "functionCall": "mcp__playwright__playwright_navigate({\"url\": \"https://vrp-system-v4.pages.dev/auth/login\"})",
+      "tool": "mcp__playwright__playwright_navigate"
+    },
+    {
+      "stepNumber": 4,
+      "description": "Take screenshot: login-page",
+      "functionCall": "mcp__playwright__playwright_screenshot({\"name\": \"login-page\", \"savePng\": true, \"outputPath\": \"/mnt/c/projects/vrp-system/v4/uat/screenshots/2025-07-06T18-40-31/login-page.png\"})",
+      "tool": "mcp__playwright__playwright_screenshot"
+    },
+    {
+      "stepNumber": "5.1",
+      "description": "Fill #email with \"test1@example.com\"",
+      "functionCall": "mcp__playwright__playwright_fill({\"selector\": \"#email\", \"value\": \"test1@example.com\"})",
+      "tool": "mcp__playwright__playwright_fill"
+    },
+    {
+      "stepNumber": "5.2",
+      "description": "Fill #password with \"testpassword123246\"",
+      "functionCall": "mcp__playwright__playwright_fill({\"selector\": \"#password\", \"value\": \"testpassword123246\"})",
+      "tool": "mcp__playwright__playwright_fill"
+    },
+    {
+      "stepNumber": 6,
+      "description": "Click button[type=\"submit\"]",
+      "functionCall": "mcp__playwright__playwright_click({\"selector\": \"button[type=\"submit\"]\"})",
+      "tool": "mcp__playwright__playwright_click"
+    },
+    {
+      "stepNumber": 7,
+      "description": "Verify state: Verify login success",
+      "functionCall": "mcp__playwright__playwright_get_visible_text({})",
+      "tool": "mcp__playwright__playwright_get_visible_text"
+    },
+    {
+      "stepNumber": 8,
+      "description": "Take screenshot: login-success",
+      "functionCall": "mcp__playwright__playwright_screenshot({\"name\": \"login-success\", \"savePng\": true, \"outputPath\": \"/mnt/c/projects/vrp-system/v4/uat/screenshots/2025-07-06T18-40-31/login-success.png\"})",
+      "tool": "mcp__playwright__playwright_screenshot"
+    },
+    {
+      "stepNumber": "9.1",
+      "description": "Click [data-radix-dropdown-trigger]",
+      "functionCall": "mcp__playwright__playwright_click({\"selector\": \"[data-radix-dropdown-trigger]\"})",
+      "tool": "mcp__playwright__playwright_click"
+    },
+    {
+      "stepNumber": "9.2",
+      "description": "Click span:contains(\"Sign out\")",
+      "functionCall": "mcp__playwright__playwright_click({\"selector\": \"span:contains(\"Sign out\")\"})",
+      "tool": "mcp__playwright__playwright_click"
+    },
+    {
+      "stepNumber": "9.3",
+      "description": "Verify state: Verify logout success",
+      "functionCall": "mcp__playwright__playwright_get_visible_text({})",
+      "tool": "mcp__playwright__playwright_get_visible_text"
+    },
+    {
+      "stepNumber": 10,
+      "description": "Take screenshot: logout-complete",
+      "functionCall": "mcp__playwright__playwright_screenshot({\"name\": \"logout-complete\", \"savePng\": true, \"outputPath\": \"/mnt/c/projects/vrp-system/v4/uat/screenshots/2025-07-06T18-40-31/logout-complete.png\"})",
+      "tool": "mcp__playwright__playwright_screenshot"
+    }
+  ]
+}

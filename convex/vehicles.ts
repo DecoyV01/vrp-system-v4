@@ -85,6 +85,7 @@ export const create = mutation({
     costPerKm: v.optional(v.number()),
     datasetName: v.optional(v.string()),
     datasetVersion: v.optional(v.number()),
+    optimizerId: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const user = await getCurrentUser(ctx);
@@ -111,6 +112,7 @@ export const create = mutation({
     
     const vehicleId = await ctx.db.insert("vehicles", {
       ...args,
+      optimizerId: args.optimizerId || Math.floor(Math.random() * 1000000),
       createdAt: now,
       updatedAt: now,
     });

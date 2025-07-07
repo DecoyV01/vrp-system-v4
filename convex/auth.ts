@@ -1,11 +1,50 @@
+import { Password } from "@convex-dev/auth/providers/Password";
+import { convexAuth } from "@convex-dev/auth/server";
+import { DataModel } from "./_generated/dataModel";
+import { query } from "./_generated/server";
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
 
-// User profile table for storing additional user information
-// Note: In a production app, you would typically use an external auth provider
-// For now, we'll create a simple auth system with users table in schema
+export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
+  providers: [
+    Password<DataModel>({
+      profile(params) {
+        return {
+          email: params.email as string,
+          name: params.name as string,
+        };
+      },
+      validatePasswordRequirements(password: string) {
+        if (!password || password.length < 8) {
+          throw new Error("Password must be at least 8 characters long");
+        }
+        if (!/(?=.*[a-z])/.test(password)) {
+          throw new Error("Password must contain at least one lowercase letter");
+        }
+        if (!/(?=.*[A-Z])/.test(password)) {
+          throw new Error("Password must contain at least one uppercase letter");
+        }
+        if (!/(?=.*\d)/.test(password)) {
+          throw new Error("Password must contain at least one number");
+        }
+      },
+    }),
+  ],
+});
 
-// Helper function to validate user ownership
+// Helper function to get current user (for backward compatibility)
+export async function getCurrentUser(ctx: any) {
+  const userId = await auth.getUserId(ctx);
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+  const user = await ctx.db.get(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+  return user;
+}
+
+// Helper function to validate user ownership for projects
 export async function validateUserOwnership(ctx: any, projectId: string, userId?: string) {
   if (!userId) {
     throw new Error("User not authenticated");
@@ -23,47 +62,33 @@ export async function validateUserOwnership(ctx: any, projectId: string, userId?
   return project;
 }
 
-// Helper function to get current user (mock implementation)
-export async function getCurrentUser(_ctx: any) {
-  // In a real implementation, this would extract user info from auth token
-  // For development purposes, we'll use a mock user
-  return {
-    _id: "user_mock_123",
-    name: "Test User",
-    email: "test@example.com",
-  };
-}
-
-// Get current user profile
+// Get current user profile using the new auth system
 export const getCurrentUserProfile = query({
+  args: {},
   handler: async (ctx) => {
-    return await getCurrentUser(ctx);
+    const userId = await auth.getUserId(ctx);
+    if (!userId) {
+      return null;
+    }
+
+    const user = await ctx.db.get(userId);
+    return user ? {
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+    } : null;
   },
 });
 
-// Create a new user profile (simplified for development)
-export const createUserProfile = mutation({
-  args: {
-    name: v.string(),
-    email: v.string(),
-  },
-  handler: async (_ctx, args) => {
-    // In production, this would be called after successful auth
-    const user = {
-      _id: `user_${Date.now()}`,
-      ...args,
-      createdAt: Date.now(),
-    };
-    
-    return user;
-  },
-});
-
-// Validate user has access to project
+// Validate user has access to project using the new auth system
 export const validateProjectAccess = query({
   args: { projectId: v.id("projects") },
   handler: async (ctx, args) => {
-    const user = await getCurrentUser(ctx);
-    return await validateUserOwnership(ctx, args.projectId, user._id);
+    const userId = await auth.getUserId(ctx);
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
+    
+    return await validateUserOwnership(ctx, args.projectId, userId);
   },
 });

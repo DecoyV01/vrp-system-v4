@@ -1,7 +1,7 @@
 import { Folder, User, LogOut, Settings, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { useCurrentUser, useAuthActions } from '@/hooks/useConvexAuth'
+import { useCurrentUser, useVRPAuthActions } from '@/hooks/useConvexAuth'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { toast } from 'sonner'
@@ -20,7 +20,7 @@ const PrimarySidebar = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const user = useCurrentUser()
-  const { signOut } = useAuthActions()
+  const { signOut } = useVRPAuthActions()
   const { primary, togglePrimary } = useSidebarStore()
   const { isMobile, isTablet } = useResponsive()
 

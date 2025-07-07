@@ -1,0 +1,27 @@
+{
+  "sessionId": "20250706-164435",
+  "generatedAt": "2025-07-06T14:44:54.994Z",
+  "summary": {
+    "totalTests": 0,
+    "passedTests": 0,
+    "failedTests": 0,
+    "totalScreenshots": 0,
+    "duration": 0
+  },
+  "screenshots": [],
+  "insights": {
+    "testPhases": [],
+    "errorScreenshots": [],
+    "successScreenshots": [],
+    "pageTransitions": [],
+    "testsByType": {},
+    "testsByEntity": {},
+    "failurePatterns": []
+  },
+  "metadata": {
+    "framework": "VRP System UAT",
+    "version": "1.0.0",
+    "environment": "development"
+  },
+  "tests": []
+}

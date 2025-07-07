@@ -1,0 +1,34 @@
+======================================================================
+UAT Test Summary - Session 20250706-164849
+======================================================================
+
+Scenario: login-flow
+Start Time: 2025-07-06T16:48:49.329557
+End Time: 2025-07-06T16:53:38.753779
+Duration: 289.42 seconds
+
+Objectives Achievement:
+  Total Objectives: 3
+  Completed: 1 ✅
+  Failed: 0 ❌
+  In Progress: 1 🔄
+  Pending: 1 ⏳
+  Success Rate: 33%
+
+Test Execution Results:
+  Total Steps: 21
+  Completed: 20
+  Failed: 1
+
+VERA Phase Breakdown:
+  Verify: 1/1 passed
+  Execute: 5/5 passed
+  Record: 5/5 passed
+  Analyze: 9/10 passed
+
+Captured Artifacts:
+  Screenshots: 4
+  Logs: 0
+
+Full report: /mnt/c/projects/vrp-system/v4/uat/reports/uat-report-20250706-164849.json
+======================================================================
