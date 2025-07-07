@@ -11,27 +11,40 @@ import {
 import { useAuthActions } from '@convex-dev/auth/react'
 import { ConvexError } from 'convex/values'
 import { toast } from 'sonner'
+import { useConvexAuth } from 'convex/react'
 
 const LoginPage = () => {
-  const { signIn } = useAuthActions()
+  const { signIn, signOut } = useAuthActions()
+  const { isAuthenticated } = useConvexAuth()
   const [flow, setFlow] = useState<'signIn' | 'signUp'>('signIn')
   const [submitting, setSubmitting] = useState(false)
 
-  // Force complete session reset to fix WebSocket authentication mismatch
+  // Force sign out any existing sessions to prevent token mismatch
   useEffect(() => {
-    const forceSessionReset = () => {
+    const forceCleanAuth = async () => {
       console.log('🔍 Debug: VITE_CONVEX_URL:', import.meta.env.VITE_CONVEX_URL)
       console.log('🔍 Debug: Current location:', window.location.href)
+      console.log('🔍 Debug: isAuthenticated:', isAuthenticated)
 
-      // Get all storage keys that could contain auth/session data
+      // If there's any existing authentication, force sign out to clear it
+      if (isAuthenticated) {
+        console.log(
+          '🔄 FORCE: Signing out existing session to clear token mismatch'
+        )
+        try {
+          await signOut()
+          console.log('✅ Existing session signed out')
+        } catch (error) {
+          console.log('⚠️ Error signing out existing session:', error)
+        }
+      }
+
+      // Clear any remaining storage
       const allStorageKeys = [
         ...Object.keys(localStorage),
         ...Object.keys(sessionStorage),
       ]
 
-      console.log('🔍 Debug: All storage keys:', allStorageKeys)
-
-      // Clear ALL Convex-related storage to force fresh session
       const convexKeys = allStorageKeys.filter(
         key =>
           key.toLowerCase().includes('convex') ||
@@ -44,35 +57,16 @@ const LoginPage = () => {
       )
 
       if (convexKeys.length > 0) {
-        console.log(
-          '🧹 FORCE: Clearing all auth/session data for fresh start:',
-          convexKeys
-        )
+        console.log('🧹 Clearing remaining auth storage:', convexKeys)
         convexKeys.forEach(key => {
           localStorage.removeItem(key)
           sessionStorage.removeItem(key)
         })
-
-        // Also clear ALL cookies
-        document.cookie.split(';').forEach(cookie => {
-          const eqPos = cookie.indexOf('=')
-          const name =
-            eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim()
-          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`
-          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`
-        })
-
-        console.log(
-          '🔄 FORCE: Session reset complete, will reload once for clean state'
-        )
-        setTimeout(() => window.location.reload(), 100)
-      } else {
-        console.log('✅ Clean session - no auth data found')
       }
     }
 
-    forceSessionReset()
-  }, [])
+    forceCleanAuth()
+  }, [isAuthenticated, signOut])
 
   // No complex logic needed - Convex Auth handles everything automatically
 
