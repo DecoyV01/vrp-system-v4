@@ -3,11 +3,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useAuth } from '@/hooks/useConvexAuth'
+import { useAuth, useCurrentUser } from '@/hooks/useConvexAuth'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useNavigate } from 'react-router-dom'
-import { useConvexAuth } from '@convex-dev/auth/react'
 import { useEffect } from 'react'
 
 const LoginPage = () => {
@@ -19,7 +18,7 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const { signIn, signUp } = useAuth()
-  const { isAuthenticated } = useConvexAuth()
+  const { isAuthenticated } = useCurrentUser()
   const navigate = useNavigate()
 
   // Redirect if already authenticated
