@@ -34,6 +34,8 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
       },
     }),
   ],
+  // Add debug logging for authentication issues
+  debug: process.env.AUTH_LOG_LEVEL === 'DEBUG',
 })
 
 // Helper function to get current user (for backward compatibility)

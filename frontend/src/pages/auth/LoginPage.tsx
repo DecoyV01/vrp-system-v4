@@ -17,45 +17,30 @@ const LoginPage = () => {
   const [flow, setFlow] = useState<'signIn' | 'signUp'>('signIn')
   const [submitting, setSubmitting] = useState(false)
 
-  // Clear any stale auth tokens on mount to prevent token mismatch errors
+  // Check for JWT key rotation issues - only clear if there are obvious mismatches
   useEffect(() => {
-    // Always clear all auth-related storage on login page to ensure clean state
-    const allKeys = [
-      ...Object.keys(localStorage),
-      ...Object.keys(sessionStorage),
-    ]
+    const debugAuthIssues = () => {
+      console.log('🔍 Debug: Checking for auth configuration issues...')
+      console.log('🔍 Debug: VITE_CONVEX_URL:', import.meta.env.VITE_CONVEX_URL)
+      console.log('🔍 Debug: Current location:', window.location.href)
 
-    const authKeys = allKeys.filter(
-      key =>
-        key.includes('convex') ||
-        key.includes('auth') ||
-        key.includes('token') ||
-        key.includes('session')
-    )
+      // Check for obvious stale tokens only
+      const suspiciousKeys = Object.keys(localStorage).filter(
+        key =>
+          key.includes('modest-bat-713') || // Old dev deployment tokens
+          key.includes('localhost') || // Local development tokens
+          key.includes('127.0.0.1') // Local development tokens
+      )
 
-    if (authKeys.length > 0) {
-      console.log('🧹 Clearing all auth tokens for clean state:', authKeys)
-      authKeys.forEach(key => {
-        localStorage.removeItem(key)
-        sessionStorage.removeItem(key)
-      })
-
-      // Also clear any cookies that might contain auth tokens
-      document.cookie.split(';').forEach(cookie => {
-        const eqPos = cookie.indexOf('=')
-        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim()
-        if (
-          name.includes('convex') ||
-          name.includes('auth') ||
-          name.includes('token')
-        ) {
-          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`
-        }
-      })
-
-      console.log('🔄 Forcing reload for completely clean auth state')
-      window.location.reload()
+      if (suspiciousKeys.length > 0) {
+        console.log('🧹 Clearing stale development tokens:', suspiciousKeys)
+        suspiciousKeys.forEach(key => localStorage.removeItem(key))
+      } else {
+        console.log('✅ No obvious stale tokens found')
+      }
     }
+
+    debugAuthIssues()
   }, [])
 
   // No complex logic needed - Convex Auth handles everything automatically
