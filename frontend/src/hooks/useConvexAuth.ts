@@ -58,6 +58,13 @@ export const useVRPAuthActions = () => {
         if (error.message?.includes('Invalid credentials')) {
           throw new Error('Invalid email or password. Please try again.')
         }
+        if (error.message?.includes('ConvexError')) {
+          // Extract the actual error message from ConvexError format
+          const match = error.message.match(/ConvexError: (.+)/)
+          if (match) {
+            throw new Error(match[1])
+          }
+        }
         if (error.message?.includes('Server Error')) {
           throw new Error(
             'Authentication service is temporarily unavailable. Please try again later.'
@@ -104,6 +111,13 @@ export const useVRPAuthActions = () => {
         }
         if (error.message?.includes('Password must')) {
           throw new Error(error.message) // Keep specific password requirements
+        }
+        if (error.message?.includes('ConvexError')) {
+          // Extract the actual error message from ConvexError format
+          const match = error.message.match(/ConvexError: (.+)/)
+          if (match) {
+            throw new Error(match[1])
+          }
         }
         if (error.message?.includes('Server Error')) {
           throw new Error(

@@ -2,7 +2,7 @@ import { Password } from '@convex-dev/auth/providers/Password'
 import { convexAuth } from '@convex-dev/auth/server'
 import { DataModel } from './_generated/dataModel'
 import { query } from './_generated/server'
-import { v } from 'convex/values'
+import { v, ConvexError } from 'convex/values'
 
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [
@@ -15,16 +15,20 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
       },
       validatePasswordRequirements(password: string) {
         if (!password || password.length < 8) {
-          throw new Error('Password must be at least 8 characters long')
+          throw new ConvexError('Password must be at least 8 characters long')
         }
         if (!/(?=.*[a-z])/.test(password)) {
-          throw new Error('Password must contain at least one lowercase letter')
+          throw new ConvexError(
+            'Password must contain at least one lowercase letter'
+          )
         }
         if (!/(?=.*[A-Z])/.test(password)) {
-          throw new Error('Password must contain at least one uppercase letter')
+          throw new ConvexError(
+            'Password must contain at least one uppercase letter'
+          )
         }
         if (!/(?=.*\d)/.test(password)) {
-          throw new Error('Password must contain at least one number')
+          throw new ConvexError('Password must contain at least one number')
         }
       },
     }),

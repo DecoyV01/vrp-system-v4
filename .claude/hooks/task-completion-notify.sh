@@ -15,7 +15,7 @@ fi
 # Double beep sound using Console.Beep for pure tone (not Windows system sound)
 /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "
 [Console]::Beep(800, 200); 
-Start-Sleep -Milliseconds 100; 
+Start-Sleep -Milliseconds 500; 
 [Console]::Beep(1000, 200)
 " 2>/dev/null || \
 echo -e "\a\a"
