@@ -1,7 +1,8 @@
-import { ChevronRight, ChevronLeft, Folder, Database, Table, Plus, MoreHorizontal } from 'lucide-react'
+import { ChevronRight, ChevronLeft, Folder, Database, Table, Plus, MoreHorizontal, Edit2, Copy, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { Checkbox } from '@/components/ui/checkbox'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useState, useEffect, useCallback } from 'react'
 import { 
   useHierarchy, 
   useTreeData, 
@@ -19,12 +20,35 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuShortcut,
+  DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu'
+import { useTreeNavigation } from '@/hooks/useTreeNavigation'
+import { useModalState } from '@/hooks/useModalState'
+import { useHierarchyOperations } from '@/hooks/useHierarchyOperations'
+import { useToastNotifications } from '@/hooks/useToastNotifications'
+import { useBulkTreeSelection } from '@/hooks/useBulkTreeSelection'
+import { ModalManager } from '@/components/ui/ModalManager'
+import BulkOperationsToolbar from './BulkOperationsToolbar'
+import BulkDeleteConfirmationModal from './BulkDeleteConfirmationModal'
+import BulkCloneModal from './BulkCloneModal'
 
-const TreeNodeComponent = ({ node, level = 0 }: { node: TreeNode; level?: number }) => {
+const TreeNodeComponent = ({ 
+  node, 
+  level = 0, 
+  bulkSelection 
+}: { 
+  node: TreeNode; 
+  level?: number;
+  bulkSelection?: ReturnType<typeof useBulkTreeSelection>
+}) => {
   const navigate = useNavigate()
   const { toggleNode, setSelectedNode, selectedNode } = useHierarchy()
+  const { openEditModal, openDeleteModal, openCloneModal } = useModalState()
+  const { getCascadeInfo } = useHierarchyOperations()
   const isSelected = selectedNode?.id === node.id
+  const isBulkSelected = bulkSelection?.isNodeSelected(node.id) || false
+  const isSelectable = bulkSelection?.isNodeSelectable(node) || false
 
   // Get child data based on node type
   const scenarios = useProjectScenarios(
@@ -50,7 +74,24 @@ const TreeNodeComponent = ({ node, level = 0 }: { node: TreeNode; level?: number
     }
   }
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    // Handle bulk selection if enabled and node is selectable
+    if (isSelectable && bulkSelection) {
+      // Check for modifier keys
+      const withCtrl = e.ctrlKey || e.metaKey
+      const withShift = e.shiftKey
+      
+      if (withCtrl || withShift) {
+        // Bulk selection mode
+        e.preventDefault()
+        bulkSelection.toggleNodeSelection(node.id, !isBulkSelected, {
+          ctrl: withCtrl,
+          shift: withShift
+        })
+        return
+      }
+    }
+    
     setSelectedNode(node)
     
     // Toggle expansion for non-leaf nodes
@@ -79,17 +120,118 @@ const TreeNodeComponent = ({ node, level = 0 }: { node: TreeNode; level?: number
                      (node.type === 'scenario' && datasets?.length > 0) ||
                      (node.type === 'dataset' && node.children && node.children.length > 0)
 
+  // Context menu handlers
+  const handleEdit = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!node.realId || node.type === 'table') return
+    
+    openEditModal(
+      node.type as 'project' | 'scenario' | 'dataset',
+      node.realId,
+      node.name
+    )
+  }, [node, openEditModal])
+
+  const handleClone = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!node.realId || node.type === 'project' || node.type === 'table') return
+    
+    const parentId = node.type === 'scenario' 
+      ? node.metadata?.projectId 
+      : node.metadata?.scenarioId
+    
+    openCloneModal(
+      node.type as 'scenario' | 'dataset',
+      node.realId,
+      node.name,
+      parentId
+    )
+  }, [node, openCloneModal])
+
+  const handleDelete = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!node.realId || node.type === 'table') return
+    
+    // Show loading state while analyzing cascade effects
+    const loadingToast = toast.loading(`Analyzing delete impact for ${node.name}...`)
+    
+    try {
+      const cascadeInfo = await getCascadeInfo(
+        node.type as 'project' | 'scenario' | 'dataset',
+        node.realId
+      )
+      
+      // Dismiss loading toast
+      toast.dismiss(loadingToast)
+      
+      openDeleteModal(
+        node.type as 'project' | 'scenario' | 'dataset',
+        node.realId,
+        node.name,
+        cascadeInfo
+      )
+    } catch (error) {
+      console.error('Failed to get cascade info:', error)
+      toast.dismiss(loadingToast)
+      toast.error('Failed to analyze delete impact. Please try again.')
+    }
+  }, [node, openDeleteModal, getCascadeInfo])
+
+  // Keyboard shortcut handler
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (!isSelected) return
+    
+    switch (e.key) {
+      case 'F2':
+        e.preventDefault()
+        handleEdit(e as any)
+        break
+      case 'Delete':
+        e.preventDefault()
+        handleDelete(e as any)
+        break
+    }
+    
+    // Ctrl+D for clone
+    if (e.ctrlKey && e.key === 'd') {
+      e.preventDefault()
+      handleClone(e as any)
+    }
+  }, [isSelected, handleEdit, handleDelete, handleClone])
+
   return (
     <div>
       <div 
-        className={`flex items-center gap-2 px-2 py-1 rounded cursor-pointer group ${
+        className={`flex items-center gap-2 px-2 py-1 rounded cursor-pointer group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 ${
           isSelected 
             ? 'bg-accent text-accent-foreground' 
+            : isBulkSelected
+            ? 'bg-primary/10 text-foreground border border-primary/20'
             : 'hover:bg-muted text-foreground'
         }`}
         style={{ paddingLeft: `${level * 16 + 8}px` }}
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        role="treeitem"
+        aria-selected={isSelected}
+        aria-expanded={hasChildren ? node.expanded : undefined}
+        aria-label={`${node.type}: ${node.name}`}
+        data-node-id={node.id}
       >
+        {/* Bulk selection checkbox for selectable nodes */}
+        {isSelectable && bulkSelection && (
+          <Checkbox
+            checked={isBulkSelected}
+            onCheckedChange={(checked) => {
+              bulkSelection.toggleNodeSelection(node.id, checked as boolean)
+            }}
+            onClick={(e) => e.stopPropagation()}
+            className="mr-1"
+            aria-label={`Select ${node.name}`}
+          />
+        )}
+        
         {hasChildren && (
           <ChevronRight 
             className={`w-4 h-4 transition-transform ${node.expanded ? 'rotate-90' : ''}`}
@@ -99,23 +241,46 @@ const TreeNodeComponent = ({ node, level = 0 }: { node: TreeNode; level?: number
         {getIcon()}
         <span className="text-sm truncate flex-1">{node.name}</span>
         
-        {/* Context menu for certain node types */}
+        {/* Enhanced context menu for certain node types */}
         {(node.type === 'project' || node.type === 'scenario' || node.type === 'dataset') && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
+                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 focus:opacity-100"
                 onClick={(e) => e.stopPropagation()}
+                aria-label={`More options for ${node.name}`}
               >
                 <MoreHorizontal className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuItem>Duplicate</DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={handleEdit}>
+                <Edit2 className="w-4 h-4 mr-2" />
+                Edit
+                <DropdownMenuShortcut>F2</DropdownMenuShortcut>
+              </DropdownMenuItem>
+              
+              {/* Clone only available for scenarios and datasets */}
+              {(node.type === 'scenario' || node.type === 'dataset') && (
+                <DropdownMenuItem onClick={handleClone}>
+                  <Copy className="w-4 h-4 mr-2" />
+                  Clone
+                  <DropdownMenuShortcut>Ctrl+D</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              )}
+              
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuItem 
+                onClick={handleDelete}
+                className="text-destructive focus:text-destructive"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete
+                <DropdownMenuShortcut>Del</DropdownMenuShortcut>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )}
@@ -127,7 +292,8 @@ const TreeNodeComponent = ({ node, level = 0 }: { node: TreeNode; level?: number
             <TreeNodeComponent 
               key={child.id} 
               node={child} 
-              level={level + 1} 
+              level={level + 1}
+              bulkSelection={bulkSelection}
             />
           ))}
         </div>
@@ -137,22 +303,423 @@ const TreeNodeComponent = ({ node, level = 0 }: { node: TreeNode; level?: number
 }
 
 const SecondarySidebar = () => {
+  const navigate = useNavigate()
+  const location = useLocation()
   const treeData = useTreeData()
   const createProject = useCreateProject()
   const [isCreatingProject, setIsCreatingProject] = useState(false)
+  const [showBulkDeleteModal, setShowBulkDeleteModal] = useState(false)
+  const [showBulkCloneModal, setShowBulkCloneModal] = useState(false)
   const { secondary, toggleSecondary } = useSidebarStore()
+  const treeNavigation = useTreeNavigation({
+    autoExpandOnSelect: false,
+    autoExpandToSelection: true
+  })
+
+  const { startProgress, updateProgress } = useToastNotifications()
+  const hierarchyOperations = useHierarchyOperations()
+
+  // Bulk selection functionality
+  const bulkSelection = useBulkTreeSelection({
+    treeData: treeData || [],
+    maxSelection: 100, // Reasonable limit for tree selection
+    selectableTypes: ['scenario', 'dataset'],
+    onSelectionChange: (selectedNodeIds, selectedNodes) => {
+      console.log('Bulk selection changed:', {
+        selectedCount: selectedNodeIds.length,
+        selectedTypes: selectedNodes.reduce((acc, node) => {
+          acc[node.type] = (acc[node.type] || 0) + 1
+          return acc
+        }, {} as Record<string, number>)
+      })
+    }
+  })
+
+  // Helper function to get all visible nodes in tree order
+  const getAllVisibleNodes = useCallback((nodes: TreeNode[]): TreeNode[] => {
+    const result: TreeNode[] = []
+    
+    const traverse = (nodeList: TreeNode[]) => {
+      for (const node of nodeList) {
+        result.push(node)
+        
+        if (node.expanded && node.children && treeNavigation.expandedNodeIds.has(node.id)) {
+          traverse(node.children)
+        }
+      }
+    }
+    
+    traverse(nodes)
+    return result
+  }, [treeNavigation.expandedNodeIds])
+
+  // Smart auto-expansion based on current route
+  useEffect(() => {
+    if (treeData && treeData.length > 0 && location.pathname) {
+      // Auto-expand to current route when tree data loads or route changes
+      treeNavigation.autoExpandToCurrentRoute(treeData, location.pathname)
+    }
+  }, [treeData, location.pathname, treeNavigation])
+
+  // Initialize smart expansion on first load
+  useEffect(() => {
+    if (treeData && treeData.length > 0) {
+      // Check if this is first load (no nodes expanded yet)
+      if (treeNavigation.expandedNodeIds.size === 0) {
+        // Apply smart expansion pattern based on tree size
+        if (treeData.length === 1) {
+          // Single project: expand it and first scenario
+          treeNavigation.smartExpansion(treeData, 'current-project')
+        } else if (treeData.length <= 3) {
+          // Few projects: expand active scenarios
+          treeNavigation.smartExpansion(treeData, 'active-scenarios')
+        }
+        // For many projects, keep collapsed by default
+      }
+      
+      // Auto-select first node if none selected for better keyboard navigation
+      if (!treeNavigation.selectedNodeId && treeData.length > 0) {
+        treeNavigation.selectNode(treeData[0].id)
+      }
+    }
+  }, [treeData, treeNavigation])
+
+  // Global keyboard event handling for tree navigation
+  useEffect(() => {
+    const handleGlobalKeyDown = (event: KeyboardEvent) => {
+      // Only handle if sidebar is focused
+      const activeElement = document.activeElement
+      const isTreeFocused = activeElement?.closest('[role="tree"]') !== null
+      
+      if (!isTreeFocused || !treeData) return
+
+      // Global shortcuts with modifiers
+      if (event.ctrlKey || event.metaKey) {
+        switch (event.key) {
+          case 'e':
+            event.preventDefault()
+            treeNavigation.expandAll(treeData)
+            return
+          case 'r':
+            event.preventDefault()
+            treeNavigation.collapseAll()
+            return
+        }
+      }
+
+      switch (event.key) {
+        case 'ArrowDown':
+          event.preventDefault()
+          if (treeNavigation.selectedNodeId) {
+            const nextId = treeNavigation.getNextSelectableNode(
+              treeNavigation.selectedNodeId,
+              treeData
+            )
+            if (nextId) {
+              treeNavigation.selectNode(nextId)
+              // Focus the element
+              const nextElement = document.querySelector(`[data-node-id="${nextId}"]`)
+              if (nextElement instanceof HTMLElement) {
+                nextElement.focus()
+              }
+            }
+          }
+          break
+          
+        case 'ArrowUp':
+          event.preventDefault()
+          if (treeNavigation.selectedNodeId) {
+            const prevId = treeNavigation.getPreviousSelectableNode(
+              treeNavigation.selectedNodeId,
+              treeData
+            )
+            if (prevId) {
+              treeNavigation.selectNode(prevId)
+              // Focus the element
+              const prevElement = document.querySelector(`[data-node-id="${prevId}"]`)
+              if (prevElement instanceof HTMLElement) {
+                prevElement.focus()
+              }
+            }
+          }
+          break
+          
+        case 'ArrowRight':
+          event.preventDefault()
+          if (treeNavigation.selectedNodeId && !treeNavigation.isNodeExpanded(treeNavigation.selectedNodeId)) {
+            treeNavigation.expandNode(treeNavigation.selectedNodeId)
+          }
+          break
+          
+        case 'ArrowLeft':
+          event.preventDefault()
+          if (treeNavigation.selectedNodeId && treeNavigation.isNodeExpanded(treeNavigation.selectedNodeId)) {
+            treeNavigation.collapseNode(treeNavigation.selectedNodeId)
+          }
+          break
+          
+        case 'Enter':
+        case ' ':
+          event.preventDefault()
+          if (treeNavigation.selectedNodeId) {
+            treeNavigation.toggleNode(treeNavigation.selectedNodeId)
+          }
+          break
+          
+        case 'Home':
+          event.preventDefault()
+          // Jump to first node
+          if (treeData.length > 0) {
+            const firstNodeId = treeData[0].id
+            treeNavigation.selectNode(firstNodeId)
+            const firstElement = document.querySelector(`[data-node-id="${firstNodeId}"]`)
+            if (firstElement instanceof HTMLElement) {
+              firstElement.focus()
+            }
+          }
+          break
+          
+        case 'End':
+          event.preventDefault()
+          // Jump to last visible node
+          const visibleNodes = getAllVisibleNodes(treeData)
+          if (visibleNodes.length > 0) {
+            const lastNodeId = visibleNodes[visibleNodes.length - 1].id
+            treeNavigation.selectNode(lastNodeId)
+            const lastElement = document.querySelector(`[data-node-id="${lastNodeId}"]`)
+            if (lastElement instanceof HTMLElement) {
+              lastElement.focus()
+            }
+          }
+          break
+          
+        case 'PageDown':
+          event.preventDefault()
+          // Jump down by 5 nodes
+          if (treeNavigation.selectedNodeId) {
+            let currentId = treeNavigation.selectedNodeId
+            for (let i = 0; i < 5; i++) {
+              const nextId = treeNavigation.getNextSelectableNode(currentId, treeData)
+              if (nextId) {
+                currentId = nextId
+              } else {
+                break
+              }
+            }
+            if (currentId !== treeNavigation.selectedNodeId) {
+              treeNavigation.selectNode(currentId)
+              const element = document.querySelector(`[data-node-id="${currentId}"]`)
+              if (element instanceof HTMLElement) {
+                element.focus()
+              }
+            }
+          }
+          break
+          
+        case 'PageUp':
+          event.preventDefault()
+          // Jump up by 5 nodes
+          if (treeNavigation.selectedNodeId) {
+            let currentId = treeNavigation.selectedNodeId
+            for (let i = 0; i < 5; i++) {
+              const prevId = treeNavigation.getPreviousSelectableNode(currentId, treeData)
+              if (prevId) {
+                currentId = prevId
+              } else {
+                break
+              }
+            }
+            if (currentId !== treeNavigation.selectedNodeId) {
+              treeNavigation.selectNode(currentId)
+              const element = document.querySelector(`[data-node-id="${currentId}"]`)
+              if (element instanceof HTMLElement) {
+                element.focus()
+              }
+            }
+          }
+          break
+          
+        case 'Escape':
+          event.preventDefault()
+          // Clear selection and remove focus
+          treeNavigation.selectNode(null)
+          const activeElement = document.activeElement
+          if (activeElement instanceof HTMLElement) {
+            activeElement.blur()
+          }
+          break
+      }
+    }
+
+    document.addEventListener('keydown', handleGlobalKeyDown)
+    return () => document.removeEventListener('keydown', handleGlobalKeyDown)
+  }, [treeNavigation, treeData, getAllVisibleNodes])
+
+  // Bulk operation handlers
+  const handleBulkEdit = useCallback(() => {
+    const selectedNodes = bulkSelection.getSelectedNodes()
+    console.log('Bulk edit requested for:', selectedNodes)
+    // TODO: Implement bulk edit modal in future task
+    toast.info(`Bulk edit for ${selectedNodes.length} items (Coming in Phase 5)`)
+  }, [bulkSelection])
+
+  const handleBulkClone = useCallback(() => {
+    const selectedNodes = bulkSelection.getSelectedNodes()
+    if (selectedNodes.length === 0) return
+    
+    console.log('Opening bulk clone modal for:', selectedNodes)
+    setShowBulkCloneModal(true)
+  }, [bulkSelection])
+
+  const handleBulkDelete = useCallback(() => {
+    const selectedNodes = bulkSelection.getSelectedNodes()
+    if (selectedNodes.length === 0) return
+    
+    console.log('Opening bulk delete modal for:', selectedNodes)
+    setShowBulkDeleteModal(true)
+  }, [bulkSelection])
+
+  // Bulk clone execution
+  const executeBulkClone = useCallback(async (namePrefix: string, namingStrategy: string) => {
+    const selectedNodes = bulkSelection.getSelectedNodes()
+    const toastId = startProgress('Cloning', `${selectedNodes.length} items`)
+    
+    try {
+      // Group nodes by type for separate processing
+      const scenarioNodes = selectedNodes.filter(node => node.type === 'scenario')
+      const datasetNodes = selectedNodes.filter(node => node.type === 'dataset')
+      
+      let totalSuccess = 0
+      let totalFailed = 0
+      const errors: string[] = []
+      
+      // Clone scenarios
+      if (scenarioNodes.length > 0) {
+        const scenarioIds = scenarioNodes.map(node => node.realId).filter(Boolean) as any[]
+        try {
+          const result = await hierarchyOperations.bulkClone('scenario', scenarioIds, namePrefix)
+          totalSuccess += result.success
+          totalFailed += result.failed
+          errors.push(...result.errors)
+        } catch (error) {
+          console.error('Failed to clone scenarios:', error)
+          totalFailed += scenarioNodes.length
+          errors.push(`Failed to clone ${scenarioNodes.length} scenarios`)
+        }
+      }
+      
+      // Clone datasets
+      if (datasetNodes.length > 0) {
+        const datasetIds = datasetNodes.map(node => node.realId).filter(Boolean) as any[]
+        try {
+          const result = await hierarchyOperations.bulkClone('dataset', datasetIds, namePrefix)
+          totalSuccess += result.success
+          totalFailed += result.failed
+          errors.push(...result.errors)
+        } catch (error) {
+          console.error('Failed to clone datasets:', error)
+          totalFailed += datasetNodes.length
+          errors.push(`Failed to clone ${datasetNodes.length} datasets`)
+        }
+      }
+      
+      // Update progress based on results
+      if (totalSuccess > 0 && totalFailed === 0) {
+        updateProgress(toastId, true, `Successfully cloned ${totalSuccess} items`)
+        bulkSelection.clearSelection()
+      } else if (totalSuccess > 0 && totalFailed > 0) {
+        updateProgress(toastId, true, `Cloned ${totalSuccess} items, ${totalFailed} failed`)
+      } else {
+        updateProgress(toastId, false, `Failed to clone items: ${errors[0] || 'Unknown error'}`)
+      }
+      
+      return { success: totalSuccess, failed: totalFailed, errors }
+    } catch (error) {
+      console.error('Bulk clone operation failed:', error)
+      updateProgress(toastId, false, 'Bulk clone operation failed')
+      throw error
+    }
+  }, [bulkSelection, hierarchyOperations, startProgress, updateProgress])
+
+  // Bulk delete execution
+  const executeBulkDelete = useCallback(async () => {
+    const selectedNodes = bulkSelection.getSelectedNodes()
+    const toastId = startProgress('Deleting', `${selectedNodes.length} items`)
+    
+    try {
+      // Group nodes by type for separate processing
+      const scenarioNodes = selectedNodes.filter(node => node.type === 'scenario')
+      const datasetNodes = selectedNodes.filter(node => node.type === 'dataset')
+      
+      let totalSuccess = 0
+      let totalFailed = 0
+      const errors: string[] = []
+      
+      // Delete scenarios first (they may contain datasets)
+      if (scenarioNodes.length > 0) {
+        const scenarioIds = scenarioNodes.map(node => node.realId).filter(Boolean) as any[]
+        try {
+          const result = await hierarchyOperations.bulkDelete('scenario', scenarioIds)
+          totalSuccess += result.success
+          totalFailed += result.failed
+          errors.push(...result.errors)
+        } catch (error) {
+          console.error('Failed to delete scenarios:', error)
+          totalFailed += scenarioNodes.length
+          errors.push(`Failed to delete ${scenarioNodes.length} scenarios`)
+        }
+      }
+      
+      // Delete datasets
+      if (datasetNodes.length > 0) {
+        const datasetIds = datasetNodes.map(node => node.realId).filter(Boolean) as any[]
+        try {
+          const result = await hierarchyOperations.bulkDelete('dataset', datasetIds)
+          totalSuccess += result.success
+          totalFailed += result.failed
+          errors.push(...result.errors)
+        } catch (error) {
+          console.error('Failed to delete datasets:', error)
+          totalFailed += datasetNodes.length
+          errors.push(`Failed to delete ${datasetNodes.length} datasets`)
+        }
+      }
+      
+      // Update progress based on results
+      if (totalSuccess > 0 && totalFailed === 0) {
+        updateProgress(toastId, true, `Successfully deleted ${totalSuccess} items`)
+        bulkSelection.clearSelection()
+      } else if (totalSuccess > 0 && totalFailed > 0) {
+        updateProgress(toastId, true, `Deleted ${totalSuccess} items, ${totalFailed} failed`)
+      } else {
+        updateProgress(toastId, false, `Failed to delete items: ${errors[0] || 'Unknown error'}`)
+      }
+      
+      return { success: totalSuccess, failed: totalFailed, errors }
+    } catch (error) {
+      console.error('Bulk delete operation failed:', error)
+      updateProgress(toastId, false, 'Bulk delete operation failed')
+      throw error
+    }
+  }, [bulkSelection, hierarchyOperations, startProgress, updateProgress])
 
   const handleCreateProject = async () => {
+    const toastId = startProgress('Creating', 'project')
+    
     try {
       setIsCreatingProject(true)
+      const projectName = `New Project ${Date.now()}`
+      
       await createProject({
-        name: `New Project ${Date.now()}`,
+        name: projectName,
         description: 'A new VRP project'
       })
-      toast.success('Project created successfully')
+      
+      updateProgress(toastId, true, `Project "${projectName}" created successfully`)
     } catch (error) {
       console.error('Failed to create project:', error)
-      toast.error('Failed to create project')
+      const message = error instanceof Error ? error.message : 'Failed to create project'
+      updateProgress(toastId, false, message)
     } finally {
       setIsCreatingProject(false)
     }
@@ -214,7 +781,11 @@ const SecondarySidebar = () => {
       </div>
       
       {/* Tree */}
-      <div className="flex-1 overflow-y-auto p-2">
+      <div 
+        className="flex-1 overflow-y-auto p-2" 
+        role="tree"
+        aria-label="VRP Projects navigation tree"
+      >
         {treeData.length === 0 ? (
           <div className="text-center text-muted-foreground text-sm mt-8">
             <Folder className="w-8 h-8 mx-auto mb-2 opacity-50" />
@@ -223,10 +794,27 @@ const SecondarySidebar = () => {
           </div>
         ) : (
           treeData.map((node) => (
-            <TreeNodeComponent key={node.id} node={node} />
+            <TreeNodeComponent 
+              key={node.id} 
+              node={node} 
+              bulkSelection={bulkSelection}
+            />
           ))
         )}
       </div>
+      
+      {/* Bulk Operations Toolbar - shown when items are selected */}
+      {bulkSelection.selectionStatus.hasSelection && (
+        <BulkOperationsToolbar
+          selectionStatus={bulkSelection.selectionStatus}
+          selectedNodes={bulkSelection.getSelectedNodes()}
+          onBulkEdit={handleBulkEdit}
+          onBulkClone={handleBulkClone}
+          onBulkDelete={handleBulkDelete}
+          onClearSelection={bulkSelection.clearSelection}
+          onSelectAll={bulkSelection.selectAll}
+        />
+      )}
       
       {/* Actions */}
       <div className="p-4 border-t border-border">
@@ -249,6 +837,39 @@ const SecondarySidebar = () => {
           )}
         </Button>
       </div>
+
+      {/* Modal Manager for all hierarchy operations */}
+      <ModalManager
+        onEditSuccess={(entityType, entityId) => {
+          console.log(`${entityType} ${entityId} updated successfully`)
+          // Tree will automatically refresh due to Convex real-time updates
+        }}
+        onDeleteSuccess={(entityType, entityId) => {
+          console.log(`${entityType} ${entityId} deleted successfully`)
+          // Tree will automatically refresh due to Convex real-time updates
+        }}
+        onCloneSuccess={(entityType) => {
+          console.log(`${entityType} cloned successfully`)
+          // Tree will automatically refresh due to Convex real-time updates
+        }}
+      />
+
+      {/* Bulk Operations Modals */}
+      <BulkDeleteConfirmationModal
+        isOpen={showBulkDeleteModal}
+        onClose={() => setShowBulkDeleteModal(false)}
+        onConfirm={executeBulkDelete}
+        selectedNodes={bulkSelection.getSelectedNodes()}
+        isDeleting={hierarchyOperations.isBulkOperating}
+      />
+
+      <BulkCloneModal
+        isOpen={showBulkCloneModal}
+        onClose={() => setShowBulkCloneModal(false)}
+        onConfirm={executeBulkClone}
+        selectedNodes={bulkSelection.getSelectedNodes()}
+        isCloning={hierarchyOperations.isBulkOperating}
+      />
     </div>
   )
 }
