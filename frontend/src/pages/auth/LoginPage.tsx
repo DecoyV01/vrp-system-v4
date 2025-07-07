@@ -30,6 +30,7 @@ const LoginPage = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
+      setIsLoading(false) // Stop loading when authenticated
       navigate('/projects')
     }
   }, [isAuthenticated, navigate])
@@ -40,18 +41,12 @@ const LoginPage = () => {
     setError('')
 
     try {
-      const result = await signIn(signInEmail, signInPassword)
-      if (result.signingIn) {
-        // Wait briefly for auth handshake to complete, then redirect
-        setTimeout(() => {
-          navigate('/projects')
-        }, 100)
-      }
+      await signIn(signInEmail, signInPassword)
+      // Don't manually redirect - let the useEffect handle it when isAuthenticated becomes true
     } catch (error: any) {
       setError(
         error.message || 'Failed to sign in. Please check your credentials.'
       )
-    } finally {
       setIsLoading(false)
     }
   }
@@ -62,16 +57,10 @@ const LoginPage = () => {
     setError('')
 
     try {
-      const result = await signUp(signUpEmail, signUpPassword, signUpName)
-      if (result.signingIn) {
-        // Wait briefly for auth handshake to complete, then redirect
-        setTimeout(() => {
-          navigate('/projects')
-        }, 100)
-      }
+      await signUp(signUpEmail, signUpPassword, signUpName)
+      // Don't manually redirect - let the useEffect handle it when isAuthenticated becomes true
     } catch (error: any) {
       setError(error.message || 'Failed to create account. Please try again.')
-    } finally {
       setIsLoading(false)
     }
   }
