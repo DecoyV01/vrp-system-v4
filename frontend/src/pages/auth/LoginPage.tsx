@@ -29,7 +29,9 @@ const LoginPage = () => {
 
   // Redirect if already authenticated
   useEffect(() => {
+    console.log('🔍 LoginPage useEffect - isAuthenticated:', isAuthenticated)
     if (isAuthenticated) {
+      console.log('✅ User is authenticated, redirecting to /projects')
       setIsLoading(false) // Stop loading when authenticated
       navigate('/projects')
     }
@@ -41,7 +43,9 @@ const LoginPage = () => {
     setError('')
 
     try {
-      await signIn(signInEmail, signInPassword)
+      console.log('🔐 Starting sign in...')
+      const result = await signIn(signInEmail, signInPassword)
+      console.log('🔐 Sign in result:', result)
       // Don't manually redirect - let the useEffect handle it when isAuthenticated becomes true
     } catch (error: any) {
       setError(

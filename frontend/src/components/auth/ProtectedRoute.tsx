@@ -9,7 +9,15 @@ interface ProtectedRouteProps {
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { isAuthenticated, isLoading } = useCurrentUser()
 
+  console.log(
+    '🛡️ ProtectedRoute check - isLoading:',
+    isLoading,
+    'isAuthenticated:',
+    isAuthenticated
+  )
+
   if (isLoading) {
+    console.log('🛡️ ProtectedRoute - Still loading, showing spinner')
     return (
       <div className="flex items-center justify-center min-h-screen">
         <LoadingSpinner className="w-8 h-8" />
@@ -18,8 +26,10 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   if (!isAuthenticated) {
+    console.log('🛡️ ProtectedRoute - Not authenticated, redirecting to login')
     return <Navigate to="/auth/login" replace />
   }
 
+  console.log('🛡️ ProtectedRoute - Authenticated, rendering children')
   return <>{children}</>
 }
