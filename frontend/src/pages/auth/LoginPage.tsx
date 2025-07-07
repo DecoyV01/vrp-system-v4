@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -16,6 +16,34 @@ const LoginPage = () => {
   const { signIn } = useAuthActions()
   const [flow, setFlow] = useState<'signIn' | 'signUp'>('signIn')
   const [submitting, setSubmitting] = useState(false)
+
+  // Clear any stale auth tokens on mount to prevent token mismatch errors
+  useEffect(() => {
+    // Check if there are auth-related items in localStorage that might be stale
+    const authKeys = Object.keys(localStorage).filter(
+      key =>
+        key.includes('convex') || key.includes('auth') || key.includes('token')
+    )
+
+    if (authKeys.length > 0) {
+      console.log('🧹 Clearing potentially stale auth tokens:', authKeys)
+      authKeys.forEach(key => localStorage.removeItem(key))
+
+      // Also clear sessionStorage
+      const sessionAuthKeys = Object.keys(sessionStorage).filter(
+        key =>
+          key.includes('convex') ||
+          key.includes('auth') ||
+          key.includes('token')
+      )
+      sessionAuthKeys.forEach(key => sessionStorage.removeItem(key))
+
+      // Force a page reload to ensure clean state
+      if (authKeys.length > 0) {
+        window.location.reload()
+      }
+    }
+  }, [])
 
   // No complex logic needed - Convex Auth handles everything automatically
 
