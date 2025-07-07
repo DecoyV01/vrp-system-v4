@@ -12,7 +12,7 @@ VRP System v4 is a production-ready Vehicle Routing Problem management system bu
 - **Frontend**: React 18.3.1 + TypeScript + Vite + shadcn/ui + Tailwind CSS v4
 - **Backend**: Convex serverless platform with real-time WebSocket database  
 - **State**: Zustand (local) + Convex (server state with real-time sync)
-- **Authentication**: Mock auth system (development-ready)
+- **Authentication**:
 
 ## Essential Commands
 

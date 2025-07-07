@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Card,
   CardContent,
@@ -9,65 +8,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { useAuth, useCurrentUser } from '@/hooks/useConvexAuth'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useAuthActions } from '@convex-dev/auth/react'
+import { ConvexError } from 'convex/values'
+import { toast } from 'sonner'
 
 const LoginPage = () => {
-  const [signInEmail, setSignInEmail] = useState('')
-  const [signInPassword, setSignInPassword] = useState('')
-  const [signUpEmail, setSignUpEmail] = useState('')
-  const [signUpPassword, setSignUpPassword] = useState('')
-  const [signUpName, setSignUpName] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
-  const { signIn, signUp } = useAuth()
-  const { isAuthenticated } = useCurrentUser()
-  const navigate = useNavigate()
+  const { signIn } = useAuthActions()
+  const [flow, setFlow] = useState<'signIn' | 'signUp'>('signIn')
+  const [submitting, setSubmitting] = useState(false)
 
-  // Redirect if already authenticated
-  useEffect(() => {
-    console.log('🔍 LoginPage useEffect - isAuthenticated:', isAuthenticated)
-    if (isAuthenticated) {
-      console.log('✅ User is authenticated, redirecting to /projects')
-      setIsLoading(false) // Stop loading when authenticated
-      navigate('/projects')
-    }
-  }, [isAuthenticated, navigate])
-
-  const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError('')
-
-    try {
-      console.log('🔐 Starting sign in...')
-      const result = await signIn(signInEmail, signInPassword)
-      console.log('🔐 Sign in result:', result)
-      // Don't manually redirect - let the useEffect handle it when isAuthenticated becomes true
-    } catch (error: any) {
-      setError(
-        error.message || 'Failed to sign in. Please check your credentials.'
-      )
-      setIsLoading(false)
-    }
-  }
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError('')
-
-    try {
-      await signUp(signUpEmail, signUpPassword, signUpName)
-      // Don't manually redirect - let the useEffect handle it when isAuthenticated becomes true
-    } catch (error: any) {
-      setError(error.message || 'Failed to create account. Please try again.')
-      setIsLoading(false)
-    }
-  }
+  // No complex logic needed - Convex Auth handles everything automatically
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -80,100 +30,96 @@ const LoginPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
-            </TabsList>
+          <form
+            className="flex flex-col space-y-4"
+            onSubmit={event => {
+              event.preventDefault()
+              setSubmitting(true)
+              const formData = new FormData(event.currentTarget)
 
-            <TabsContent value="signin">
-              <form onSubmit={handleSignIn} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
-                  <Input
-                    id="signin-email"
-                    type="email"
-                    autoComplete="email"
-                    value={signInEmail}
-                    onChange={e => setSignInEmail(e.target.value)}
-                    placeholder="your@email.com"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
-                  <Input
-                    id="signin-password"
-                    type="password"
-                    autoComplete="current-password"
-                    value={signInPassword}
-                    onChange={e => setSignInPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Signing in...' : 'Sign In'}
-                </Button>
-              </form>
-            </TabsContent>
+              signIn('password', formData)
+                .then(() => {
+                  console.log('✅ Authentication successful')
+                })
+                .catch(error => {
+                  console.error('❌ Authentication error:', error)
+                  let errorMessage: string
 
-            <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-name">Full Name</Label>
-                  <Input
-                    id="signup-name"
-                    type="text"
-                    autoComplete="name"
-                    value={signUpName}
-                    onChange={e => setSignUpName(e.target.value)}
-                    placeholder="Your full name"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    autoComplete="email"
-                    value={signUpEmail}
-                    onChange={e => setSignUpEmail(e.target.value)}
-                    placeholder="your@email.com"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    autoComplete="new-password"
-                    value={signUpPassword}
-                    onChange={e => setSignUpPassword(e.target.value)}
-                    placeholder="Create a strong password"
-                    required
-                  />
-                  <p className="text-xs text-gray-500">
-                    Password must be at least 8 characters with uppercase,
-                    lowercase, and numbers
-                  </p>
-                </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Creating account...' : 'Create Account'}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
+                  if (error instanceof ConvexError) {
+                    errorMessage = error.data || 'Authentication failed'
+                  } else {
+                    errorMessage =
+                      flow === 'signIn'
+                        ? 'Could not sign in, did you mean to sign up?'
+                        : 'Could not sign up, did you mean to sign in?'
+                  }
 
-          {error && (
-            <Alert className="mt-4 border-red-200 bg-red-50">
-              <AlertDescription className="text-red-700">
-                {error}
-              </AlertDescription>
-            </Alert>
-          )}
+                  toast.error(errorMessage)
+                  setSubmitting(false)
+                })
+            }}
+          >
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium">
+                Email
+              </label>
+              <Input
+                name="email"
+                id="email"
+                type="email"
+                autoComplete="email"
+                placeholder="your@email.com"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-sm font-medium">
+                Password
+              </label>
+              <Input
+                type="password"
+                name="password"
+                id="password"
+                placeholder={
+                  flow === 'signIn'
+                    ? 'Enter your password'
+                    : 'Create a strong password'
+                }
+                autoComplete={
+                  flow === 'signIn' ? 'current-password' : 'new-password'
+                }
+                required
+              />
+              {flow === 'signUp' && (
+                <p className="text-xs text-gray-500">
+                  Password must be at least 8 characters with uppercase,
+                  lowercase, and numbers
+                </p>
+              )}
+            </div>
+
+            <input name="flow" value={flow} type="hidden" />
+
+            <Button type="submit" disabled={submitting} className="w-full">
+              {submitting
+                ? 'Please wait...'
+                : flow === 'signIn'
+                  ? 'Sign In'
+                  : 'Create Account'}
+            </Button>
+
+            <Button
+              variant="link"
+              type="button"
+              onClick={() => setFlow(flow === 'signIn' ? 'signUp' : 'signIn')}
+              className="w-full"
+            >
+              {flow === 'signIn'
+                ? "Don't have an account? Sign up"
+                : 'Already have an account? Sign in'}
+            </Button>
+          </form>
 
           <div className="mt-6 text-center text-sm text-gray-500">
             <p>Secure authentication powered by Convex Auth</p>
