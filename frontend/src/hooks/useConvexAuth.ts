@@ -51,7 +51,7 @@ export const useVRPAuthActions = () => {
           password,
           flow: 'signIn',
         })
-        return { success: result?.redirect ? false : true }
+        return result // Return the actual Convex Auth result: { signingIn: boolean, redirect?: URL }
       } catch (error: any) {
         console.error('Sign in error:', error)
         // Provide user-friendly error messages
@@ -97,7 +97,7 @@ export const useVRPAuthActions = () => {
           name: name || email.split('@')[0],
           flow: 'signUp',
         })
-        return { success: result?.redirect ? false : true }
+        return result // Return the actual Convex Auth result: { signingIn: boolean, redirect?: URL }
       } catch (error: any) {
         console.error('Sign up error:', error)
         // Provide user-friendly error messages

@@ -41,9 +41,11 @@ const LoginPage = () => {
 
     try {
       const result = await signIn(signInEmail, signInPassword)
-      if (result.success) {
-        // Immediate redirect on successful sign-in
-        navigate('/projects')
+      if (result.signingIn) {
+        // Wait briefly for auth handshake to complete, then redirect
+        setTimeout(() => {
+          navigate('/projects')
+        }, 100)
       }
     } catch (error: any) {
       setError(
@@ -61,9 +63,11 @@ const LoginPage = () => {
 
     try {
       const result = await signUp(signUpEmail, signUpPassword, signUpName)
-      if (result.success) {
-        // Immediate redirect on successful sign-up
-        navigate('/projects')
+      if (result.signingIn) {
+        // Wait briefly for auth handshake to complete, then redirect
+        setTimeout(() => {
+          navigate('/projects')
+        }, 100)
       }
     } catch (error: any) {
       setError(error.message || 'Failed to create account. Please try again.')
