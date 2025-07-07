@@ -1,8 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { ConvexReactClient } from 'convex/react'
-import { ConvexAuthProvider } from "@convex-dev/auth/react"
 import { BrowserRouter } from 'react-router-dom'
+import { ConvexAuthWrapper } from '@/components/auth/ConvexAuthWrapper'
 import App from './App.tsx'
 import './index.css'
 import './utils/uatHealthCheck'
@@ -16,10 +16,10 @@ if (import.meta.env.DEV) {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ConvexAuthProvider client={convex}>
+    <ConvexAuthWrapper client={convex}>
       <BrowserRouter>
         <App />
       </BrowserRouter>
-    </ConvexAuthProvider>
-  </React.StrictMode>,
+    </ConvexAuthWrapper>
+  </React.StrictMode>
 )
