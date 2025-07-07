@@ -14,7 +14,7 @@ fi
 # Windows notification through PowerShell from WSL
 # Double beep sound using Console.Beep for pure tone (not Windows system sound)
 /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "
-[Console]::Beep(800, 200); 
+[Console]::Beep(800, 300); 
 Start-Sleep -Milliseconds 500; 
 [Console]::Beep(1000, 200)
 " 2>/dev/null || \
@@ -27,11 +27,11 @@ echo -e "\a\a"
 Add-Type -AssemblyName System.Speech; 
 \$synth = New-Object System.Speech.Synthesis.SpeechSynthesizer; 
 \$synth.Rate = 1; 
-\$synth.Volume = 100; 
+\$synth.Volume = 95; 
 try { \$synth.SelectVoice('Microsoft Eva Desktop') } catch { 
   try { \$synth.SelectVoice('Microsoft Zira Desktop') } catch { }
 }; 
-\$synth.Speak('Hey Gjisbert, your task is complete!')
+\$synth.Speak('Hey G, come quickly, your task is complete!!! You are really awsome')
 " 2>/dev/null || \
 echo "🎉 Task complete!"
 

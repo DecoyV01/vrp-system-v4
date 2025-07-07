@@ -7,6 +7,7 @@ import { v, ConvexError } from 'convex/values'
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [
     Password<DataModel>({
+      id: 'password', // Explicit provider ID to match frontend calls
       profile(params) {
         return {
           email: params.email as string,

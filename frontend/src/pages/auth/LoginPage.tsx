@@ -40,8 +40,11 @@ const LoginPage = () => {
     setError('')
 
     try {
-      await signIn(signInEmail, signInPassword)
-      // Redirect will be handled by the useEffect above
+      const result = await signIn(signInEmail, signInPassword)
+      if (result.success) {
+        // Immediate redirect on successful sign-in
+        navigate('/projects')
+      }
     } catch (error: any) {
       setError(
         error.message || 'Failed to sign in. Please check your credentials.'
@@ -57,8 +60,11 @@ const LoginPage = () => {
     setError('')
 
     try {
-      await signUp(signUpEmail, signUpPassword, signUpName)
-      // Redirect will be handled by the useEffect above
+      const result = await signUp(signUpEmail, signUpPassword, signUpName)
+      if (result.success) {
+        // Immediate redirect on successful sign-up
+        navigate('/projects')
+      }
     } catch (error: any) {
       setError(error.message || 'Failed to create account. Please try again.')
     } finally {
