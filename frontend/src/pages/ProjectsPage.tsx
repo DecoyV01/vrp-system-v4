@@ -1,14 +1,27 @@
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Settings, Folder, Calendar, MoreHorizontal } from 'lucide-react'
-import { useProjects, useCreateProject, useDeleteProject, useProjectStats } from '@/hooks/useVRPData'
+import {
+  useProjects,
+  useCreateProject,
+  useDeleteProject,
+  useProjectStats,
+} from '@/hooks/useVRPData'
+import { useCurrentUser } from '@/hooks/useConvexAuth'
+import { Navigate } from 'react-router-dom'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
 import { formatDistanceToNow } from 'date-fns'
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -22,10 +35,14 @@ const ProjectCard = ({ project }: { project: any }) => {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+    if (
+      !confirm(
+        'Are you sure you want to delete this project? This action cannot be undone.'
+      )
+    ) {
       return
     }
-    
+
     try {
       setIsDeleting(true)
       await deleteProject({ id: project._id })
@@ -42,7 +59,10 @@ const ProjectCard = ({ project }: { project: any }) => {
     <Card className="hover:shadow-md transition-shadow cursor-pointer">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
-          <div className="flex-1" onClick={() => navigate(`/projects/${project._id}`)}>
+          <div
+            className="flex-1"
+            onClick={() => navigate(`/projects/${project._id}`)}
+          >
             <CardTitle className="text-lg mb-1">{project.name}</CardTitle>
             <CardDescription className="text-sm">
               {project.description || 'No description provided'}
@@ -55,13 +75,13 @@ const ProjectCard = ({ project }: { project: any }) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => navigate(`/projects/${project._id}`)}>
+              <DropdownMenuItem
+                onClick={() => navigate(`/projects/${project._id}`)}
+              >
                 Open
               </DropdownMenuItem>
-              <DropdownMenuItem disabled>
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem 
+              <DropdownMenuItem disabled>Edit</DropdownMenuItem>
+              <DropdownMenuItem
                 className="text-red-600"
                 onClick={handleDelete}
                 disabled={isDeleting}
@@ -72,17 +92,20 @@ const ProjectCard = ({ project }: { project: any }) => {
           </DropdownMenu>
         </div>
       </CardHeader>
-      
+
       <CardContent className="pt-0">
         <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
           <div className="flex items-center gap-1">
             <Calendar className="w-4 h-4" />
             <span>
-              Created {formatDistanceToNow(new Date(project.createdAt), { addSuffix: true })}
+              Created{' '}
+              {formatDistanceToNow(new Date(project.createdAt), {
+                addSuffix: true,
+              })}
             </span>
           </div>
         </div>
-        
+
         {stats && (
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="flex items-center justify-between">
@@ -103,7 +126,7 @@ const ProjectCard = ({ project }: { project: any }) => {
             </div>
           </div>
         )}
-        
+
         {project.tags && project.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-3">
             {project.tags.slice(0, 3).map((tag: string) => (
@@ -124,9 +147,15 @@ const ProjectCard = ({ project }: { project: any }) => {
 }
 
 const ProjectsPage = () => {
+  const { isAuthenticated, isLoading: authLoading } = useCurrentUser()
   const projects = useProjects()
   const createProject = useCreateProject()
   const [isCreating, setIsCreating] = useState(false)
+
+  // Add auth check before rendering
+  if (!authLoading && !isAuthenticated) {
+    return <Navigate to="/auth/login" replace />
+  }
 
   const handleCreateProject = async () => {
     try {
@@ -135,7 +164,7 @@ const ProjectsPage = () => {
         name: `New Project ${Date.now()}`,
         description: 'A new VRP project',
         currency: 'USD',
-        priority: 'medium'
+        priority: 'medium',
       })
       toast.success('Project created successfully')
     } catch (error) {
@@ -146,13 +175,15 @@ const ProjectsPage = () => {
     }
   }
 
-  if (projects === undefined) {
+  if (authLoading || projects === undefined) {
     return (
       <div className="flex flex-col h-full bg-white">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
-            <p className="text-sm text-gray-600">Manage your VRP projects and scenarios</p>
+            <p className="text-sm text-gray-600">
+              Manage your VRP projects and scenarios
+            </p>
           </div>
         </div>
         <div className="flex-1 flex items-center justify-center">
@@ -169,7 +200,8 @@ const ProjectsPage = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
           <p className="text-sm text-gray-600">
-            Manage your VRP projects and scenarios ({projects.length} project{projects.length !== 1 ? 's' : ''})
+            Manage your VRP projects and scenarios ({projects.length} project
+            {projects.length !== 1 ? 's' : ''})
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -177,11 +209,7 @@ const ProjectsPage = () => {
             <Settings className="w-4 h-4 mr-2" />
             Settings
           </Button>
-          <Button 
-            size="sm" 
-            onClick={handleCreateProject}
-            disabled={isCreating}
-          >
+          <Button size="sm" onClick={handleCreateProject} disabled={isCreating}>
             {isCreating ? (
               <>
                 <LoadingSpinner className="w-4 h-4 mr-2" />
@@ -196,7 +224,7 @@ const ProjectsPage = () => {
           </Button>
         </div>
       </div>
-      
+
       {/* Content */}
       <div className="flex-1 p-6">
         {projects.length === 0 ? (
@@ -208,12 +236,10 @@ const ProjectsPage = () => {
               Create your first VRP project
             </h3>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              Get started by creating a new project. You can add scenarios, datasets, and manage your vehicle routing problems.
+              Get started by creating a new project. You can add scenarios,
+              datasets, and manage your vehicle routing problems.
             </p>
-            <Button 
-              onClick={handleCreateProject}
-              disabled={isCreating}
-            >
+            <Button onClick={handleCreateProject} disabled={isCreating}>
               {isCreating ? (
                 <>
                   <LoadingSpinner className="w-4 h-4 mr-2" />
@@ -229,7 +255,7 @@ const ProjectsPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project) => (
+            {projects.map(project => (
               <ProjectCard key={project._id} project={project} />
             ))}
           </div>

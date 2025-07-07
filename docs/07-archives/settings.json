@@ -21,28 +21,6 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/mnt/c/projects/vrp-system/v4/.claude/hooks/task-completion-notify.sh"
-          }
-        ]
-      }
-    ],
-    "SubagentStop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/mnt/c/projects/vrp-system/v4/.claude/hooks/task-completion-notify.sh"
-          }
-        ]
-      }
     ]
   }
 }

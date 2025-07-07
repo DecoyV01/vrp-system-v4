@@ -2,7 +2,13 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { useAuth, useCurrentUser } from '@/hooks/useConvexAuth'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -32,12 +38,14 @@ const LoginPage = () => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
-    
+
     try {
       await signIn(signInEmail, signInPassword)
       // Redirect will be handled by the useEffect above
     } catch (error: any) {
-      setError(error.message || 'Failed to sign in. Please check your credentials.')
+      setError(
+        error.message || 'Failed to sign in. Please check your credentials.'
+      )
     } finally {
       setIsLoading(false)
     }
@@ -47,7 +55,7 @@ const LoginPage = () => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
-    
+
     try {
       await signUp(signUpEmail, signUpPassword, signUpName)
       // Redirect will be handled by the useEffect above
@@ -64,7 +72,8 @@ const LoginPage = () => {
         <CardHeader>
           <CardTitle>VRP System Access</CardTitle>
           <CardDescription>
-            Sign in to your account or create a new one to access your VRP projects
+            Sign in to your account or create a new one to access your VRP
+            projects
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -73,7 +82,7 @@ const LoginPage = () => {
               <TabsTrigger value="signin">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
@@ -81,8 +90,9 @@ const LoginPage = () => {
                   <Input
                     id="signin-email"
                     type="email"
+                    autoComplete="email"
                     value={signInEmail}
-                    onChange={(e) => setSignInEmail(e.target.value)}
+                    onChange={e => setSignInEmail(e.target.value)}
                     placeholder="your@email.com"
                     required
                   />
@@ -92,8 +102,9 @@ const LoginPage = () => {
                   <Input
                     id="signin-password"
                     type="password"
+                    autoComplete="current-password"
                     value={signInPassword}
-                    onChange={(e) => setSignInPassword(e.target.value)}
+                    onChange={e => setSignInPassword(e.target.value)}
                     placeholder="Enter your password"
                     required
                   />
@@ -111,8 +122,9 @@ const LoginPage = () => {
                   <Input
                     id="signup-name"
                     type="text"
+                    autoComplete="name"
                     value={signUpName}
-                    onChange={(e) => setSignUpName(e.target.value)}
+                    onChange={e => setSignUpName(e.target.value)}
                     placeholder="Your full name"
                     required
                   />
@@ -122,8 +134,9 @@ const LoginPage = () => {
                   <Input
                     id="signup-email"
                     type="email"
+                    autoComplete="email"
                     value={signUpEmail}
-                    onChange={(e) => setSignUpEmail(e.target.value)}
+                    onChange={e => setSignUpEmail(e.target.value)}
                     placeholder="your@email.com"
                     required
                   />
@@ -133,13 +146,15 @@ const LoginPage = () => {
                   <Input
                     id="signup-password"
                     type="password"
+                    autoComplete="new-password"
                     value={signUpPassword}
-                    onChange={(e) => setSignUpPassword(e.target.value)}
+                    onChange={e => setSignUpPassword(e.target.value)}
                     placeholder="Create a strong password"
                     required
                   />
                   <p className="text-xs text-gray-500">
-                    Password must be at least 8 characters with uppercase, lowercase, and numbers
+                    Password must be at least 8 characters with uppercase,
+                    lowercase, and numbers
                   </p>
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>

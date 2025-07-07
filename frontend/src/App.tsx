@@ -9,6 +9,7 @@ import TableEditorPage from './pages/TableEditorPage'
 import LoginPage from './pages/auth/LoginPage'
 import UATErrorBoundary from './components/UATErrorBoundary'
 import { ConfirmationDialogProvider } from './components/ui/ConfirmationDialogProvider'
+import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import './App.css'
 
 function App() {
@@ -18,18 +19,40 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/auth/login" element={<LoginPage />} />
-            <Route path="/" element={<MainLayout />}>
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <MainLayout />
+                </ProtectedRoute>
+              }
+            >
               <Route index element={<ProjectsPage />} />
               <Route path="projects" element={<ProjectsPage />} />
-              
+
               {/* Deep linking routes for VRP hierarchy */}
-              <Route path="projects/:projectId" element={<ProjectDetailPage />} />
-              <Route path="projects/:projectId/scenarios/:scenarioId" element={<ScenarioDetailPage />} />
-              <Route path="projects/:projectId/scenarios/:scenarioId/datasets/:datasetId" element={<DatasetDetailPage />} />
-              <Route path="projects/:projectId/scenarios/:scenarioId/datasets/:datasetId/:tableType" element={<TableEditorPage />} />
-              
+              <Route
+                path="projects/:projectId"
+                element={<ProjectDetailPage />}
+              />
+              <Route
+                path="projects/:projectId/scenarios/:scenarioId"
+                element={<ScenarioDetailPage />}
+              />
+              <Route
+                path="projects/:projectId/scenarios/:scenarioId/datasets/:datasetId"
+                element={<DatasetDetailPage />}
+              />
+              <Route
+                path="projects/:projectId/scenarios/:scenarioId/datasets/:datasetId/:tableType"
+                element={<TableEditorPage />}
+              />
+
               {/* Legacy routes for backwards compatibility */}
-              <Route path="tables/:datasetId/:tableType" element={<TableEditorPage />} />
+              <Route
+                path="tables/:datasetId/:tableType"
+                element={<TableEditorPage />}
+              />
             </Route>
           </Routes>
           <Toaster position="top-right" />
