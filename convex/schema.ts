@@ -10,7 +10,7 @@ export default defineSchema({
     // REQUIRED FIELDS (Not Nullable)
     name: v.string(),                    // ✅ Project name - always required
     ownerId: v.string(),                 // ✅ User ID from Convex Auth - required for ownership
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
+    // NOTE: Use _creationTime instead of createdAt (auto-managed by Convex)
     updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
     
     // OPTIONAL FIELDS (Nullable)
@@ -37,7 +37,7 @@ export default defineSchema({
     // REQUIRED FIELDS (Not Nullable)
     projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
     name: v.string(),                    // ✅ Scenario name - always required
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
+    // NOTE: Use _creationTime instead of createdAt (auto-managed by Convex)
     updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
     
     // OPTIONAL FIELDS (Nullable)
@@ -62,7 +62,7 @@ export default defineSchema({
     projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
     name: v.string(),                    // ✅ Dataset name - always required
     version: v.number(),                 // ✅ Dataset version number - required for versioning
-    createdAt: v.number(),               // ✅ Creation timestamp - required for audit
+    // NOTE: Use _creationTime instead of createdAt (auto-managed by Convex)
     updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
     
     // OPTIONAL FIELDS (Nullable)
@@ -99,7 +99,7 @@ export default defineSchema({
     projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
     // NOTE: Use _creationTime instead of createdAt (auto-managed by Convex)
     updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
-    optimizerId: v.number(),             // ✅ Numeric ID for optimization engines - required for API compatibility
+    optimizerId: v.optional(v.number()),             // ❓ Numeric ID for optimization engines - temporarily optional for migration
     
     // OPTIONAL FIELDS (Nullable)
     scenarioId: v.optional(v.id("scenarios")),        // ❓ Optional scenario assignment
@@ -148,7 +148,7 @@ export default defineSchema({
     projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
     // NOTE: Use _creationTime instead of createdAt (auto-managed by Convex)
     updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
-    optimizerId: v.number(),             // ✅ Numeric ID for optimization engines - required for API compatibility
+    optimizerId: v.optional(v.number()),             // ❓ Numeric ID for optimization engines - temporarily optional for migration
     
     // OPTIONAL FIELDS (Nullable)
     scenarioId: v.optional(v.id("scenarios")),        // ❓ Optional scenario assignment
@@ -260,7 +260,7 @@ export default defineSchema({
   shipments: defineTable({
     // REQUIRED FIELDS (Not Nullable)
     projectId: v.id("projects"),         // ✅ Parent project reference - required relationship
-    optimizerId: v.number(),             // ✅ Numeric ID for optimization engines - required for API compatibility
+    optimizerId: v.optional(v.number()),             // ❓ Numeric ID for optimization engines - temporarily optional for migration
     // NOTE: Use _creationTime instead of createdAt (auto-managed by Convex)
     updatedAt: v.number(),               // ✅ Last update timestamp - required for audit
     

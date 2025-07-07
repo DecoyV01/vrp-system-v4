@@ -1,0 +1,2 @@
+Experiment
+Try encouraging Claude to be granular with his todos. Instead of "style the navbar," get Claude to reveal specific adjustments: "change height from 60px to 80px," "reduce padding-top from 16px to 12px," "adjust background from #ffffff to rgba(255,255,255,0.95)." This transparency exposes Claude's design decisions before he makes them, letting you approve or redirect his aesthetic choices.

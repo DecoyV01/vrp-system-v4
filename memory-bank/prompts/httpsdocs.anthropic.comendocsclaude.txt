@@ -1,0 +1,21 @@
+https://docs.anthropic.com/en/docs/claude-code/hooks\
+
+  Claude I'm trying to read some context on React features. I want you to ultra think and review the documentation because we are going to create a new hook, and I'm not exactly sure where the hook should
+   be created. So I need you to review the documentation and use your expertise as an architect because I want to achieve the following optimizations
+
+  The text appears to be cut off at the bottom, but this shows someone asking Claude to review the Claude Code hooks documentation to help design a new React hook with specific optimizations in mind. The
+  person wants architectural guidance on where to place the hook and how to structure it properly.
+
+
+
+ https://docs.anthropic.com/en/docs/claude-code/hooks\
+
+  Claude has released the new hooks feature. I want you to ultrathink and review the documentation because we are going to create a new hook, and I'm not exactly sure where the hook should be created. So I need you to review the document and use your expertise as an architect because I want to achieve the following outcomes:
+
+  1. Before we generate any code, I want you to extensively think and review the optimization upgrade flow plan to make sure that we're utilizing the code in my repo. Here is the attached rules files: "C:\projects\vrp-system\v4\docs\04-development\optimisation-case-studies.md"
+"C:\projects\vrp-system\v4\docs\04-development\optimisation-principles.md"
+"C:\projects\vrp-system\v4\docs\04-development\master-optimization-principles.md" 
+
+  2. I then want you to generate code using the principles.
+  3. I want you to review the code and make sure it has met the principles and call out any areas that still need to be optimised.
+  4. Lastly, I want you to work through until we have met the optimization principles (Iterate until the optimization goals are met).

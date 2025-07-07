@@ -80,6 +80,100 @@ See @docs/uat-quick-reference.md for complete UAT guide.
 ```bash
 cd C:\projects\vrp-system\v4
 npx @modelcontextprotocol/server-convex  # Keep terminal open
+convex mcp start                         # Alternative Convex MCP server
+```
+
+## MCP Tools Available
+
+This project supports multiple Model Context Protocol (MCP) servers providing specialized tools for development and testing.
+
+### Convex MCP Server Tools
+When `convex mcp start` is running, these tools are available:
+
+**Database Operations:**
+- `status`: Query available deployments and deployment selector
+- `tables`: List tables with schemas and metadata  
+- `data`: Paginate through table documents with filtering
+- `runOneoffQuery`: Execute read-only JavaScript queries
+
+**Function Management:**
+- `functionSpec`: Get metadata about deployed functions
+- `run`: Execute Convex functions with arguments
+
+**Environment Variables:**
+- `envList`: List deployment environment variables
+- `envGet`: Retrieve specific environment variable values
+- `envSet`: Set or update environment variables
+- `envRemove`: Remove environment variables
+
+### Playwright MCP Server Tools
+For automated browser testing and UAT scenarios:
+
+**Browser Control:**
+- `playwright_navigate`: Navigate to URLs with viewport control
+- `playwright_screenshot`: Capture full page or element screenshots
+- `playwright_click`: Click elements by CSS selector
+- `playwright_fill`: Fill input fields and forms
+- `playwright_select`: Handle dropdown selections
+
+**Advanced Interactions:**
+- `playwright_hover`: Hover over elements
+- `playwright_drag`: Drag and drop operations
+- `playwright_upload_file`: File upload handling
+- `playwright_press_key`: Keyboard input simulation
+
+**Session Management:**
+- `start_codegen_session`: Record actions for test generation
+- `end_codegen_session`: Generate test files from recorded actions
+- `playwright_close`: Clean up browser resources
+
+**HTTP Operations:**
+- `playwright_get/post/put/patch/delete`: HTTP requests
+- `playwright_expect_response`: Wait for specific responses
+- `playwright_assert_response`: Validate response content
+
+**Content Extraction:**
+- `playwright_get_visible_text`: Extract page text content
+- `playwright_get_visible_html`: Get cleaned HTML structure
+- `playwright_console_logs`: Retrieve browser console output
+
+### Other MCP Servers Available
+
+**Tavily (Web Search):**
+- `tavily-search`: AI-powered web search with filtering
+- `tavily-extract`: Extract content from specific URLs
+- `tavily-crawl`: Structured website crawling
+- `tavily-map`: Website structure mapping
+
+**Filesystem Operations:**
+- `read_file/write_file`: File content operations
+- `list_directory/directory_tree`: Directory exploration
+- `search_files`: Pattern-based file searching
+- `move_file`: File operations
+
+**Context7 (Documentation):**
+- `resolve-library-id`: Find library documentation IDs
+- `get-library-docs`: Retrieve up-to-date documentation
+
+### MCP Usage Best Practices
+
+1. **Browser Testing**: Use Playwright MCP for UAT scenarios and UI automation
+2. **Database Operations**: Use Convex MCP for data exploration and function testing
+3. **Research**: Use Tavily for external documentation and API research
+4. **File Operations**: Use Filesystem MCP for codebase exploration
+5. **Documentation**: Use Context7 for library-specific documentation
+
+**Example Usage Patterns:**
+```bash
+# Convex database exploration
+mcp__convex__tables                    # List all tables
+mcp__convex__data <table-name>         # View table data
+mcp__convex__run <function-name>       # Execute functions
+
+# Browser automation for testing
+mcp__playwright__navigate <url>        # Open application
+mcp__playwright__fill <selector> <value>  # Fill forms
+mcp__playwright__screenshot <name>     # Capture state
 ```
 
 ## Key Development Guidelines
@@ -113,8 +207,54 @@ npx @modelcontextprotocol/server-convex  # Keep terminal open
 
 ## Development Best Practices
 
-- NEVER proactively create documentation files unless explicitly requested
-- ALWAYS prefer editing existing files to creating new ones
+- NEVER: proactively create documentation files unless explicitly requested
+- ALWAYS: prefer editing existing files to creating new ones
 - Use the established project patterns and conventions
 - Follow the four-level hierarchy: Projects → Scenarios → Datasets → Tables
 - Leverage the comprehensive schema and validation systems
+- IMPORTANT: Always run tests after code changes
+- NEVER commit code without running linting first
+- When editing React components, you MUST check for TypeScript errors
+- Class names: CamelCase, functions/variables: snake_case
+- Import order: standard library → third-party → local modules
+- Error handling: Use try/except with specific exceptions
+- Provide descriptive error messages with traceback when appropriate
+
+## High Priority:
+
+### DRY (Don't Repeat Yourself)
+
+- CRITICAL: Zero code duplication will be tolerated
+- IMPORTANT: Each functionality must exist in exactly one place
+- IMPORTANT: No duplicate files or alternative implementations allowed
+
+### KISS (Keep It Simple, Stupid)
+
+- ALWAYS: Implement the simplest solution that works
+- NEVER over-engineering or unnecessary complexity
+- IMPORTANT: Straightforward, maintainable code patterns
+
+### Clean File System
+
+- IMPORTANT: All existing files must be either used or removed
+- IMPORTANT: No orphaned, redundant, or unused files
+- CRITICAL: Clear, logical organization of the file structure
+
+### Transparent Error Handling
+
+- CRITICAL: No error hiding or fallback mechanisms that mask issues
+- IMPORTANT: All errors must be properly displayed to the user
+- IMPORTANT: Errors must be clear, actionable, and honest
+
+### Success Criteria
+In accordance with the established principles and previous PRDs, the implementation will be successful if:
+
+- CRITICAL: Zero Duplication: No duplicate code or files exist in the codebase
+- CRITICAL: Single Implementation: Each feature has exactly one implementation
+- NEVER CREATE fallback systems that hide or mask errors
+- ALWAYS: All errors are properly displayed to users (Transparent Errors)
+- Component Architecture: UI is built from reusable, modular components
+- ALWAYS: Consistent Standards - development follows @docs/04-development/Full Design System Guidelines Document-frontend.md
+- IMPORTANT: Full Functionality- All features work correctly through template UI
+- Complete Documentation: Implementation details are properly documented
+

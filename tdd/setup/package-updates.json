@@ -1,0 +1,36 @@
+{
+  "frontend": {
+    "devDependencies": {
+      "vitest": "^1.0.0",
+      "@testing-library/react": "^14.0.0",
+      "@testing-library/jest-dom": "^6.0.0",
+      "@testing-library/user-event": "^14.0.0",
+      "jsdom": "^23.0.0",
+      "@vitest/ui": "^1.0.0",
+      "happy-dom": "^12.0.0",
+      "@types/testing-library__jest-dom": "^5.14.0"
+    },
+    "scripts": {
+      "test": "vitest",
+      "test:watch": "vitest --watch", 
+      "test:ui": "vitest --ui",
+      "test:coverage": "vitest --coverage",
+      "test:run": "vitest run"
+    }
+  },
+  "root": {
+    "scripts": {
+      "test:all": "npm run test:frontend && npm run test:backend",
+      "test:frontend": "cd frontend && npm run test",
+      "test:backend": "npx convex test",
+      "test:watch": "concurrently \"npm run test:frontend -- --watch\" \"npx convex test --watch\""
+    },
+    "devDependencies": {
+      "concurrently": "^8.0.0"
+    }
+  },
+  "installation_commands": [
+    "cd frontend && npm install --save-dev vitest @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom @vitest/ui happy-dom @types/testing-library__jest-dom",
+    "npm install --save-dev concurrently"
+  ]
+}

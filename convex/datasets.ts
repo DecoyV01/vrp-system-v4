@@ -103,7 +103,6 @@ export const create = mutation({
     const datasetId = await ctx.db.insert("datasets", {
       ...args,
       version,
-      createdAt: now,
       updatedAt: now,
       createdBy: user._id,
       vehicleCount: 0,
@@ -399,7 +398,6 @@ export const clone = mutation({
       tags: originalDataset.tags,
       datasetType: originalDataset.datasetType,
       versionNote: `Cloned from ${originalDataset.name} v${originalDataset.version}`,
-      createdAt: now,
       updatedAt: now,
       createdBy: user._id,
       vehicleCount: 0,
@@ -441,3 +439,4 @@ export const archive = mutation({
     return args.id;
   },
 });
+

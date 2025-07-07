@@ -15,8 +15,10 @@ import type {
 } from "convex/server";
 import type * as auth from "../auth.js";
 import type * as datasets from "../datasets.js";
+import type * as http from "../http.js";
 import type * as jobs from "../jobs.js";
 import type * as locations from "../locations.js";
+import type * as migration from "../migration.js";
 import type * as optimizerValidation from "../optimizerValidation.js";
 import type * as projects from "../projects.js";
 import type * as routes from "../routes.js";
@@ -36,8 +38,10 @@ import type * as vehicles from "../vehicles.js";
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   datasets: typeof datasets;
+  http: typeof http;
   jobs: typeof jobs;
   locations: typeof locations;
+  migration: typeof migration;
   optimizerValidation: typeof optimizerValidation;
   projects: typeof projects;
   routes: typeof routes;
