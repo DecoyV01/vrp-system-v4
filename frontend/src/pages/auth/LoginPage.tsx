@@ -40,6 +40,8 @@ const LoginPage = () => {
               signIn('password', formData)
                 .then(() => {
                   console.log('✅ Authentication successful')
+                  // Don't set submitting to false here - let the redirect handle it
+                  // The component will unmount when authentication state changes
                 })
                 .catch(error => {
                   console.error('❌ Authentication error:', error)

@@ -60,6 +60,25 @@ function AuthenticatedApp() {
   )
 }
 
+function UnauthenticatedApp() {
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  useEffect(() => {
+    // Redirect unauthenticated users from root to login
+    if (location.pathname === '/') {
+      navigate('/auth/login', { replace: true })
+    }
+  }, [location.pathname, navigate])
+
+  return (
+    <Routes>
+      <Route path="/auth/login" element={<LoginPage />} />
+      <Route path="*" element={<LoginPage />} />
+    </Routes>
+  )
+}
+
 function App() {
   return (
     <UATErrorBoundary>
@@ -70,7 +89,7 @@ function App() {
           </Authenticated>
 
           <Unauthenticated>
-            <LoginPage />
+            <UnauthenticatedApp />
           </Unauthenticated>
 
           <Toaster position="top-right" />
