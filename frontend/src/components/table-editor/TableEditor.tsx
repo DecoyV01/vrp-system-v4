@@ -168,6 +168,12 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
     }
   })
 
+  // Helper function to get selected rows data
+  const getSelectedRows = () => {
+    const selectedIds = getSelectedIds()
+    return currentData.filter(row => selectedIds.includes(row._id))
+  }
+
   // Checkbox ref for indeterminate state
   const selectAllCheckboxRef = useRef<HTMLButtonElement>(null)
 

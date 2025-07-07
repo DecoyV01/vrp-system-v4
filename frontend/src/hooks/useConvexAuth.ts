@@ -1,13 +1,15 @@
 import { useAuthActions as useConvexAuthActions } from "@convex-dev/auth/react";
 import { useQuery } from "convex/react";
-import { useConvexAuth as useConvexAuthHook } from "@convex-dev/auth/react";
 import { api } from '../convex/_generated/api';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 // Current implementation uses the official Convex Auth
 export const useCurrentUser = () => {
-  const { isAuthenticated, isLoading } = useConvexAuthHook();
   const userProfile = useQuery(api.auth.getCurrentUserProfile);
+  
+  // Determine authentication state based on userProfile
+  const isAuthenticated = userProfile !== undefined && userProfile !== null;
+  const isLoading = userProfile === undefined;
   
   const userState = {
     isAuthenticated,
@@ -88,7 +90,7 @@ export const useAuth = () => {
 
 // Helper hook to check if user has access to a project
 export const useProjectAccess = (projectId: string | undefined) => {
-  const { isAuthenticated } = useConvexAuthHook();
+  const { isAuthenticated } = useCurrentUser();
   return useQuery(
     api.auth.validateProjectAccess,
     isAuthenticated && projectId ? { projectId: projectId as any } : 'skip'
