@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { useQuery } from 'convex/react'
 import { api } from '../convex/_generated/api'
 import { Toaster } from 'sonner'
@@ -25,71 +20,69 @@ export default function App() {
   return (
     <UATErrorBoundary>
       <ConfirmationDialogProvider>
-        <Router>
-          <div className="min-h-screen bg-background">
-            <Routes>
-              {/* Public routes */}
+        <div className="min-h-screen bg-background">
+          <Routes>
+            {/* Public routes */}
+            <Route
+              path="/auth/login"
+              element={user ? <Navigate to="/" replace /> : <LoginPage />}
+            />
+
+            {/* Protected routes */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <MainLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<ProjectsPage />} />
+              <Route path="projects" element={<ProjectsPage />} />
+
+              {/* Deep linking routes for VRP hierarchy */}
               <Route
-                path="/auth/login"
-                element={user ? <Navigate to="/" replace /> : <LoginPage />}
+                path="projects/:projectId"
+                element={<ProjectDetailPage />}
+              />
+              <Route
+                path="projects/:projectId/scenarios/:scenarioId"
+                element={<ScenarioDetailPage />}
+              />
+              <Route
+                path="projects/:projectId/scenarios/:scenarioId/datasets/:datasetId"
+                element={<DatasetDetailPage />}
+              />
+              <Route
+                path="projects/:projectId/scenarios/:scenarioId/datasets/:datasetId/:tableType"
+                element={<TableEditorPage />}
               />
 
-              {/* Protected routes */}
+              {/* Legacy routes for backwards compatibility */}
               <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <MainLayout />
-                  </ProtectedRoute>
-                }
-              >
-                <Route index element={<ProjectsPage />} />
-                <Route path="projects" element={<ProjectsPage />} />
-
-                {/* Deep linking routes for VRP hierarchy */}
-                <Route
-                  path="projects/:projectId"
-                  element={<ProjectDetailPage />}
-                />
-                <Route
-                  path="projects/:projectId/scenarios/:scenarioId"
-                  element={<ScenarioDetailPage />}
-                />
-                <Route
-                  path="projects/:projectId/scenarios/:scenarioId/datasets/:datasetId"
-                  element={<DatasetDetailPage />}
-                />
-                <Route
-                  path="projects/:projectId/scenarios/:scenarioId/datasets/:datasetId/:tableType"
-                  element={<TableEditorPage />}
-                />
-
-                {/* Legacy routes for backwards compatibility */}
-                <Route
-                  path="tables/:datasetId/:tableType"
-                  element={<TableEditorPage />}
-                />
-              </Route>
-
-              {/* Default redirect based on auth state */}
-              <Route
-                path="*"
-                element={
-                  user === undefined ? (
-                    <div className="flex justify-center items-center min-h-screen">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                    </div>
-                  ) : user ? (
-                    <Navigate to="/" replace />
-                  ) : (
-                    <Navigate to="/auth/login" replace />
-                  )
-                }
+                path="tables/:datasetId/:tableType"
+                element={<TableEditorPage />}
               />
-            </Routes>
-            <Toaster position="top-right" />
-          </div>
-        </Router>
+            </Route>
+
+            {/* Default redirect based on auth state */}
+            <Route
+              path="*"
+              element={
+                user === undefined ? (
+                  <div className="flex justify-center items-center min-h-screen">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                ) : user ? (
+                  <Navigate to="/" replace />
+                ) : (
+                  <Navigate to="/auth/login" replace />
+                )
+              }
+            />
+          </Routes>
+          <Toaster position="top-right" />
+        </div>
       </ConfirmationDialogProvider>
     </UATErrorBoundary>
   )
