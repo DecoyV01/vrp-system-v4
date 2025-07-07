@@ -17,30 +17,61 @@ const LoginPage = () => {
   const [flow, setFlow] = useState<'signIn' | 'signUp'>('signIn')
   const [submitting, setSubmitting] = useState(false)
 
-  // Check for JWT key rotation issues - only clear if there are obvious mismatches
+  // Force complete session reset to fix WebSocket authentication mismatch
   useEffect(() => {
-    const debugAuthIssues = () => {
-      console.log('🔍 Debug: Checking for auth configuration issues...')
+    const forceSessionReset = () => {
       console.log('🔍 Debug: VITE_CONVEX_URL:', import.meta.env.VITE_CONVEX_URL)
       console.log('🔍 Debug: Current location:', window.location.href)
 
-      // Check for obvious stale tokens only
-      const suspiciousKeys = Object.keys(localStorage).filter(
+      // Get all storage keys that could contain auth/session data
+      const allStorageKeys = [
+        ...Object.keys(localStorage),
+        ...Object.keys(sessionStorage),
+      ]
+
+      console.log('🔍 Debug: All storage keys:', allStorageKeys)
+
+      // Clear ALL Convex-related storage to force fresh session
+      const convexKeys = allStorageKeys.filter(
         key =>
-          key.includes('modest-bat-713') || // Old dev deployment tokens
-          key.includes('localhost') || // Local development tokens
-          key.includes('127.0.0.1') // Local development tokens
+          key.toLowerCase().includes('convex') ||
+          key.toLowerCase().includes('auth') ||
+          key.toLowerCase().includes('session') ||
+          key.toLowerCase().includes('token') ||
+          key.toLowerCase().includes('refresh') ||
+          key.includes('mild-elephant-70') ||
+          key.includes('modest-bat-713')
       )
 
-      if (suspiciousKeys.length > 0) {
-        console.log('🧹 Clearing stale development tokens:', suspiciousKeys)
-        suspiciousKeys.forEach(key => localStorage.removeItem(key))
+      if (convexKeys.length > 0) {
+        console.log(
+          '🧹 FORCE: Clearing all auth/session data for fresh start:',
+          convexKeys
+        )
+        convexKeys.forEach(key => {
+          localStorage.removeItem(key)
+          sessionStorage.removeItem(key)
+        })
+
+        // Also clear ALL cookies
+        document.cookie.split(';').forEach(cookie => {
+          const eqPos = cookie.indexOf('=')
+          const name =
+            eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim()
+          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`
+          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`
+        })
+
+        console.log(
+          '🔄 FORCE: Session reset complete, will reload once for clean state'
+        )
+        setTimeout(() => window.location.reload(), 100)
       } else {
-        console.log('✅ No obvious stale tokens found')
+        console.log('✅ Clean session - no auth data found')
       }
     }
 
-    debugAuthIssues()
+    forceSessionReset()
   }, [])
 
   // No complex logic needed - Convex Auth handles everything automatically
