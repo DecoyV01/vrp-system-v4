@@ -12,7 +12,7 @@ const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string)
 // Set JWT token if available in localStorage
 const token = localStorage.getItem('convex-auth-token')
 if (token) {
-  convex.setAuth(token)
+  convex.setAuth(async () => token)
 }
 
 // Custom useAuth hook for ConvexProviderWithAuth
