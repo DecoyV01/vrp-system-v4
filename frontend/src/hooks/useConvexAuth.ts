@@ -45,7 +45,7 @@ export const useVRPAuthActions = () => {
       try {
         // Call our JWT authentication endpoint
         const response = await fetch(
-          `${import.meta.env.VITE_CONVEX_URL}/auth/login`,
+          `${import.meta.env.VITE_CONVEX_URL}/jwt-login`,
           {
             method: 'POST',
             headers: {
@@ -117,7 +117,7 @@ export const useVRPAuthActions = () => {
       try {
         // Call our JWT authentication endpoint
         const response = await fetch(
-          `${import.meta.env.VITE_CONVEX_URL}/auth/login`,
+          `${import.meta.env.VITE_CONVEX_URL}/jwt-login`,
           {
             method: 'POST',
             headers: {

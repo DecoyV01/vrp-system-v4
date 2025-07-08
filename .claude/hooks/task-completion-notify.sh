@@ -33,7 +33,7 @@ Add-Type -AssemblyName System.Speech;
 try { \$synth.SelectVoice('Microsoft Eva Desktop') } catch { 
   try { \$synth.SelectVoice('Microsoft Zira Desktop') } catch { }
 }; 
-\$synth.Speak('Hey G, come quickly, your task is complete!!! These are the days.')
+\$synth.Speak('Hey G, come quickly, your task is complete!!! These are the days...')
 " 2>/dev/null || \
 echo "🎉 Task complete!"
 
