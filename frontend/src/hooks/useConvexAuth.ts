@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 
 // Current implementation uses the official Convex Auth
 export const useCurrentUser = () => {
-  const userProfile = useQuery(api.auth.getCurrentUserProfile)
+  const userProfile = useQuery(api.auth.currentUser)
 
   // Determine authentication state based on userProfile
   const isAuthenticated = userProfile !== undefined && userProfile !== null

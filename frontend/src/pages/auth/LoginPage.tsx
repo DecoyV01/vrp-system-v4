@@ -1,7 +1,5 @@
 import { useState } from 'react'
-import { useConvexAuth } from 'convex/react'
-import { useAction } from 'convex/react'
-import { api } from '../convex/_generated/api'
+import { useAuthActions } from '@convex-dev/auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,66 +11,59 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 
 export function LoginPage() {
+  const { signIn } = useAuthActions()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const [isSignUp, setIsSignUp] = useState(false)
-  const signInAction = useAction(api.auth.signIn)
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
 
     try {
-      // Client-side validation for sign-up
-      if (isSignUp) {
-        if (!name.trim()) {
-          throw new Error('Name is required')
-        }
-        if (password.length < 6) {
-          throw new Error('Password must be at least 6 characters long')
-        }
-      }
-
-      // Use Convex Auth for authentication
-      await signInAction({
-        provider: 'password',
-        params: {
-          email,
-          password,
-          name: isSignUp ? name : undefined,
-          flow: isSignUp ? 'signUp' : 'signIn',
-        },
-      })
-
-      if (isSignUp) {
-        toast.success('Account created successfully! Welcome!')
-      } else {
-        toast.success('Welcome back!')
-      }
-
-      // Redirect to projects
-      window.location.href = '/projects'
+      await signIn('password', { email, password })
+      toast.success('Welcome back!')
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : 'Authentication failed'
+        err instanceof Error ? err.message : 'Failed to sign in'
+      setError(errorMessage)
+      toast.error(errorMessage)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
-      // Provide helpful error messages
-      if (
-        errorMessage.includes('InvalidAccountId') ||
-        errorMessage.includes('No auth provider found')
-      ) {
-        setError(
-          'Account not found. Would you like to create an account instead?'
-        )
-        toast.error('Account not found. Try creating an account instead.')
-      } else {
+  const handleDemoLogin = async () => {
+    setIsLoading(true)
+    setError('')
+
+    try {
+      await signIn('password', {
+        email: 'demo@example.com',
+        password: 'demo123',
+      })
+      toast.success('Signed in as demo user!')
+    } catch (err) {
+      // If demo user doesn't exist, create it
+      try {
+        await signIn('password', {
+          email: 'demo@example.com',
+          password: 'demo123',
+          name: 'Demo User',
+          flow: 'signUp',
+        })
+        toast.success('Demo account created and signed in!')
+      } catch (createErr) {
+        const errorMessage =
+          createErr instanceof Error
+            ? createErr.message
+            : 'Failed to create demo account'
         setError(errorMessage)
         toast.error(errorMessage)
       }
@@ -86,22 +77,24 @@ export function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            {isSignUp ? 'Create your account' : 'Sign in to your account'}
+            Sign in to your account
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            {isSignUp
-              ? 'Get started with VRP System projects and datasets'
-              : 'Access your VRP System projects and datasets'}
+            Or{' '}
+            <Link
+              to="/auth/register"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              create a new account
+            </Link>
           </p>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>{isSignUp ? 'Get started' : 'Welcome back'}</CardTitle>
+            <CardTitle>Welcome back</CardTitle>
             <CardDescription>
-              {isSignUp
-                ? 'Create your account to get started'
-                : 'Enter your credentials to access your account'}
+              Enter your credentials to access your account
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -111,34 +104,35 @@ export function LoginPage() {
               </Alert>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {isSignUp && (
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    type="text"
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    placeholder="Enter your full name"
-                    autoComplete="name"
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-              )}
+            <Button
+              onClick={handleDemoLogin}
+              variant="outline"
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Signing in...' : 'Try Demo Account'}
+            </Button>
 
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white px-2 text-muted-foreground">
+                  Or continue with email
+                </span>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
-                  name="email"
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  autoComplete="email"
                   required
                   disabled={isLoading}
                 />
@@ -148,49 +142,19 @@ export function LoginPage() {
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
-                  name="password"
                   type="password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  placeholder={
-                    isSignUp
-                      ? 'Create a password (min. 6 characters)'
-                      : 'Enter your password'
-                  }
-                  autoComplete={isSignUp ? 'new-password' : 'current-password'}
+                  placeholder="Enter your password"
                   required
                   disabled={isLoading}
-                  minLength={isSignUp ? 6 : undefined}
                 />
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading
-                  ? isSignUp
-                    ? 'Creating account...'
-                    : 'Signing in...'
-                  : isSignUp
-                    ? 'Create account'
-                    : 'Sign in'}
+                {isLoading ? 'Signing in...' : 'Sign in'}
               </Button>
             </form>
-
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsSignUp(!isSignUp)
-                  setError('')
-                  setName('')
-                }}
-                className="text-sm text-indigo-600 hover:text-indigo-500"
-                disabled={isLoading}
-              >
-                {isSignUp
-                  ? 'Already have an account? Sign in'
-                  : "Don't have an account? Create one"}
-              </button>
-            </div>
           </CardContent>
         </Card>
       </div>

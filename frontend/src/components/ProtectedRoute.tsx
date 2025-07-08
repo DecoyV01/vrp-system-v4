@@ -8,7 +8,7 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const user = useQuery(api.auth.getCurrentUserProfile)
+  const user = useQuery(api.auth.currentUser)
 
   if (user === undefined) {
     return (

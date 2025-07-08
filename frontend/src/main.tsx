@@ -1,8 +1,6 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { ConvexReactClient } from 'convex/react'
-import { BrowserRouter } from 'react-router-dom'
+import { createRoot } from 'react-dom/client'
 import { ConvexAuthProvider } from '@convex-dev/auth/react'
+import { ConvexReactClient } from 'convex/react'
 import App from './App.tsx'
 import './index.css'
 import './utils/uatHealthCheck'
@@ -14,12 +12,8 @@ if (import.meta.env.DEV) {
   console.log('UAT Health Check system enabled')
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <ConvexAuthProvider client={convex}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </ConvexAuthProvider>
-  </React.StrictMode>
+createRoot(document.getElementById('root')!).render(
+  <ConvexAuthProvider client={convex}>
+    <App />
+  </ConvexAuthProvider>
 )
