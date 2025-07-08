@@ -19,7 +19,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const [step, setStep] = useState<'signIn' | 'signUp'>('signIn')
+  // Simplified to sign-in only for now
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -27,10 +27,8 @@ export function LoginPage() {
     setError('')
 
     try {
-      await signIn('password', { email, password, flow: step })
-      toast.success(
-        step === 'signIn' ? 'Welcome back!' : 'Account created successfully!'
-      )
+      await signIn('password', { email, password })
+      toast.success('Welcome back!')
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Authentication failed'
@@ -46,9 +44,7 @@ export function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            {step === 'signIn'
-              ? 'Sign in to your account'
-              : 'Create your account'}
+            Sign in to your account
           </h2>
           <p className="mt-2 text-sm text-gray-600">
             Access your VRP System projects and datasets
@@ -57,13 +53,9 @@ export function LoginPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>
-              {step === 'signIn' ? 'Welcome back' : 'Get started'}
-            </CardTitle>
+            <CardTitle>Welcome back</CardTitle>
             <CardDescription>
-              {step === 'signIn'
-                ? 'Enter your credentials to access your account'
-                : 'Create a new account to start managing your VRP projects'}
+              Enter your credentials to access your account
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -101,25 +93,9 @@ export function LoginPage() {
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading
-                  ? 'Processing...'
-                  : step === 'signIn'
-                    ? 'Sign in'
-                    : 'Sign up'}
+                {isLoading ? 'Signing in...' : 'Sign in'}
               </Button>
             </form>
-
-            <Button
-              type="button"
-              variant="link"
-              onClick={() => setStep(step === 'signIn' ? 'signUp' : 'signIn')}
-              className="w-full"
-              disabled={isLoading}
-            >
-              {step === 'signIn'
-                ? "Don't have an account? Sign up"
-                : 'Already have an account? Sign in'}
-            </Button>
           </CardContent>
         </Card>
       </div>

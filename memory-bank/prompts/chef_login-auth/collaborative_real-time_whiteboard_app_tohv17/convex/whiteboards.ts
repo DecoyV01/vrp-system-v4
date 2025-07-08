@@ -1,0 +1,1 @@
+// This file will be used for future whiteboard functionality
