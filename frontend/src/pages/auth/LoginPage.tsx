@@ -82,8 +82,8 @@ export function LoginPage() {
         console.log('🔍 Copy token to https://jwt.io for analysis')
       }
 
-      // Redirect to dashboard
-      window.location.href = '/dashboard'
+      // Redirect to projects
+      window.location.href = '/projects'
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Authentication failed'
