@@ -119,6 +119,7 @@ export function LoginPage() {
                     value={name}
                     onChange={e => setName(e.target.value)}
                     placeholder="Enter your full name"
+                    autoComplete="name"
                     required
                     disabled={isLoading}
                   />
@@ -133,6 +134,7 @@ export function LoginPage() {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="Enter your email"
+                  autoComplete="email"
                   required
                   disabled={isLoading}
                 />
@@ -150,6 +152,7 @@ export function LoginPage() {
                       ? 'Create a password (min. 6 characters)'
                       : 'Enter your password'
                   }
+                  autoComplete={isSignUp ? 'new-password' : 'current-password'}
                   required
                   disabled={isLoading}
                   minLength={isSignUp ? 6 : undefined}

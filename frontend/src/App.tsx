@@ -15,7 +15,7 @@ import { ConfirmationDialogProvider } from './components/ui/ConfirmationDialogPr
 import './App.css'
 
 export default function App() {
-  const user = useQuery(api.auth.currentUser)
+  const user = useQuery(api.auth.getCurrentUserProfile)
 
   return (
     <UATErrorBoundary>

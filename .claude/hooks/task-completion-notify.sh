@@ -16,7 +16,9 @@ fi
 /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "
 [Console]::Beep(800, 300); 
 Start-Sleep -Milliseconds 500; 
-[Console]::Beep(1000, 200)
+[Console]::Beep(1000, 200);
+Start-Sleep -Milliseconds 500; 
+[Console]::Beep(600, 400)
 " 2>/dev/null || \
 echo -e "\a\a"
 
@@ -31,7 +33,7 @@ Add-Type -AssemblyName System.Speech;
 try { \$synth.SelectVoice('Microsoft Eva Desktop') } catch { 
   try { \$synth.SelectVoice('Microsoft Zira Desktop') } catch { }
 }; 
-\$synth.Speak('Hey G, come quickly, your task is complete!!! You are really awsome')
+\$synth.Speak('Hey G, come quickly, your task is complete!!! These are the days.')
 " 2>/dev/null || \
 echo "🎉 Task complete!"
 
