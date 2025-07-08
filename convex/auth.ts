@@ -1,11 +1,10 @@
 import { convexAuth, getAuthUserId } from '@convex-dev/auth/server'
-import { Password } from '@convex-dev/auth/providers/Password'
 import { query } from './_generated/server'
 
-// Temporarily restore Password provider to fix the missing function error
-// While we work on proper JWT/OIDC integration
+// JWT/OIDC authentication configured via auth.config.ts
+// This setup works with the OIDC provider configured in the dashboard
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
-  providers: [Password],
+  providers: [], // Empty - JWT validation handled by auth.config.ts
 })
 
 export const getCurrentUserProfile = query({
