@@ -8,6 +8,18 @@ auth.addHttpRoutes(http)
 
 // JWT authentication endpoint
 const jwtLoginHandler = httpAction(async (ctx, request) => {
+  // Handle CORS preflight requests
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    })
+  }
+
   const body = await request.json()
   const { email, password, flow } = body
 
@@ -16,7 +28,10 @@ const jwtLoginHandler = httpAction(async (ctx, request) => {
       JSON.stringify({ error: 'Email and password required' }),
       {
         status: 400,
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
       }
     )
   }
@@ -56,14 +71,20 @@ const jwtLoginHandler = httpAction(async (ctx, request) => {
       }),
       {
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
       }
     )
   } catch (error) {
     console.error('JWT generation error:', error)
     return new Response(JSON.stringify({ error: 'Authentication failed' }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
     })
   }
 })
@@ -71,6 +92,12 @@ const jwtLoginHandler = httpAction(async (ctx, request) => {
 http.route({
   path: '/jwt-login',
   method: 'POST',
+  handler: jwtLoginHandler,
+})
+
+http.route({
+  path: '/jwt-login',
+  method: 'OPTIONS',
   handler: jwtLoginHandler,
 })
 

@@ -64,7 +64,7 @@ export function LoginPage() {
       const { token, user } = await response.json()
 
       // Set the JWT token for the Convex client
-      client.setAuth(token)
+      client.setAuth(async () => token)
 
       // Store token in localStorage for persistence
       localStorage.setItem('convex-auth-token', token)
