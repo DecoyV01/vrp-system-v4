@@ -22,58 +22,59 @@ export function LoginPage() {
   const [error, setError] = useState('')
   const [isSignUp, setIsSignUp] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
 
     try {
+      // Use FormData as required by Convex Auth
+      const formData = new FormData(e.currentTarget)
+
+      // Add the flow parameter based on current mode
+      formData.set('flow', isSignUp ? 'signUp' : 'signIn')
+
+      // Client-side validation for sign-up
       if (isSignUp) {
-        // Sign up flow
         if (!name.trim()) {
           throw new Error('Name is required')
         }
         if (password.length < 6) {
           throw new Error('Password must be at least 6 characters long')
         }
-        await signIn('password', {
-          email,
-          password,
-          name: name.trim(),
-          flow: 'signUp',
-        })
+      }
+
+      await signIn('password', formData)
+
+      if (isSignUp) {
         toast.success('Account created successfully! Welcome!')
       } else {
-        // Sign in flow - if user doesn't exist, suggest sign up
-        try {
-          await signIn('password', { email, password })
-          toast.success('Welcome back!')
-        } catch (signInError) {
-          const errorMsg =
-            signInError instanceof Error
-              ? signInError.message
-              : 'Authentication failed'
+        toast.success('Welcome back!')
+      }
 
-          // If account doesn't exist, suggest sign up
-          if (
-            errorMsg.includes('InvalidAccountId') ||
-            errorMsg.includes('No auth provider found')
-          ) {
-            setError(
-              'Account not found. Would you like to create an account instead?'
-            )
-            toast.error('Account not found. Try creating an account instead.')
-          } else {
-            setError(errorMsg)
-            toast.error(errorMsg)
-          }
-        }
+      // JWT Debugging - log for jwt.io analysis
+      if (import.meta.env.DEV) {
+        console.log(
+          '🔍 JWT Debug: Check Network tab for Authorization header, copy token to https://jwt.io'
+        )
       }
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Authentication failed'
-      setError(errorMessage)
-      toast.error(errorMessage)
+
+      // Provide helpful error messages
+      if (
+        errorMessage.includes('InvalidAccountId') ||
+        errorMessage.includes('No auth provider found')
+      ) {
+        setError(
+          'Account not found. Would you like to create an account instead?'
+        )
+        toast.error('Account not found. Try creating an account instead.')
+      } else {
+        setError(errorMessage)
+        toast.error(errorMessage)
+      }
     } finally {
       setIsLoading(false)
     }
@@ -115,6 +116,7 @@ export function LoginPage() {
                   <Label htmlFor="name">Full Name</Label>
                   <Input
                     id="name"
+                    name="name"
                     type="text"
                     value={name}
                     onChange={e => setName(e.target.value)}
@@ -130,6 +132,7 @@ export function LoginPage() {
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
@@ -144,6 +147,7 @@ export function LoginPage() {
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
+                  name="password"
                   type="password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}

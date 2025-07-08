@@ -54,3 +54,22 @@ export async function validateUserOwnership(
 
   return project
 }
+
+// Development helper to debug JWT claims
+export const debugJWTClaims = query({
+  handler: async ctx => {
+    const userId = await getAuthUserId(ctx)
+    const authInfo = {
+      userId,
+      hasAuth: !!userId,
+      environment: {
+        siteUrl: process.env.SITE_URL,
+        authLogLevel: process.env.AUTH_LOG_LEVEL,
+      },
+      timestamp: Date.now(),
+    }
+
+    console.log('Auth Debug Info:', authInfo)
+    return authInfo
+  },
+})
