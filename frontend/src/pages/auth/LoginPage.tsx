@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useConvexAuth } from 'convex/react'
-import { useConvex } from 'convex/react'
+import { useMutation } from 'convex/react'
+import { api } from '../convex/_generated/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -21,7 +22,7 @@ export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [isSignUp, setIsSignUp] = useState(false)
-  const client = useConvex()
+  const signInMutation = useMutation(api.auth.signIn)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -39,47 +40,21 @@ export function LoginPage() {
         }
       }
 
-      // Call our JWT authentication endpoint
-      const response = await fetch(
-        `${import.meta.env.VITE_CONVEX_URL.replace('.convex.cloud', '.convex.site')}/jwt-login`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email,
-            password,
-            flow: isSignUp ? 'signUp' : 'signIn',
-            name: isSignUp ? name : undefined,
-          }),
-        }
-      )
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Authentication failed')
-      }
-
-      const { token, user } = await response.json()
-
-      // Set the JWT token for the Convex client
-      client.setAuth(async () => token)
-
-      // Store token in localStorage for persistence
-      localStorage.setItem('convex-auth-token', token)
-      localStorage.setItem('convex-user', JSON.stringify(user))
+      // Use Convex Auth for authentication
+      await signInMutation({
+        provider: 'password',
+        params: {
+          email,
+          password,
+          name: isSignUp ? name : undefined,
+          flow: isSignUp ? 'signUp' : 'signIn',
+        },
+      })
 
       if (isSignUp) {
         toast.success('Account created successfully! Welcome!')
       } else {
         toast.success('Welcome back!')
-      }
-
-      // JWT Debugging - log for jwt.io analysis
-      if (import.meta.env.DEV) {
-        console.log('🔍 JWT Debug: Token received:', token)
-        console.log('🔍 Copy token to https://jwt.io for analysis')
       }
 
       // Redirect to projects

@@ -1,30 +1,46 @@
 import { convexAuth, getAuthUserId } from '@convex-dev/auth/server'
-import { query } from './_generated/server'
+import { Password } from '@convex-dev/auth/providers/Password'
+import { query, mutation } from './_generated/server'
 
-// JWT/OIDC authentication configured via auth.config.ts
-// This setup works with the OIDC provider configured in the dashboard
+// Password authentication using Convex Auth
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
-  providers: [], // Empty - JWT validation handled by auth.config.ts
+  providers: [Password],
 })
 
 export const getCurrentUserProfile = query({
   handler: async ctx => {
     const userId = await getAuthUserId(ctx)
     if (!userId) {
-      // For development: return mock user when no auth
-      // In production, this should return null
-      return {
-        _id: 'mock_user_id' as any,
-        email: 'test@example.com',
-        name: 'Test User',
-        _creationTime: Date.now(),
-      }
-    }
-    const user = await ctx.db.get(userId)
-    if (!user) {
       return null
     }
+
+    // With Convex Auth, user data is stored in auth tables
+    // We need to get the user from the auth system
+    const user = await ctx.db.get(userId)
     return user
+  },
+})
+
+// Create or update user profile information
+export const createUserProfile = mutation({
+  handler: async (ctx, args: { name?: string; email?: string }) => {
+    const userId = await getAuthUserId(ctx)
+    if (!userId) {
+      throw new Error('Not authenticated')
+    }
+
+    // Get existing user record
+    const existingUser = await ctx.db.get(userId)
+    if (existingUser) {
+      // Update existing user
+      await ctx.db.patch(userId, {
+        name: args.name || existingUser.name,
+        email: args.email || existingUser.email,
+        updatedAt: Date.now(),
+      })
+    }
+
+    return { success: true }
   },
 })
 
