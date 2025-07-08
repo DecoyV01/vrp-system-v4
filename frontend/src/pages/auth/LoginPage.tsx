@@ -27,7 +27,7 @@ export function LoginPage() {
     setError('')
 
     try {
-      await signIn('password', { email, password })
+      await signIn('password', { email, password, flow: 'signIn' })
       toast.success('Welcome back!')
     } catch (err) {
       const errorMessage =
@@ -46,7 +46,8 @@ export function LoginPage() {
     try {
       await signIn('password', {
         email: 'demo@example.com',
-        password: 'demo123',
+        password: 'Demo123!',
+        flow: 'signIn',
       })
       toast.success('Signed in as demo user!')
     } catch (err) {
@@ -54,7 +55,7 @@ export function LoginPage() {
       try {
         await signIn('password', {
           email: 'demo@example.com',
-          password: 'demo123',
+          password: 'Demo123!',
           name: 'Demo User',
           flow: 'signUp',
         })
