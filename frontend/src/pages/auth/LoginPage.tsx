@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useConvexAuth } from 'convex/react'
-import { useMutation } from 'convex/react'
+import { useAction } from 'convex/react'
 import { api } from '../convex/_generated/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,7 +22,7 @@ export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [isSignUp, setIsSignUp] = useState(false)
-  const signInMutation = useMutation(api.auth.signIn)
+  const signInAction = useAction(api.auth.signIn)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -41,7 +41,7 @@ export function LoginPage() {
       }
 
       // Use Convex Auth for authentication
-      await signInMutation({
+      await signInAction({
         provider: 'password',
         params: {
           email,
