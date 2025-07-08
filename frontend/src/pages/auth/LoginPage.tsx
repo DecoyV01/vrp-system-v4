@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAuthActions } from '@convex-dev/auth/react'
+import { useConvexAuth } from 'convex/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,7 +14,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { toast } from 'sonner'
 
 export function LoginPage() {
-  const { signIn } = useAuthActions()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
@@ -28,12 +27,6 @@ export function LoginPage() {
     setError('')
 
     try {
-      // Use FormData as required by Convex Auth
-      const formData = new FormData(e.currentTarget)
-
-      // Add the flow parameter based on current mode
-      formData.set('flow', isSignUp ? 'signUp' : 'signIn')
-
       // Client-side validation for sign-up
       if (isSignUp) {
         if (!name.trim()) {
@@ -44,7 +37,36 @@ export function LoginPage() {
         }
       }
 
-      await signIn('password', formData)
+      // Call our JWT authentication endpoint
+      const response = await fetch(
+        `${import.meta.env.VITE_CONVEX_URL}/auth/login`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            password,
+            flow: isSignUp ? 'signUp' : 'signIn',
+            name: isSignUp ? name : undefined,
+          }),
+        }
+      )
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Authentication failed')
+      }
+
+      const { token, user } = await response.json()
+
+      // Set the JWT token for the Convex client
+      client.setAuth(token)
+
+      // Store token in localStorage for persistence
+      localStorage.setItem('convex-auth-token', token)
+      localStorage.setItem('convex-user', JSON.stringify(user))
 
       if (isSignUp) {
         toast.success('Account created successfully! Welcome!')
@@ -54,10 +76,12 @@ export function LoginPage() {
 
       // JWT Debugging - log for jwt.io analysis
       if (import.meta.env.DEV) {
-        console.log(
-          '🔍 JWT Debug: Check Network tab for Authorization header, copy token to https://jwt.io'
-        )
+        console.log('🔍 JWT Debug: Token received:', token)
+        console.log('🔍 Copy token to https://jwt.io for analysis')
       }
+
+      // Redirect to dashboard
+      window.location.href = '/dashboard'
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Authentication failed'

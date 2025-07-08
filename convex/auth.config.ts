@@ -1,7 +1,7 @@
 export default {
   providers: [
     {
-      domain: process.env.SITE_URL,
+      domain: 'https://mild-elephant-70.convex.cloud',
       applicationID: 'convex',
     },
   ],

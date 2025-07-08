@@ -1,4 +1,4 @@
-import { useAuthActions as useConvexAuthActions } from '@convex-dev/auth/react'
+import { useConvexAuth } from 'convex/react'
 import { useQuery } from 'convex/react'
 import { api } from '../convex/_generated/api'
 import { useEffect, useState } from 'react'
@@ -40,18 +40,39 @@ export const useCurrentUser = () => {
 }
 
 export const useVRPAuthActions = () => {
-  const { signIn: convexSignIn, signOut: convexSignOut } =
-    useConvexAuthActions()
-
   return {
     signIn: async (email: string, password: string) => {
       try {
-        const result = await convexSignIn('password', {
-          email,
-          password,
-          flow: 'signIn',
-        })
-        return result // Return the actual Convex Auth result: { signingIn: boolean, redirect?: URL }
+        // Call our JWT authentication endpoint
+        const response = await fetch(
+          `${import.meta.env.VITE_CONVEX_URL}/auth/login`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email,
+              password,
+              flow: 'signIn',
+            }),
+          }
+        )
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Authentication failed')
+        }
+
+        const { token, user } = await response.json()
+
+        // Note: Client auth will be set when app initializes with stored token
+
+        // Store token in localStorage for persistence
+        localStorage.setItem('convex-auth-token', token)
+        localStorage.setItem('convex-user', JSON.stringify(user))
+
+        return { success: true, user }
       } catch (error: any) {
         console.error('Sign in error:', error)
         // Provide user-friendly error messages
@@ -82,7 +103,10 @@ export const useVRPAuthActions = () => {
     },
     signOut: async () => {
       try {
-        await convexSignOut()
+        // Clear local storage
+        localStorage.removeItem('convex-auth-token')
+        localStorage.removeItem('convex-user')
+
         return { success: true }
       } catch (error) {
         console.error('Sign out error:', error)
@@ -91,13 +115,35 @@ export const useVRPAuthActions = () => {
     },
     signUp: async (email: string, password: string, name?: string) => {
       try {
-        const result = await convexSignIn('password', {
-          email,
-          password,
-          name: name || email.split('@')[0],
-          flow: 'signUp',
-        })
-        return result // Return the actual Convex Auth result: { signingIn: boolean, redirect?: URL }
+        // Call our JWT authentication endpoint
+        const response = await fetch(
+          `${import.meta.env.VITE_CONVEX_URL}/auth/login`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email,
+              password,
+              name: name || email.split('@')[0],
+              flow: 'signUp',
+            }),
+          }
+        )
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Account creation failed')
+        }
+
+        const { token, user } = await response.json()
+
+        // Store token in localStorage for persistence
+        localStorage.setItem('convex-auth-token', token)
+        localStorage.setItem('convex-user', JSON.stringify(user))
+
+        return { success: true, user }
       } catch (error: any) {
         console.error('Sign up error:', error)
         // Provide user-friendly error messages
@@ -107,21 +153,6 @@ export const useVRPAuthActions = () => {
         ) {
           throw new Error(
             'An account with this email already exists. Please sign in instead.'
-          )
-        }
-        if (error.message?.includes('Password must')) {
-          throw new Error(error.message) // Keep specific password requirements
-        }
-        if (error.message?.includes('ConvexError')) {
-          // Extract the actual error message from ConvexError format
-          const match = error.message.match(/ConvexError: (.+)/)
-          if (match) {
-            throw new Error(match[1])
-          }
-        }
-        if (error.message?.includes('Server Error')) {
-          throw new Error(
-            'Account creation service is temporarily unavailable. Please try again later.'
           )
         }
         if (error.message?.includes('Network')) {
