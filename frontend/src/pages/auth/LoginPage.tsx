@@ -164,7 +164,7 @@ export function LoginPage() {
         })
         toast.success('Account created successfully! Welcome!')
       } else {
-        await signIn('password', { email, password })
+        await signIn('password', { email, password, flow: 'signIn' })
         toast.success('Welcome back!')
       }
 
