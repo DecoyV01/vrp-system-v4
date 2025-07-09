@@ -661,8 +661,17 @@ const TableEditor = ({
         const row = updatedRows[i]
 
         try {
-          // Prepare update data (exclude system fields)
-          const { _id, _creationTime, ...updateData } = row
+          // Prepare update data (exclude system fields and relationship fields)
+          const {
+            _id,
+            _creationTime,
+            projectId,
+            scenarioId,
+            datasetId,
+            optimizerId,
+            updatedAt,
+            ...updateData
+          } = row
 
           // Call appropriate mutation based on table type
           switch (tableType) {

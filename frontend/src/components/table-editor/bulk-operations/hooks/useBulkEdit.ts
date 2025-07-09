@@ -499,7 +499,7 @@ function applyOperation(
       }
 
       // Handle array fields (capacity, skills, delivery, pickup, etc.)
-      if (typeof operation.value === 'string' && operation.value !== '') {
+      if (operation.value !== undefined && operation.value !== null) {
         const isArrayField =
           operation.field === 'capacity' ||
           operation.field === 'skills' ||
@@ -507,17 +507,35 @@ function applyOperation(
           operation.field === 'pickup'
 
         if (isArrayField) {
-          try {
-            const parsed = JSON.parse(operation.value)
-            if (Array.isArray(parsed)) {
-              convertedValue = parsed
+          // If it's already an array, use it directly
+          if (Array.isArray(operation.value)) {
+            convertedValue = operation.value
+          } else if (
+            typeof operation.value === 'string' &&
+            operation.value !== ''
+          ) {
+            // Try to parse as JSON array first
+            try {
+              const parsed = JSON.parse(operation.value)
+              if (Array.isArray(parsed)) {
+                convertedValue = parsed
+              } else {
+                // If parsed value is not an array, wrap it in array
+                convertedValue = [parsed]
+              }
+            } catch {
+              // If JSON parsing fails, treat as single value array
+              const numValue = parseFloat(operation.value)
+              if (!isNaN(numValue)) {
+                convertedValue = [numValue]
+              } else {
+                // For non-numeric strings, wrap in array
+                convertedValue = [operation.value]
+              }
             }
-          } catch {
-            // If JSON parsing fails, treat as single value array
-            const numValue = parseFloat(operation.value)
-            if (!isNaN(numValue)) {
-              convertedValue = [numValue]
-            }
+          } else {
+            // For non-string values, wrap in array
+            convertedValue = [operation.value]
           }
         }
       }
