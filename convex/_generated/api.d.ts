@@ -22,6 +22,7 @@ import type * as optimizerValidation from "../optimizerValidation.js";
 import type * as projects from "../projects.js";
 import type * as routes from "../routes.js";
 import type * as scenarios from "../scenarios.js";
+import type * as shipments from "../shipments.js";
 import type * as tasks from "../tasks.js";
 import type * as validation from "../validation.js";
 import type * as vehicles from "../vehicles.js";
@@ -44,6 +45,7 @@ declare const fullApi: ApiFromModules<{
   projects: typeof projects;
   routes: typeof routes;
   scenarios: typeof scenarios;
+  shipments: typeof shipments;
   tasks: typeof tasks;
   validation: typeof validation;
   vehicles: typeof vehicles;

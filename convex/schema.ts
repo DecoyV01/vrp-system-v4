@@ -122,13 +122,23 @@ export default defineSchema({
     capacity: v.optional(v.array(v.number())), // ❓ Multi-dimensional capacity array
     skills: v.optional(v.array(v.number())), // ❓ Vehicle skill IDs
 
-    // Time windows and constraints
-    twStart: v.optional(v.number()), // ❓ Time window start
-    twEnd: v.optional(v.number()), // ❓ Time window end
+    // Time windows and constraints (VROOM-compliant format)
+    timeWindow: v.optional(v.array(v.number())), // ❓ Time window [start, end] in seconds for VROOM compatibility
     speedFactor: v.optional(v.number()), // ❓ Speed modification factor
     maxTasks: v.optional(v.number()), // ❓ Maximum tasks per route
     maxTravelTime: v.optional(v.number()), // ❓ Maximum travel time
     maxDistance: v.optional(v.number()), // ❓ Maximum distance
+
+    // Driver breaks and scheduling
+    breaks: v.optional(
+      v.array(
+        v.object({
+          id: v.number(), // Break ID for optimization engine
+          timeWindows: v.array(v.array(v.number())), // Break time windows [start, end]
+          service: v.optional(v.number()), // Break duration in seconds
+        })
+      )
+    ), // ❓ Driver break definitions for optimization engines
 
     // Cost structure
     costFixed: v.optional(v.number()), // ❓ Fixed cost per vehicle
@@ -174,15 +184,7 @@ export default defineSchema({
     // Job constraints
     skills: v.optional(v.array(v.number())), // ❓ Required skill IDs
     priority: v.optional(v.number()), // ❓ Job priority level
-    timeWindows: v.optional(
-      v.array(
-        v.object({
-          // ❓ Valid service time windows
-          start: v.number(), // Required if timeWindows exists
-          end: v.number(), // Required if timeWindows exists
-        })
-      )
-    ),
+    timeWindows: v.optional(v.array(v.array(v.number()))), // ❓ VROOM-compliant time windows [[start, end], [start2, end2]]
 
     // Dataset metadata
     datasetName: v.optional(v.string()), // ❓ Source dataset name
@@ -251,7 +253,16 @@ export default defineSchema({
     deliveryCount: v.optional(v.number()), // ❓ Number of deliveries
 
     // Route violations and geometry
-    violations: v.optional(v.array(v.object({}))), // ❓ Constraint violations
+    violations: v.optional(
+      v.array(
+        v.object({
+          type: v.string(), // Violation type (time_window, capacity, skill, etc.)
+          cause: v.string(), // Reason for violation
+          location: v.optional(v.string()), // Location where violation occurred
+          severity: v.optional(v.string()), // Severity level (critical, warning, info)
+        })
+      )
+    ), // ❓ Constraint violations for optimization analysis
     geometry: v.optional(v.string()), // ❓ Route geometry (WKT/GeoJSON)
     geojson: v.optional(v.object({})), // ❓ GeoJSON representation
 
@@ -297,28 +308,12 @@ export default defineSchema({
     // Pickup timing
     pickupSetup: v.optional(v.number()), // ❓ Pickup setup time (seconds)
     pickupService: v.optional(v.number()), // ❓ Pickup service time (seconds)
-    pickupTimeWindows: v.optional(
-      v.array(
-        v.object({
-          // ❓ Pickup time windows
-          start: v.number(), // Required if pickupTimeWindows exists
-          end: v.number(), // Required if pickupTimeWindows exists
-        })
-      )
-    ),
+    pickupTimeWindows: v.optional(v.array(v.array(v.number()))), // ❓ VROOM-compliant pickup time windows [[start, end]]
 
     // Delivery timing
     deliverySetup: v.optional(v.number()), // ❓ Delivery setup time (seconds)
     deliveryService: v.optional(v.number()), // ❓ Delivery service time (seconds)
-    deliveryTimeWindows: v.optional(
-      v.array(
-        v.object({
-          // ❓ Delivery time windows
-          start: v.number(), // Required if deliveryTimeWindows exists
-          end: v.number(), // Required if deliveryTimeWindows exists
-        })
-      )
-    ),
+    deliveryTimeWindows: v.optional(v.array(v.array(v.number()))), // ❓ VROOM-compliant delivery time windows [[start, end]]
 
     // Dataset metadata
     datasetName: v.optional(v.string()), // ❓ Source dataset name

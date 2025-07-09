@@ -1,81 +1,85 @@
-import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
-import { getCurrentUser, validateUserOwnership } from "./auth";
+import { v } from 'convex/values'
+import { mutation, query } from './_generated/server'
+import { getCurrentUser, validateUserOwnership } from './auth'
+import {
+  validateAndConvertCost,
+  validateCapacity,
+  validateTimeConsistency,
+} from './optimizerValidation'
 
 // Get all vehicles for a specific dataset
 export const listByDataset = query({
-  args: { datasetId: v.id("datasets") },
+  args: { datasetId: v.id('datasets') },
   handler: async (ctx, args) => {
-    const user = await getCurrentUser(ctx);
-    
+    const user = await getCurrentUser(ctx)
+
     // Get dataset to validate project ownership
-    const dataset = await ctx.db.get(args.datasetId);
+    const dataset = await ctx.db.get(args.datasetId)
     if (!dataset) {
-      throw new Error("Dataset not found");
+      throw new Error('Dataset not found')
     }
-    
+
     // Validate user owns the project
-    await validateUserOwnership(ctx, dataset.projectId, user._id);
-    
+    await validateUserOwnership(ctx, dataset.projectId, user._id)
+
     return await ctx.db
-      .query("vehicles")
-      .withIndex("by_dataset", (q) => q.eq("datasetId", args.datasetId))
-      .collect();
+      .query('vehicles')
+      .withIndex('by_dataset', q => q.eq('datasetId', args.datasetId))
+      .collect()
   },
-});
+})
 
 // Get all vehicles for a specific project
 export const listByProject = query({
-  args: { projectId: v.id("projects") },
+  args: { projectId: v.id('projects') },
   handler: async (ctx, args) => {
-    const user = await getCurrentUser(ctx);
-    
+    const user = await getCurrentUser(ctx)
+
     // Validate user owns the project
-    await validateUserOwnership(ctx, args.projectId, user._id);
-    
+    await validateUserOwnership(ctx, args.projectId, user._id)
+
     return await ctx.db
-      .query("vehicles")
-      .withIndex("by_project", (q) => q.eq("projectId", args.projectId))
-      .collect();
+      .query('vehicles')
+      .withIndex('by_project', q => q.eq('projectId', args.projectId))
+      .collect()
   },
-});
+})
 
 // Get a single vehicle by ID
 export const getById = query({
-  args: { id: v.id("vehicles") },
+  args: { id: v.id('vehicles') },
   handler: async (ctx, args) => {
-    const user = await getCurrentUser(ctx);
-    const vehicle = await ctx.db.get(args.id);
-    
+    const user = await getCurrentUser(ctx)
+    const vehicle = await ctx.db.get(args.id)
+
     if (!vehicle) {
-      throw new Error("Vehicle not found");
+      throw new Error('Vehicle not found')
     }
-    
+
     // Validate user owns the parent project
-    await validateUserOwnership(ctx, vehicle.projectId, user._id);
-    
-    return vehicle;
+    await validateUserOwnership(ctx, vehicle.projectId, user._id)
+
+    return vehicle
   },
-});
+})
 
 // Create a new vehicle
 export const create = mutation({
   args: {
-    projectId: v.id("projects"),
-    scenarioId: v.optional(v.id("scenarios")),
-    datasetId: v.optional(v.id("datasets")),
+    projectId: v.id('projects'),
+    scenarioId: v.optional(v.id('scenarios')),
+    datasetId: v.optional(v.id('datasets')),
     description: v.optional(v.string()),
     profile: v.optional(v.string()),
     startLon: v.optional(v.number()),
     startLat: v.optional(v.number()),
     endLon: v.optional(v.number()),
     endLat: v.optional(v.number()),
-    startLocationId: v.optional(v.id("locations")),
-    endLocationId: v.optional(v.id("locations")),
+    startLocationId: v.optional(v.id('locations')),
+    endLocationId: v.optional(v.id('locations')),
     capacity: v.optional(v.array(v.number())),
     skills: v.optional(v.array(v.number())),
-    twStart: v.optional(v.number()),
-    twEnd: v.optional(v.number()),
+    timeWindow: v.optional(v.array(v.number())),
     speedFactor: v.optional(v.number()),
     maxTasks: v.optional(v.number()),
     maxTravelTime: v.optional(v.number()),
@@ -88,67 +92,97 @@ export const create = mutation({
     optimizerId: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const user = await getCurrentUser(ctx);
-    const now = Date.now();
-    
+    const user = await getCurrentUser(ctx)
+    const now = Date.now()
+
     // Validate user owns the project
-    await validateUserOwnership(ctx, args.projectId, user._id);
-    
+    await validateUserOwnership(ctx, args.projectId, user._id)
+
     // If scenario is provided, validate it belongs to the project
     if (args.scenarioId) {
-      const scenario = await ctx.db.get(args.scenarioId);
+      const scenario = await ctx.db.get(args.scenarioId)
       if (!scenario || scenario.projectId !== args.projectId) {
-        throw new Error("Scenario does not belong to the specified project");
+        throw new Error('Scenario does not belong to the specified project')
       }
     }
-    
+
     // If dataset is provided, validate it belongs to the project
     if (args.datasetId) {
-      const dataset = await ctx.db.get(args.datasetId);
+      const dataset = await ctx.db.get(args.datasetId)
       if (!dataset || dataset.projectId !== args.projectId) {
-        throw new Error("Dataset does not belong to the specified project");
+        throw new Error('Dataset does not belong to the specified project')
       }
     }
-    
-    const vehicleId = await ctx.db.insert("vehicles", {
-      ...args,
+
+    // Validate and convert data for optimization engine compatibility
+    const processedArgs = { ...args }
+
+    // Validate capacity array length (must be exactly 3 elements)
+    if (args.capacity !== undefined) {
+      validateCapacity(args.capacity, 'capacity')
+    }
+
+    // Validate time unit consistency (all times in seconds)
+    validateTimeConsistency(args, 'vehicle')
+
+    // Convert cost values from dollars to cents for optimization engine compatibility
+    if (args.costFixed !== undefined) {
+      processedArgs.costFixed = validateAndConvertCost(
+        args.costFixed,
+        'costFixed'
+      )
+    }
+    if (args.costPerHour !== undefined) {
+      processedArgs.costPerHour = validateAndConvertCost(
+        args.costPerHour,
+        'costPerHour'
+      )
+    }
+    if (args.costPerKm !== undefined) {
+      processedArgs.costPerKm = validateAndConvertCost(
+        args.costPerKm,
+        'costPerKm'
+      )
+    }
+
+    const vehicleId = await ctx.db.insert('vehicles', {
+      ...processedArgs,
       optimizerId: args.optimizerId || Math.floor(Math.random() * 1000000),
       updatedAt: now,
-    });
-    
+    })
+
     // Update dataset vehicle count if dataset is specified
     if (args.datasetId) {
       const vehicles = await ctx.db
-        .query("vehicles")
-        .withIndex("by_dataset", (q) => q.eq("datasetId", args.datasetId))
-        .collect();
-      
+        .query('vehicles')
+        .withIndex('by_dataset', q => q.eq('datasetId', args.datasetId))
+        .collect()
+
       await ctx.db.patch(args.datasetId, {
         vehicleCount: vehicles.length,
         updatedAt: now,
-      });
+      })
     }
-    
-    return vehicleId;
+
+    return vehicleId
   },
-});
+})
 
 // Update an existing vehicle
 export const update = mutation({
   args: {
-    id: v.id("vehicles"),
+    id: v.id('vehicles'),
     description: v.optional(v.string()),
     profile: v.optional(v.string()),
     startLon: v.optional(v.number()),
     startLat: v.optional(v.number()),
     endLon: v.optional(v.number()),
     endLat: v.optional(v.number()),
-    startLocationId: v.optional(v.id("locations")),
-    endLocationId: v.optional(v.id("locations")),
+    startLocationId: v.optional(v.id('locations')),
+    endLocationId: v.optional(v.id('locations')),
     capacity: v.optional(v.array(v.number())),
     skills: v.optional(v.array(v.number())),
-    twStart: v.optional(v.number()),
-    twEnd: v.optional(v.number()),
+    timeWindow: v.optional(v.array(v.number())),
     speedFactor: v.optional(v.number()),
     maxTasks: v.optional(v.number()),
     maxTravelTime: v.optional(v.number()),
@@ -160,232 +194,305 @@ export const update = mutation({
     datasetVersion: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const user = await getCurrentUser(ctx);
-    const { id, ...updateData } = args;
-    
-    const vehicle = await ctx.db.get(id);
+    const user = await getCurrentUser(ctx)
+    const { id, ...updateData } = args
+
+    const vehicle = await ctx.db.get(id)
     if (!vehicle) {
-      throw new Error("Vehicle not found");
+      throw new Error('Vehicle not found')
     }
-    
+
     // Validate user owns the parent project
-    await validateUserOwnership(ctx, vehicle.projectId, user._id);
-    
-    // Remove undefined values
+    await validateUserOwnership(ctx, vehicle.projectId, user._id)
+
+    // Remove undefined values and validate/convert data for optimization engine compatibility
     const cleanUpdateData = Object.fromEntries(
       Object.entries(updateData).filter(([_, value]) => value !== undefined)
-    );
-    
+    )
+
+    // Validate capacity array length (must be exactly 3 elements)
+    if (cleanUpdateData.capacity !== undefined) {
+      validateCapacity(cleanUpdateData.capacity as number[], 'capacity')
+    }
+
+    // Validate time unit consistency (all times in seconds)
+    validateTimeConsistency(cleanUpdateData, 'vehicle')
+
+    // Convert cost values from dollars to cents for optimization engine compatibility
+    if (cleanUpdateData.costFixed !== undefined) {
+      cleanUpdateData.costFixed = validateAndConvertCost(
+        cleanUpdateData.costFixed as number,
+        'costFixed'
+      )
+    }
+    if (cleanUpdateData.costPerHour !== undefined) {
+      cleanUpdateData.costPerHour = validateAndConvertCost(
+        cleanUpdateData.costPerHour as number,
+        'costPerHour'
+      )
+    }
+    if (cleanUpdateData.costPerKm !== undefined) {
+      cleanUpdateData.costPerKm = validateAndConvertCost(
+        cleanUpdateData.costPerKm as number,
+        'costPerKm'
+      )
+    }
+
     await ctx.db.patch(id, {
       ...cleanUpdateData,
       updatedAt: Date.now(),
-    });
-    
-    return id;
+    })
+
+    return id
   },
-});
+})
 
 // Delete a vehicle
 export const remove = mutation({
-  args: { id: v.id("vehicles") },
+  args: { id: v.id('vehicles') },
   handler: async (ctx, args) => {
-    const user = await getCurrentUser(ctx);
-    
-    const vehicle = await ctx.db.get(args.id);
+    const user = await getCurrentUser(ctx)
+
+    const vehicle = await ctx.db.get(args.id)
     if (!vehicle) {
-      throw new Error("Vehicle not found");
+      throw new Error('Vehicle not found')
     }
-    
+
     // Validate user owns the parent project
-    await validateUserOwnership(ctx, vehicle.projectId, user._id);
-    
-    const datasetId = vehicle.datasetId;
-    
+    await validateUserOwnership(ctx, vehicle.projectId, user._id)
+
+    const datasetId = vehicle.datasetId
+
     // Delete the vehicle
-    await ctx.db.delete(args.id);
-    
+    await ctx.db.delete(args.id)
+
     // Update dataset vehicle count if dataset is specified
     if (datasetId) {
       const vehicles = await ctx.db
-        .query("vehicles")
-        .withIndex("by_dataset", (q) => q.eq("datasetId", datasetId))
-        .collect();
-      
+        .query('vehicles')
+        .withIndex('by_dataset', q => q.eq('datasetId', datasetId))
+        .collect()
+
       await ctx.db.patch(datasetId, {
         vehicleCount: vehicles.length,
         updatedAt: Date.now(),
-      });
+      })
     }
-    
-    return args.id;
+
+    return args.id
   },
-});
+})
 
 // Bulk import vehicles from CSV-like data
 export const bulkImport = mutation({
   args: {
-    projectId: v.id("projects"),
-    datasetId: v.optional(v.id("datasets")),
-    scenarioId: v.optional(v.id("scenarios")),
-    vehicles: v.array(v.object({
-      description: v.optional(v.string()),
-      profile: v.optional(v.string()),
-      startLon: v.optional(v.number()),
-      startLat: v.optional(v.number()),
-      endLon: v.optional(v.number()),
-      endLat: v.optional(v.number()),
-      capacity: v.optional(v.array(v.number())),
-      skills: v.optional(v.array(v.number())),
-      twStart: v.optional(v.number()),
-      twEnd: v.optional(v.number()),
-      speedFactor: v.optional(v.number()),
-      maxTasks: v.optional(v.number()),
-      maxTravelTime: v.optional(v.number()),
-      maxDistance: v.optional(v.number()),
-      costFixed: v.optional(v.number()),
-      costPerHour: v.optional(v.number()),
-      costPerKm: v.optional(v.number()),
-    })),
+    projectId: v.id('projects'),
+    datasetId: v.optional(v.id('datasets')),
+    scenarioId: v.optional(v.id('scenarios')),
+    vehicles: v.array(
+      v.object({
+        description: v.optional(v.string()),
+        profile: v.optional(v.string()),
+        startLon: v.optional(v.number()),
+        startLat: v.optional(v.number()),
+        endLon: v.optional(v.number()),
+        endLat: v.optional(v.number()),
+        capacity: v.optional(v.array(v.number())),
+        skills: v.optional(v.array(v.number())),
+        twStart: v.optional(v.number()),
+        twEnd: v.optional(v.number()),
+        speedFactor: v.optional(v.number()),
+        maxTasks: v.optional(v.number()),
+        maxTravelTime: v.optional(v.number()),
+        maxDistance: v.optional(v.number()),
+        costFixed: v.optional(v.number()),
+        costPerHour: v.optional(v.number()),
+        costPerKm: v.optional(v.number()),
+      })
+    ),
     clearExisting: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
-    const user = await getCurrentUser(ctx);
-    const now = Date.now();
-    
+    const user = await getCurrentUser(ctx)
+    const now = Date.now()
+
     // Validate user owns the project
-    await validateUserOwnership(ctx, args.projectId, user._id);
-    
+    await validateUserOwnership(ctx, args.projectId, user._id)
+
     // If dataset is provided, validate it belongs to the project
     if (args.datasetId) {
-      const dataset = await ctx.db.get(args.datasetId);
+      const dataset = await ctx.db.get(args.datasetId)
       if (!dataset || dataset.projectId !== args.projectId) {
-        throw new Error("Dataset does not belong to the specified project");
+        throw new Error('Dataset does not belong to the specified project')
       }
     }
-    
+
     // Clear existing vehicles if requested
     if (args.clearExisting && args.datasetId) {
       const existingVehicles = await ctx.db
-        .query("vehicles")
-        .withIndex("by_dataset", (q) => q.eq("datasetId", args.datasetId))
-        .collect();
-      
+        .query('vehicles')
+        .withIndex('by_dataset', q => q.eq('datasetId', args.datasetId))
+        .collect()
+
       for (const vehicle of existingVehicles) {
-        await ctx.db.delete(vehicle._id);
+        await ctx.db.delete(vehicle._id)
       }
     }
-    
+
     // Insert new vehicles
-    const vehicleIds = [];
+    const vehicleIds = []
     for (const vehicleData of args.vehicles) {
-      const vehicleId = await ctx.db.insert("vehicles", {
+      // Validate and convert data for optimization engine compatibility
+      const processedVehicleData = { ...vehicleData }
+
+      // Validate capacity array length (must be exactly 3 elements)
+      if (vehicleData.capacity !== undefined) {
+        validateCapacity(vehicleData.capacity, 'capacity')
+      }
+
+      // Validate time unit consistency (all times in seconds)
+      validateTimeConsistency(vehicleData, 'vehicle')
+
+      // Convert cost values from dollars to cents for optimization engine compatibility
+      if (vehicleData.costFixed !== undefined) {
+        processedVehicleData.costFixed = validateAndConvertCost(
+          vehicleData.costFixed,
+          'costFixed'
+        )
+      }
+      if (vehicleData.costPerHour !== undefined) {
+        processedVehicleData.costPerHour = validateAndConvertCost(
+          vehicleData.costPerHour,
+          'costPerHour'
+        )
+      }
+      if (vehicleData.costPerKm !== undefined) {
+        processedVehicleData.costPerKm = validateAndConvertCost(
+          vehicleData.costPerKm,
+          'costPerKm'
+        )
+      }
+
+      const vehicleId = await ctx.db.insert('vehicles', {
         projectId: args.projectId,
         scenarioId: args.scenarioId,
         datasetId: args.datasetId,
-        ...vehicleData,
+        ...processedVehicleData,
         updatedAt: now,
-      });
-      vehicleIds.push(vehicleId);
+      })
+      vehicleIds.push(vehicleId)
     }
-    
+
     // Update dataset vehicle count if dataset is specified
     if (args.datasetId) {
       const vehicles = await ctx.db
-        .query("vehicles")
-        .withIndex("by_dataset", (q) => q.eq("datasetId", args.datasetId))
-        .collect();
-      
+        .query('vehicles')
+        .withIndex('by_dataset', q => q.eq('datasetId', args.datasetId))
+        .collect()
+
       await ctx.db.patch(args.datasetId, {
         vehicleCount: vehicles.length,
         updatedAt: now,
-      });
+      })
     }
-    
+
     return {
       importedCount: vehicleIds.length,
       vehicleIds,
-    };
+    }
   },
-});
+})
 
 // Get vehicles with filtering and pagination
 export const listWithFilters = query({
   args: {
-    projectId: v.id("projects"),
-    datasetId: v.optional(v.id("datasets")),
-    scenarioId: v.optional(v.id("scenarios")),
+    projectId: v.id('projects'),
+    datasetId: v.optional(v.id('datasets')),
+    scenarioId: v.optional(v.id('scenarios')),
     profile: v.optional(v.string()),
     hasCapacity: v.optional(v.boolean()),
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const user = await getCurrentUser(ctx);
-    
+    const user = await getCurrentUser(ctx)
+
     // Validate user owns the project
-    await validateUserOwnership(ctx, args.projectId, user._id);
-    
-    const query = ctx.db.query("vehicles").withIndex("by_project", (q) => q.eq("projectId", args.projectId));
-    
-    const vehicles = await query.collect();
-    
+    await validateUserOwnership(ctx, args.projectId, user._id)
+
+    const query = ctx.db
+      .query('vehicles')
+      .withIndex('by_project', q => q.eq('projectId', args.projectId))
+
+    const vehicles = await query.collect()
+
     // Apply filters
-    let filteredVehicles = vehicles;
-    
+    let filteredVehicles = vehicles
+
     if (args.datasetId) {
-      filteredVehicles = filteredVehicles.filter(v => v.datasetId === args.datasetId);
+      filteredVehicles = filteredVehicles.filter(
+        v => v.datasetId === args.datasetId
+      )
     }
-    
+
     if (args.scenarioId) {
-      filteredVehicles = filteredVehicles.filter(v => v.scenarioId === args.scenarioId);
+      filteredVehicles = filteredVehicles.filter(
+        v => v.scenarioId === args.scenarioId
+      )
     }
-    
+
     if (args.profile) {
-      filteredVehicles = filteredVehicles.filter(v => v.profile === args.profile);
+      filteredVehicles = filteredVehicles.filter(
+        v => v.profile === args.profile
+      )
     }
-    
+
     if (args.hasCapacity !== undefined) {
-      filteredVehicles = filteredVehicles.filter(v => 
-        args.hasCapacity ? (v.capacity && v.capacity.length > 0) : (!v.capacity || v.capacity.length === 0)
-      );
+      filteredVehicles = filteredVehicles.filter(v =>
+        args.hasCapacity
+          ? v.capacity && v.capacity.length > 0
+          : !v.capacity || v.capacity.length === 0
+      )
     }
-    
+
     // Apply limit
     if (args.limit) {
-      filteredVehicles = filteredVehicles.slice(0, args.limit);
+      filteredVehicles = filteredVehicles.slice(0, args.limit)
     }
-    
-    return filteredVehicles;
+
+    return filteredVehicles
   },
-});
+})
 
 // Duplicate vehicles within or across datasets
 export const duplicate = mutation({
   args: {
-    vehicleIds: v.array(v.id("vehicles")),
-    targetDatasetId: v.optional(v.id("datasets")),
-    targetScenarioId: v.optional(v.id("scenarios")),
+    vehicleIds: v.array(v.id('vehicles')),
+    targetDatasetId: v.optional(v.id('datasets')),
+    targetScenarioId: v.optional(v.id('scenarios')),
   },
   handler: async (ctx, args) => {
-    const user = await getCurrentUser(ctx);
-    const now = Date.now();
-    
-    const duplicatedIds = [];
-    
+    const user = await getCurrentUser(ctx)
+    const now = Date.now()
+
+    const duplicatedIds = []
+
     for (const vehicleId of args.vehicleIds) {
-      const originalVehicle = await ctx.db.get(vehicleId);
+      const originalVehicle = await ctx.db.get(vehicleId)
       if (!originalVehicle) {
-        continue;
+        continue
       }
-      
+
       // Validate user owns the parent project
-      await validateUserOwnership(ctx, originalVehicle.projectId, user._id);
-      
+      await validateUserOwnership(ctx, originalVehicle.projectId, user._id)
+
       // Create duplicated vehicle
-      const duplicatedId = await ctx.db.insert("vehicles", {
+      const duplicatedId = await ctx.db.insert('vehicles', {
         projectId: originalVehicle.projectId,
         scenarioId: args.targetScenarioId || originalVehicle.scenarioId,
         datasetId: args.targetDatasetId || originalVehicle.datasetId,
-        description: originalVehicle.description ? `${originalVehicle.description} (Copy)` : undefined,
+        description: originalVehicle.description
+          ? `${originalVehicle.description} (Copy)`
+          : undefined,
         profile: originalVehicle.profile,
         startLon: originalVehicle.startLon,
         startLat: originalVehicle.startLat,
@@ -407,27 +514,27 @@ export const duplicate = mutation({
         datasetName: originalVehicle.datasetName,
         datasetVersion: originalVehicle.datasetVersion,
         updatedAt: now,
-      });
-      
-      duplicatedIds.push(duplicatedId);
+      })
+
+      duplicatedIds.push(duplicatedId)
     }
-    
+
     // Update dataset vehicle count if target dataset is specified
     if (args.targetDatasetId) {
       const vehicles = await ctx.db
-        .query("vehicles")
-        .withIndex("by_dataset", (q) => q.eq("datasetId", args.targetDatasetId))
-        .collect();
-      
+        .query('vehicles')
+        .withIndex('by_dataset', q => q.eq('datasetId', args.targetDatasetId))
+        .collect()
+
       await ctx.db.patch(args.targetDatasetId, {
         vehicleCount: vehicles.length,
         updatedAt: now,
-      });
+      })
     }
-    
+
     return {
       duplicatedCount: duplicatedIds.length,
       vehicleIds: duplicatedIds,
-    };
+    }
   },
-});
+})

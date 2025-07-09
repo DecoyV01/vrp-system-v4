@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from 'convex/react'
+import { useQuery, useMutation, useAction } from 'convex/react'
 import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
 import { useEffect } from 'react'
@@ -384,5 +384,87 @@ export const useVRPDataset = (datasetId: Id<'datasets'> | undefined) => {
       jobs === undefined ||
       locations === undefined ||
       routes === undefined,
+  }
+}
+
+// =============================================================================
+// OPTIMIZATION HOOKS
+// =============================================================================
+
+export const useOptimizationRuns = (
+  scenarioId: Id<'scenarios'> | undefined
+) => {
+  const runs = useQuery(
+    api.scenarios.listOptimizationRuns,
+    scenarioId ? { scenarioId } : 'skip'
+  )
+
+  // Update UAT health check with optimization runs load state
+  useEffect(() => {
+    if (import.meta.env.DEV && (window as any).__UAT_HEALTH__) {
+      if (runs === undefined) {
+        ;(window as any).__UAT_HEALTH__.setLoadState(
+          'optimizationRuns',
+          'loading'
+        )
+      } else if (runs === null) {
+        ;(window as any).__UAT_HEALTH__.setLoadState(
+          'optimizationRuns',
+          'error'
+        )
+      } else {
+        ;(window as any).__UAT_HEALTH__.setLoadState(
+          'optimizationRuns',
+          'success'
+        )
+      }
+    }
+  }, [runs])
+
+  return runs
+}
+
+export const useOptimizationRun = (
+  runId: Id<'optimizationRuns'> | undefined
+) => {
+  return useQuery(
+    api.scenarios.getOptimizationRun,
+    runId ? { id: runId } : 'skip'
+  )
+}
+
+export const useLatestOptimizationRun = (
+  scenarioId: Id<'scenarios'> | undefined
+) => {
+  return useQuery(
+    api.scenarios.getLatestOptimizationRun,
+    scenarioId ? { scenarioId } : 'skip'
+  )
+}
+
+export const useRunVROOMOptimization = () => {
+  return useAction(api.scenarios.runVROOMOptimization)
+}
+
+// Combined hook for optimization workflow
+export const useOptimizationWorkflow = (
+  scenarioId: Id<'scenarios'> | undefined
+) => {
+  const runs = useOptimizationRuns(scenarioId)
+  const latestRun = useLatestOptimizationRun(scenarioId)
+  const runOptimization = useRunVROOMOptimization()
+
+  const isOptimizing = latestRun?.status === 'running'
+  const hasCompleted = latestRun?.status === 'completed'
+  const hasFailed = latestRun?.status === 'error'
+
+  return {
+    runs,
+    latestRun,
+    runOptimization,
+    isOptimizing,
+    hasCompleted,
+    hasFailed,
+    canOptimize: !isOptimizing,
   }
 }
