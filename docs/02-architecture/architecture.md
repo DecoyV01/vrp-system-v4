@@ -21,7 +21,7 @@ Projects → Scenarios → Datasets → Tables (vehicles, jobs, locations, etc.)
 - **Platform**: Convex serverless backend
 - **Database**: Real-time WebSocket database with 58 indexes
 - **Functions**: 70+ serverless functions across 12 TypeScript files
-- **Authentication**: Mock auth system (development-ready)
+- **Authentication**: Convex Auth with JWT (production-ready)
 
 ### Deployment
 - **Backend**: Convex Cloud (https://mild-elephant-70.convex.cloud)
@@ -66,7 +66,7 @@ Projects → Scenarios → Datasets → Tables (vehicles, jobs, locations, etc.)
 ### Backend Patterns
 - **Schema Design**: Comprehensive VRP data model (convex/schema.ts - 502 lines)
 - **Function Organization**: Separate files per entity type
-- **Authentication**: Convex Auth integration
+- **Authentication**: Convex Auth with JWT-based sessions
 - **Validation**: Input validation with optimization engine compatibility
 - **Real-time**: WebSocket connections for live updates
 
@@ -83,4 +83,6 @@ Projects → Scenarios → Datasets → Tables (vehicles, jobs, locations, etc.)
 - User-based project ownership and access control
 - All backend functions validate user ownership before data access
 - Production headers configured for XSS protection and HSTS
-- Mock authentication system for development
+- JWT-based authentication with secure key management
+
+For detailed authentication architecture, see [Authentication Architecture](./authentication-architecture.md).
