@@ -242,6 +242,7 @@ export function LoginPage() {
                     }}
                     placeholder="Enter your full name"
                     disabled={isLoading}
+                    autoComplete="name"
                     className={fieldErrors.name ? 'border-red-500' : ''}
                   />
                   {fieldErrors.name && (
@@ -263,6 +264,7 @@ export function LoginPage() {
                   placeholder="Enter your email"
                   required
                   disabled={isLoading}
+                  autoComplete="email"
                   className={fieldErrors.email ? 'border-red-500' : ''}
                 />
                 {fieldErrors.email && (
@@ -284,6 +286,9 @@ export function LoginPage() {
                   required
                   disabled={isLoading}
                   minLength={isRegisterMode ? 6 : undefined}
+                  autoComplete={
+                    isRegisterMode ? 'new-password' : 'current-password'
+                  }
                   className={fieldErrors.password ? 'border-red-500' : ''}
                 />
                 {fieldErrors.password && (
@@ -311,6 +316,7 @@ export function LoginPage() {
                     required
                     disabled={isLoading}
                     minLength={6}
+                    autoComplete="new-password"
                     className={
                       fieldErrors.confirmPassword ? 'border-red-500' : ''
                     }
