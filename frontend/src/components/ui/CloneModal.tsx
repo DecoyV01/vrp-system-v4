@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Copy, AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import type { Id } from '../convex/_generated/dataModel'
+import type { Id } from '../../../convex/_generated/dataModel'
 
 export interface CloneModalData {
   id: Id<'scenarios'> | Id<'datasets'>

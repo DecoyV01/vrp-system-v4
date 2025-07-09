@@ -11,7 +11,7 @@ import {
   useScenario, 
   useDataset 
 } from '@/hooks/useVRPData'
-import type { Id } from '../convex/_generated/dataModel'
+import type { Id } from '../../../convex/_generated/dataModel'
 
 export interface ModalManagerProps {
   // Optional callbacks for custom handling

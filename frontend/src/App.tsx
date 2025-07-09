@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useQuery } from 'convex/react'
-import { api } from '../convex/_generated/api'
+import { api } from '../../convex/_generated/api'
 import { Toaster } from 'sonner'
 import MainLayout from './components/layout/MainLayout'
 import ProjectsPage from './pages/ProjectsPage'

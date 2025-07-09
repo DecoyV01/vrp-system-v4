@@ -21,7 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import type { Id } from '../convex/_generated/dataModel'
+import type { Id } from '../../convex/_generated/dataModel'
 
 const DatasetCard = ({ 
   dataset, 

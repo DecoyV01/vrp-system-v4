@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { AlertTriangle, Trash2, AlertCircle } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import type { Id } from '../convex/_generated/dataModel'
+import type { Id } from '../../../convex/_generated/dataModel'
 
 export interface CascadeInfo {
   childCount: number

@@ -14,7 +14,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import type { Id } from '../convex/_generated/dataModel'
+import type { Id } from '../../../convex/_generated/dataModel'
 
 export interface EditModalData {
   id: Id<'projects'> | Id<'scenarios'> | Id<'datasets'>

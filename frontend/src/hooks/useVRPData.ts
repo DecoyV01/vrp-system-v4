@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from 'convex/react'
-import { api } from '../convex/_generated/api'
-import type { Id } from '../convex/_generated/dataModel'
+import { api } from '../../convex/_generated/api'
+import type { Id } from '../../convex/_generated/dataModel'
 import { useEffect } from 'react'
 
 // =============================================================================
@@ -9,35 +9,29 @@ import { useEffect } from 'react'
 
 export const useProjects = () => {
   const projects = useQuery(api.projects.list)
-  
+
   // Update UAT health check with projects load state
   useEffect(() => {
     if (import.meta.env.DEV && (window as any).__UAT_HEALTH__) {
       if (projects === undefined) {
-        (window as any).__UAT_HEALTH__.setLoadState('projects', 'loading')
+        ;(window as any).__UAT_HEALTH__.setLoadState('projects', 'loading')
       } else if (projects === null) {
-        (window as any).__UAT_HEALTH__.setLoadState('projects', 'error')
+        ;(window as any).__UAT_HEALTH__.setLoadState('projects', 'error')
       } else {
-        (window as any).__UAT_HEALTH__.setLoadState('projects', 'success')
+        ;(window as any).__UAT_HEALTH__.setLoadState('projects', 'success')
       }
     }
   }, [projects])
-  
+
   return projects
 }
 
-export const useProject = (projectId: Id<"projects"> | undefined) => {
-  return useQuery(
-    api.projects.getById,
-    projectId ? { id: projectId } : 'skip'
-  )
+export const useProject = (projectId: Id<'projects'> | undefined) => {
+  return useQuery(api.projects.getById, projectId ? { id: projectId } : 'skip')
 }
 
-export const useProjectStats = (projectId: Id<"projects"> | undefined) => {
-  return useQuery(
-    api.projects.getStats,
-    projectId ? { id: projectId } : 'skip'
-  )
+export const useProjectStats = (projectId: Id<'projects'> | undefined) => {
+  return useQuery(api.projects.getStats, projectId ? { id: projectId } : 'skip')
 }
 
 export const useCreateProject = () => {
@@ -53,46 +47,43 @@ export const useDeleteProject = () => {
 }
 
 export const useSearchProjects = (query: string) => {
-  return useQuery(
-    api.projects.search,
-    query ? { query } : 'skip'
-  )
+  return useQuery(api.projects.search, query ? { query } : 'skip')
 }
 
 // =============================================================================
 // SCENARIO HOOKS
 // =============================================================================
 
-export const useScenarios = (projectId: Id<"projects"> | undefined) => {
+export const useScenarios = (projectId: Id<'projects'> | undefined) => {
   const scenarios = useQuery(
     api.scenarios.listByProject,
     projectId ? { projectId } : 'skip'
   )
-  
+
   // Update UAT health check with scenarios load state
   useEffect(() => {
     if (import.meta.env.DEV && (window as any).__UAT_HEALTH__) {
       if (scenarios === undefined) {
-        (window as any).__UAT_HEALTH__.setLoadState('scenarios', 'loading')
+        ;(window as any).__UAT_HEALTH__.setLoadState('scenarios', 'loading')
       } else if (scenarios === null) {
-        (window as any).__UAT_HEALTH__.setLoadState('scenarios', 'error')
+        ;(window as any).__UAT_HEALTH__.setLoadState('scenarios', 'error')
       } else {
-        (window as any).__UAT_HEALTH__.setLoadState('scenarios', 'success')
+        ;(window as any).__UAT_HEALTH__.setLoadState('scenarios', 'success')
       }
     }
   }, [scenarios])
-  
+
   return scenarios
 }
 
-export const useScenario = (scenarioId: Id<"scenarios"> | undefined) => {
+export const useScenario = (scenarioId: Id<'scenarios'> | undefined) => {
   return useQuery(
     api.scenarios.getById,
     scenarioId ? { id: scenarioId } : 'skip'
   )
 }
 
-export const useScenarioStats = (scenarioId: Id<"scenarios"> | undefined) => {
+export const useScenarioStats = (scenarioId: Id<'scenarios'> | undefined) => {
   return useQuery(
     api.scenarios.getStats,
     scenarioId ? { id: scenarioId } : 'skip'
@@ -119,47 +110,41 @@ export const useCloneScenario = () => {
 // DATASET HOOKS
 // =============================================================================
 
-export const useDatasets = (scenarioId: Id<"scenarios"> | undefined) => {
+export const useDatasets = (scenarioId: Id<'scenarios'> | undefined) => {
   const datasets = useQuery(
     api.datasets.listByScenario,
     scenarioId ? { scenarioId } : 'skip'
   )
-  
+
   // Update UAT health check with datasets load state
   useEffect(() => {
     if (import.meta.env.DEV && (window as any).__UAT_HEALTH__) {
       if (datasets === undefined) {
-        (window as any).__UAT_HEALTH__.setLoadState('datasets', 'loading')
+        ;(window as any).__UAT_HEALTH__.setLoadState('datasets', 'loading')
       } else if (datasets === null) {
-        (window as any).__UAT_HEALTH__.setLoadState('datasets', 'error')
+        ;(window as any).__UAT_HEALTH__.setLoadState('datasets', 'error')
       } else {
-        (window as any).__UAT_HEALTH__.setLoadState('datasets', 'success')
+        ;(window as any).__UAT_HEALTH__.setLoadState('datasets', 'success')
       }
     }
   }, [datasets])
-  
+
   return datasets
 }
 
-export const useDatasetsByProject = (projectId: Id<"projects"> | undefined) => {
+export const useDatasetsByProject = (projectId: Id<'projects'> | undefined) => {
   return useQuery(
     api.datasets.listByProject,
     projectId ? { projectId } : 'skip'
   )
 }
 
-export const useDataset = (datasetId: Id<"datasets"> | undefined) => {
-  return useQuery(
-    api.datasets.getById,
-    datasetId ? { id: datasetId } : 'skip'
-  )
+export const useDataset = (datasetId: Id<'datasets'> | undefined) => {
+  return useQuery(api.datasets.getById, datasetId ? { id: datasetId } : 'skip')
 }
 
-export const useDatasetStats = (datasetId: Id<"datasets"> | undefined) => {
-  return useQuery(
-    api.datasets.getStats,
-    datasetId ? { id: datasetId } : 'skip'
-  )
+export const useDatasetStats = (datasetId: Id<'datasets'> | undefined) => {
+  return useQuery(api.datasets.getStats, datasetId ? { id: datasetId } : 'skip')
 }
 
 export const useCreateDataset = () => {
@@ -186,40 +171,37 @@ export const useArchiveDataset = () => {
 // VEHICLE HOOKS
 // =============================================================================
 
-export const useVehicles = (datasetId: Id<"datasets"> | undefined) => {
+export const useVehicles = (datasetId: Id<'datasets'> | undefined) => {
   const vehicles = useQuery(
     api.vehicles.listByDataset,
     datasetId ? { datasetId } : 'skip'
   )
-  
+
   // Update UAT health check with vehicles load state
   useEffect(() => {
     if (import.meta.env.DEV && (window as any).__UAT_HEALTH__) {
       if (vehicles === undefined) {
-        (window as any).__UAT_HEALTH__.setLoadState('vehicles', 'loading')
+        ;(window as any).__UAT_HEALTH__.setLoadState('vehicles', 'loading')
       } else if (vehicles === null) {
-        (window as any).__UAT_HEALTH__.setLoadState('vehicles', 'error')
+        ;(window as any).__UAT_HEALTH__.setLoadState('vehicles', 'error')
       } else {
-        (window as any).__UAT_HEALTH__.setLoadState('vehicles', 'success')
+        ;(window as any).__UAT_HEALTH__.setLoadState('vehicles', 'success')
       }
     }
   }, [vehicles])
-  
+
   return vehicles
 }
 
-export const useVehiclesByProject = (projectId: Id<"projects"> | undefined) => {
+export const useVehiclesByProject = (projectId: Id<'projects'> | undefined) => {
   return useQuery(
     api.vehicles.listByProject,
     projectId ? { projectId } : 'skip'
   )
 }
 
-export const useVehicle = (vehicleId: Id<"vehicles"> | undefined) => {
-  return useQuery(
-    api.vehicles.getById,
-    vehicleId ? { id: vehicleId } : 'skip'
-  )
+export const useVehicle = (vehicleId: Id<'vehicles'> | undefined) => {
+  return useQuery(api.vehicles.getById, vehicleId ? { id: vehicleId } : 'skip')
 }
 
 export const useCreateVehicle = () => {
@@ -246,40 +228,34 @@ export const useDuplicateVehicles = () => {
 // JOB HOOKS
 // =============================================================================
 
-export const useJobs = (datasetId: Id<"datasets"> | undefined) => {
+export const useJobs = (datasetId: Id<'datasets'> | undefined) => {
   const jobs = useQuery(
     api.jobs.listByDataset,
     datasetId ? { datasetId } : 'skip'
   )
-  
+
   // Update UAT health check with jobs load state
   useEffect(() => {
     if (import.meta.env.DEV && (window as any).__UAT_HEALTH__) {
       if (jobs === undefined) {
-        (window as any).__UAT_HEALTH__.setLoadState('jobs', 'loading')
+        ;(window as any).__UAT_HEALTH__.setLoadState('jobs', 'loading')
       } else if (jobs === null) {
-        (window as any).__UAT_HEALTH__.setLoadState('jobs', 'error')
+        ;(window as any).__UAT_HEALTH__.setLoadState('jobs', 'error')
       } else {
-        (window as any).__UAT_HEALTH__.setLoadState('jobs', 'success')
+        ;(window as any).__UAT_HEALTH__.setLoadState('jobs', 'success')
       }
     }
   }, [jobs])
-  
+
   return jobs
 }
 
-export const useJobsByProject = (projectId: Id<"projects"> | undefined) => {
-  return useQuery(
-    api.jobs.listByProject,
-    projectId ? { projectId } : 'skip'
-  )
+export const useJobsByProject = (projectId: Id<'projects'> | undefined) => {
+  return useQuery(api.jobs.listByProject, projectId ? { projectId } : 'skip')
 }
 
-export const useJob = (jobId: Id<"jobs"> | undefined) => {
-  return useQuery(
-    api.jobs.getById,
-    jobId ? { id: jobId } : 'skip'
-  )
+export const useJob = (jobId: Id<'jobs'> | undefined) => {
+  return useQuery(api.jobs.getById, jobId ? { id: jobId } : 'skip')
 }
 
 export const useCreateJob = () => {
@@ -302,21 +278,23 @@ export const useBulkImportJobs = () => {
 // LOCATION HOOKS
 // =============================================================================
 
-export const useLocations = (datasetId: Id<"datasets"> | undefined) => {
+export const useLocations = (datasetId: Id<'datasets'> | undefined) => {
   return useQuery(
     api.locations.listByDataset,
     datasetId ? { datasetId } : 'skip'
   )
 }
 
-export const useLocationsByProject = (projectId: Id<"projects"> | undefined) => {
+export const useLocationsByProject = (
+  projectId: Id<'projects'> | undefined
+) => {
   return useQuery(
     api.locations.listByProject,
     projectId ? { projectId } : 'skip'
   )
 }
 
-export const useLocation = (locationId: Id<"locations"> | undefined) => {
+export const useLocation = (locationId: Id<'locations'> | undefined) => {
   return useQuery(
     api.locations.getById,
     locationId ? { id: locationId } : 'skip'
@@ -343,25 +321,16 @@ export const useBulkImportLocations = () => {
 // ROUTE HOOKS
 // =============================================================================
 
-export const useRoutes = (datasetId: Id<"datasets"> | undefined) => {
-  return useQuery(
-    api.routes.listByDataset,
-    datasetId ? { datasetId } : 'skip'
-  )
+export const useRoutes = (datasetId: Id<'datasets'> | undefined) => {
+  return useQuery(api.routes.listByDataset, datasetId ? { datasetId } : 'skip')
 }
 
-export const useRoutesByProject = (projectId: Id<"projects"> | undefined) => {
-  return useQuery(
-    api.routes.listByProject,
-    projectId ? { projectId } : 'skip'
-  )
+export const useRoutesByProject = (projectId: Id<'projects'> | undefined) => {
+  return useQuery(api.routes.listByProject, projectId ? { projectId } : 'skip')
 }
 
-export const useRoute = (routeId: Id<"routes"> | undefined) => {
-  return useQuery(
-    api.routes.getById,
-    routeId ? { id: routeId } : 'skip'
-  )
+export const useRoute = (routeId: Id<'routes'> | undefined) => {
+  return useQuery(api.routes.getById, routeId ? { id: routeId } : 'skip')
 }
 
 export const useCreateRoute = () => {
@@ -394,7 +363,7 @@ export const useStoreOptimizationResults = () => {
 // =============================================================================
 
 // Combined hook for getting all VRP data for a dataset
-export const useVRPDataset = (datasetId: Id<"datasets"> | undefined) => {
+export const useVRPDataset = (datasetId: Id<'datasets'> | undefined) => {
   const dataset = useDataset(datasetId)
   const vehicles = useVehicles(datasetId)
   const jobs = useJobs(datasetId)
@@ -409,6 +378,11 @@ export const useVRPDataset = (datasetId: Id<"datasets"> | undefined) => {
     locations,
     routes,
     stats,
-    isLoading: dataset === undefined || vehicles === undefined || jobs === undefined || locations === undefined || routes === undefined
+    isLoading:
+      dataset === undefined ||
+      vehicles === undefined ||
+      jobs === undefined ||
+      locations === undefined ||
+      routes === undefined,
   }
 }

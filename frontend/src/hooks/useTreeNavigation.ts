@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react'
-import type { Id } from '../convex/_generated/dataModel'
+import type { Id } from '../../convex/_generated/dataModel'
 
 export interface TreeNode {
   id: string

@@ -20,7 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import type { Id } from '../convex/_generated/dataModel'
+import type { Id } from '../../convex/_generated/dataModel'
 
 const ScenarioCard = ({ scenario, projectId }: { scenario: any; projectId: Id<"projects"> }) => {
   const navigate = useNavigate()

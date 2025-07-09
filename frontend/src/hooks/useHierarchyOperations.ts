@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import type { Id } from '../convex/_generated/dataModel'
+import type { Id } from '../../convex/_generated/dataModel'
 import {
   useUpdateProject,
   useUpdateScenario,

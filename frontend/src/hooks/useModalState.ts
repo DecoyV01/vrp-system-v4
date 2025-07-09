@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import type { Id } from '../convex/_generated/dataModel'
+import type { Id } from '../../convex/_generated/dataModel'
 
 export type ModalType = 
   | 'edit-project' 

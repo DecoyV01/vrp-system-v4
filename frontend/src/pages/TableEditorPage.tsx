@@ -6,7 +6,7 @@ import { ArrowLeft, Database, Table as TableIcon } from 'lucide-react'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import TableEditor from '@/components/table-editor/TableEditor'
 import { useProject, useScenario, useDataset } from '@/hooks/useVRPData'
-import type { Id } from '../convex/_generated/dataModel'
+import type { Id } from '../../convex/_generated/dataModel'
 
 const TableEditorPage = () => {
   const { projectId, scenarioId, datasetId, tableType } = useParams()

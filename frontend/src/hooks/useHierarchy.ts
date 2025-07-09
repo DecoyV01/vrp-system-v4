@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { useProjects, useScenarios, useDatasets } from './useVRPData'
 import { useMemo } from 'react'
-import type { Id } from '../convex/_generated/dataModel'
+import type { Id } from '../../convex/_generated/dataModel'
 
 export interface TreeNode {
   id: string
