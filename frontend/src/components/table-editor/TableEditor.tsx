@@ -1,6 +1,13 @@
 import { useState, useMemo, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -8,10 +15,14 @@ import { Separator } from '@/components/ui/separator'
 import { Plus, Trash2, Edit2, Upload, Download, X, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { useBulkSelection, TemplateDownload, CSVImportModal } from './bulk-operations'
+import {
+  useBulkSelection,
+  TemplateDownload,
+  CSVImportModal,
+} from './bulk-operations'
 import { CSVExportModal } from './bulk-operations/export/CSVExportModal'
 import { BulkEditModal } from './bulk-operations/edit/BulkEditModal'
-import type { Id } from '../convex/_generated/dataModel'
+import type { Id } from '../../../convex/_generated/dataModel'
 import {
   useVehicles,
   useJobs,
@@ -26,84 +37,248 @@ import {
   useUpdateRoute,
   useDeleteVehicle,
   useDeleteJob,
-  useDeleteLocation
+  useDeleteLocation,
 } from '@/hooks/useVRPData'
 
 interface TableEditorProps {
-  datasetId: Id<"datasets">
+  datasetId: Id<'datasets'>
   tableType: 'vehicles' | 'jobs' | 'locations' | 'routes'
-  projectId: Id<"projects">
-  scenarioId?: Id<"scenarios">
+  projectId: Id<'projects'>
+  scenarioId?: Id<'scenarios'>
 }
-
 
 const getTableSchema = (tableType: string) => {
   switch (tableType) {
     case 'vehicles':
       return {
         columns: [
-          { key: 'description', label: 'Description', type: 'string', required: false },
+          {
+            key: 'description',
+            label: 'Description',
+            type: 'string',
+            required: false,
+          },
           { key: 'profile', label: 'Profile', type: 'string', required: false },
-          { key: 'startLat', label: 'Start Latitude', type: 'number', required: false },
-          { key: 'startLon', label: 'Start Longitude', type: 'number', required: false },
-          { key: 'endLat', label: 'End Latitude', type: 'number', required: false },
-          { key: 'endLon', label: 'End Longitude', type: 'number', required: false },
-          { key: 'capacity', label: 'Capacity', type: 'array', required: false },
+          {
+            key: 'startLat',
+            label: 'Start Latitude',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'startLon',
+            label: 'Start Longitude',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'endLat',
+            label: 'End Latitude',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'endLon',
+            label: 'End Longitude',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'capacity',
+            label: 'Capacity',
+            type: 'array',
+            required: false,
+          },
           { key: 'skills', label: 'Skills', type: 'array', required: false },
-          { key: 'twStart', label: 'Time Window Start', type: 'number', required: false },
-          { key: 'twEnd', label: 'Time Window End', type: 'number', required: false },
-          { key: 'speedFactor', label: 'Speed Factor', type: 'number', required: false },
-          { key: 'maxTasks', label: 'Max Tasks', type: 'number', required: false },
-          { key: 'costFixed', label: 'Fixed Cost', type: 'number', required: false },
-          { key: 'costPerHour', label: 'Cost per Hour', type: 'number', required: false },
-          { key: 'costPerKm', label: 'Cost per Km', type: 'number', required: false }
-        ]
+          {
+            key: 'twStart',
+            label: 'Time Window Start',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'twEnd',
+            label: 'Time Window End',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'speedFactor',
+            label: 'Speed Factor',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'maxTasks',
+            label: 'Max Tasks',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'costFixed',
+            label: 'Fixed Cost',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'costPerHour',
+            label: 'Cost per Hour',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'costPerKm',
+            label: 'Cost per Km',
+            type: 'number',
+            required: false,
+          },
+        ],
       }
     case 'jobs':
       return {
         columns: [
-          { key: 'description', label: 'Description', type: 'string', required: false },
-          { key: 'locationLat', label: 'Latitude', type: 'number', required: false },
-          { key: 'locationLon', label: 'Longitude', type: 'number', required: false },
-          { key: 'setup', label: 'Setup Time', type: 'number', required: false },
-          { key: 'service', label: 'Service Time', type: 'number', required: false },
-          { key: 'delivery', label: 'Delivery', type: 'array', required: false },
+          {
+            key: 'description',
+            label: 'Description',
+            type: 'string',
+            required: false,
+          },
+          {
+            key: 'locationLat',
+            label: 'Latitude',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'locationLon',
+            label: 'Longitude',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'setup',
+            label: 'Setup Time',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'service',
+            label: 'Service Time',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'delivery',
+            label: 'Delivery',
+            type: 'array',
+            required: false,
+          },
           { key: 'pickup', label: 'Pickup', type: 'array', required: false },
-          { key: 'priority', label: 'Priority', type: 'number', required: false }
-        ]
+          {
+            key: 'priority',
+            label: 'Priority',
+            type: 'number',
+            required: false,
+          },
+        ],
       }
     case 'locations':
       return {
         columns: [
           { key: 'name', label: 'Name', type: 'string', required: true },
-          { key: 'locationLat', label: 'Latitude', type: 'number', required: false },
-          { key: 'locationLon', label: 'Longitude', type: 'number', required: false },
+          {
+            key: 'locationLat',
+            label: 'Latitude',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'locationLon',
+            label: 'Longitude',
+            type: 'number',
+            required: false,
+          },
           { key: 'address', label: 'Address', type: 'string', required: false },
-          { key: 'description', label: 'Description', type: 'string', required: false },
-          { key: 'locationType', label: 'Type', type: 'string', required: false },
-          { key: 'operatingHours', label: 'Operating Hours', type: 'string', required: false },
-          { key: 'contactInfo', label: 'Contact Info', type: 'string', required: false }
-        ]
+          {
+            key: 'description',
+            label: 'Description',
+            type: 'string',
+            required: false,
+          },
+          {
+            key: 'locationType',
+            label: 'Type',
+            type: 'string',
+            required: false,
+          },
+          {
+            key: 'operatingHours',
+            label: 'Operating Hours',
+            type: 'string',
+            required: false,
+          },
+          {
+            key: 'contactInfo',
+            label: 'Contact Info',
+            type: 'string',
+            required: false,
+          },
+        ],
       }
     case 'routes':
       return {
         columns: [
-          { key: 'vehicleId', label: 'Vehicle ID', type: 'string', required: true },
+          {
+            key: 'vehicleId',
+            label: 'Vehicle ID',
+            type: 'string',
+            required: true,
+          },
           { key: 'type', label: 'Type', type: 'string', required: false },
-          { key: 'locationId', label: 'Location ID', type: 'string', required: false },
+          {
+            key: 'locationId',
+            label: 'Location ID',
+            type: 'string',
+            required: false,
+          },
           { key: 'jobId', label: 'Job ID', type: 'string', required: false },
-          { key: 'service', label: 'Service Time', type: 'number', required: false },
-          { key: 'waiting', label: 'Waiting Time', type: 'number', required: false },
-          { key: 'arrivalTime', label: 'Arrival Time', type: 'number', required: false },
-          { key: 'departureTime', label: 'Departure Time', type: 'number', required: false }
-        ]
+          {
+            key: 'service',
+            label: 'Service Time',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'waiting',
+            label: 'Waiting Time',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'arrivalTime',
+            label: 'Arrival Time',
+            type: 'number',
+            required: false,
+          },
+          {
+            key: 'departureTime',
+            label: 'Departure Time',
+            type: 'number',
+            required: false,
+          },
+        ],
       }
     default:
       return { columns: [] }
   }
 }
 
-const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEditorProps) => {
+const TableEditor = ({
+  datasetId,
+  tableType,
+  projectId,
+  scenarioId,
+}: TableEditorProps) => {
   // Data fetching hooks
   const vehicles = useVehicles(datasetId)
   const jobs = useJobs(datasetId)
@@ -115,20 +290,22 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
   const createJob = useCreateJob()
   const createLocation = useCreateLocation()
   // const createRoute = useCreateRoute() // Not implemented yet
-  
+
   const updateVehicle = useUpdateVehicle()
   const updateJob = useUpdateJob()
   const updateLocation = useUpdateLocation()
   const updateRoute = useUpdateRoute()
-  
+
   const deleteVehicle = useDeleteVehicle()
   const deleteJob = useDeleteJob()
   const deleteLocation = useDeleteLocation()
   // const deleteRoute = useDeleteRoute() // Not implemented yet
 
-
   // Local state
-  const [editingCell, setEditingCell] = useState<{row: number, col: string} | null>(null)
+  const [editingCell, setEditingCell] = useState<{
+    row: number
+    col: string
+  } | null>(null)
   const [editValue, setEditValue] = useState('')
   const [isCreating, setIsCreating] = useState(false)
 
@@ -140,11 +317,16 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
   // Get current data based on table type
   const currentData = useMemo(() => {
     switch (tableType) {
-      case 'vehicles': return vehicles || []
-      case 'jobs': return jobs || []
-      case 'locations': return locations || []
-      case 'routes': return routes || []
-      default: return []
+      case 'vehicles':
+        return vehicles || []
+      case 'jobs':
+        return jobs || []
+      case 'locations':
+        return locations || []
+      case 'routes':
+        return routes || []
+      default:
+        return []
     }
   }, [tableType, vehicles, jobs, locations, routes])
 
@@ -159,13 +341,13 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
     selectAll,
     clearSelection,
     isRowSelected,
-    getSelectedIds
+    getSelectedIds,
   } = useBulkSelection({
     data: currentData,
     maxSelection: 1000,
-    onSelectionChange: (selectedIds) => {
+    onSelectionChange: selectedIds => {
       // Selection state managed by the hook
-    }
+    },
   })
 
   // Helper function to get selected rows data
@@ -177,7 +359,11 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
   // Checkbox ref for indeterminate state
   const selectAllCheckboxRef = useRef<HTMLButtonElement>(null)
 
-  const handleCellClick = (rowIndex: number, colKey: string, currentValue: any) => {
+  const handleCellClick = (
+    rowIndex: number,
+    colKey: string,
+    currentValue: any
+  ) => {
     setEditingCell({ row: rowIndex, col: colKey })
     setEditValue(formatValueForEdit(currentValue))
   }
@@ -191,7 +377,7 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
 
   const parseEditValue = (value: string, type: string): any => {
     if (value === '') return undefined
-    
+
     switch (type) {
       case 'number': {
         const num = parseFloat(value)
@@ -220,15 +406,15 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
 
     const item = currentData[editingCell.row]
     const column = schema.columns.find(col => col.key === editingCell.col)
-    
+
     if (!item || !column) return
 
     const newValue = parseEditValue(editValue, column.type)
 
     try {
-      const updateData: any = { 
-        id: item._id, 
-        [editingCell.col]: newValue 
+      const updateData: any = {
+        id: item._id,
+        [editingCell.col]: newValue,
       }
 
       switch (tableType) {
@@ -264,24 +450,24 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
   const addRow = async () => {
     try {
       setIsCreating(true)
-      
+
       const baseData = {
         projectId,
         scenarioId,
-        datasetId
+        datasetId,
       }
 
       switch (tableType) {
         case 'vehicles':
           await createVehicle({
             ...baseData,
-            description: `Vehicle ${Date.now()}`
+            description: `Vehicle ${Date.now()}`,
           })
           break
         case 'jobs':
           await createJob({
             ...baseData,
-            description: `Job ${Date.now()}`
+            description: `Job ${Date.now()}`,
           })
           break
         case 'locations':
@@ -289,7 +475,7 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
             ...baseData,
             name: `Location ${Date.now()}`,
             locationLat: 0,
-            locationLon: 0
+            locationLon: 0,
           })
           break
         case 'routes':
@@ -318,7 +504,7 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
             projectId,
             scenarioId,
             datasetId,
-            optimizerId: Math.floor(Math.random() * 1000000) // Generate unique optimizer ID
+            optimizerId: Math.floor(Math.random() * 1000000), // Generate unique optimizer ID
           }
 
           switch (tableType) {
@@ -342,11 +528,15 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
       }
 
       if (successCount > 0) {
-        toast.success(`Successfully imported ${successCount} row${successCount !== 1 ? 's' : ''}`)
+        toast.success(
+          `Successfully imported ${successCount} row${successCount !== 1 ? 's' : ''}`
+        )
       }
-      
+
       if (errorCount > 0) {
-        toast.error(`Failed to import ${errorCount} row${errorCount !== 1 ? 's' : ''}`)
+        toast.error(
+          `Failed to import ${errorCount} row${errorCount !== 1 ? 's' : ''}`
+        )
       }
 
       setShowImportModal(false)
@@ -360,7 +550,11 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
     const item = currentData[index]
     if (!item?._id) return
 
-    if (!confirm(`Are you sure you want to delete this ${tableType.slice(0, -1)}?`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete this ${tableType.slice(0, -1)}?`
+      )
+    ) {
       return
     }
 
@@ -391,13 +585,13 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
   // Bulk delete handler
   const handleBulkDelete = async () => {
     const selectedIds = getSelectedIds()
-    
+
     if (selectedIds.length === 0) return
-    
+
     const confirmMessage = `Are you sure you want to delete ${selectedIds.length} ${tableType}? This action cannot be undone.`
-    
+
     if (!confirm(confirmMessage)) return
-    
+
     try {
       // Delete each selected item
       for (const id of selectedIds) {
@@ -416,7 +610,7 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
             return
         }
       }
-      
+
       clearSelection()
       toast.success(`Deleted ${selectedIds.length} ${tableType} successfully`)
     } catch (error) {
@@ -429,7 +623,7 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
     if (value === undefined || value === null) {
       return <span className="text-muted-foreground italic">Empty</span>
     }
-    
+
     if (Array.isArray(value)) {
       return (
         <div className="flex flex-wrap gap-1">
@@ -441,15 +635,19 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
         </div>
       )
     }
-    
+
     if (typeof value === 'object') {
-      return <Badge variant="secondary" className="text-xs">Object</Badge>
+      return (
+        <Badge variant="secondary" className="text-xs">
+          Object
+        </Badge>
+      )
     }
-    
+
     if (column.type === 'number' && typeof value === 'number') {
       return value.toLocaleString()
     }
-    
+
     return String(value)
   }
 
@@ -473,26 +671,30 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
         <div className="flex items-center gap-4">
           {/* Import/Export Section */}
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => setShowImportModal(true)}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowImportModal(true)}
+            >
               <Upload className="w-4 h-4 mr-2" />
               Import CSV
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setShowExportModal(true)}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowExportModal(true)}
+            >
               <Download className="w-4 h-4 mr-2" />
               Export CSV
             </Button>
             <TemplateDownload tableType={tableType} />
           </div>
-          
+
           {/* Separator */}
           <Separator orientation="vertical" className="h-6" />
-          
+
           {/* Add Row */}
-          <Button 
-            onClick={addRow} 
-            size="sm"
-            disabled={isCreating}
-          >
+          <Button onClick={addRow} size="sm" disabled={isCreating}>
             {isCreating ? (
               <>
                 <LoadingSpinner className="w-4 h-4 mr-2" />
@@ -512,36 +714,33 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
               <Separator orientation="vertical" className="h-6" />
               <div className="flex items-center gap-4">
                 <span className="text-sm text-muted-foreground">
-                  {selectionStatus.selectedCount} of {selectionStatus.totalCount} selected
+                  {selectionStatus.selectedCount} of{' '}
+                  {selectionStatus.totalCount} selected
                   {selectionStatus.isMaxSelection && (
                     <span className="text-orange-600 ml-1">(max reached)</span>
                   )}
                 </span>
-                
+
                 <div className="flex items-center gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => setShowBulkEditModal(true)}
                   >
                     <Edit2 className="w-4 h-4 mr-2" />
                     Bulk Edit
                   </Button>
-                  
-                  <Button 
-                    variant="destructive" 
-                    size="sm" 
+
+                  <Button
+                    variant="destructive"
+                    size="sm"
                     onClick={handleBulkDelete}
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Delete Selected
                   </Button>
-                  
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={clearSelection}
-                  >
+
+                  <Button variant="ghost" size="sm" onClick={clearSelection}>
                     <X className="w-4 h-4 mr-2" />
                     Clear Selection
                   </Button>
@@ -558,13 +757,13 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
             <TableRow>
               <TableHead className="w-12">
                 <Checkbox
-                  ref={(checkboxRef) => {
+                  ref={checkboxRef => {
                     if (checkboxRef && selectionStatus.isIndeterminate) {
                       checkboxRef.indeterminate = true
                     }
                   }}
                   checked={selectionStatus.isAllSelected}
-                  onCheckedChange={(checked) => {
+                  onCheckedChange={checked => {
                     if (checked) {
                       selectAll()
                     } else {
@@ -574,7 +773,7 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
                   aria-label="Select all rows"
                 />
               </TableHead>
-              {schema.columns.map((column) => (
+              {schema.columns.map(column => (
                 <TableHead key={column.key} className="font-semibold">
                   <div className="flex items-center gap-2">
                     {column.label}
@@ -595,33 +794,40 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
           <TableBody>
             {currentData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={schema.columns.length + 2} className="text-center py-8 text-muted-foreground">
+                <TableCell
+                  colSpan={schema.columns.length + 2}
+                  className="text-center py-8 text-muted-foreground"
+                >
                   No {tableType} yet. Click "Add Row" to get started.
                 </TableCell>
               </TableRow>
             ) : (
               currentData.map((item: any, rowIndex: number) => (
-                <TableRow 
+                <TableRow
                   key={item._id || rowIndex}
                   className={isRowSelected(item._id) ? 'bg-muted/50' : ''}
                 >
                   <TableCell>
                     <Checkbox
                       checked={isRowSelected(item._id)}
-                      onCheckedChange={(checked) => 
+                      onCheckedChange={checked =>
                         toggleRowSelection(item._id, checked as boolean)
                       }
                       aria-label={`Select row ${rowIndex + 1}`}
                     />
                   </TableCell>
-                  {schema.columns.map((column) => (
-                    <TableCell key={column.key} className="relative min-w-[120px]">
-                      {editingCell?.row === rowIndex && editingCell?.col === column.key ? (
+                  {schema.columns.map(column => (
+                    <TableCell
+                      key={column.key}
+                      className="relative min-w-[120px]"
+                    >
+                      {editingCell?.row === rowIndex &&
+                      editingCell?.col === column.key ? (
                         <div className="flex items-center gap-2">
                           <Input
                             value={editValue}
-                            onChange={(e) => setEditValue(e.target.value)}
-                            onKeyDown={(e) => {
+                            onChange={e => setEditValue(e.target.value)}
+                            onKeyDown={e => {
                               if (e.key === 'Enter') handleCellSave()
                               if (e.key === 'Escape') handleCellCancel()
                             }}
@@ -648,7 +854,13 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
                         </div>
                       ) : (
                         <div
-                          onClick={() => handleCellClick(rowIndex, column.key, item[column.key])}
+                          onClick={() =>
+                            handleCellClick(
+                              rowIndex,
+                              column.key,
+                              item[column.key]
+                            )
+                          }
                           className="min-h-[32px] flex items-center cursor-pointer hover:bg-muted/50 rounded px-2 -mx-2"
                         >
                           {renderCellValue(item[column.key], column)}
@@ -682,12 +894,10 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
             Start Building Your {tableType} Data
           </h3>
           <p className="text-gray-600 mb-6 max-w-md mx-auto">
-            Add rows and click on cells to edit them. Changes are automatically saved to your dataset.
+            Add rows and click on cells to edit them. Changes are automatically
+            saved to your dataset.
           </p>
-          <Button 
-            onClick={addRow}
-            disabled={isCreating}
-          >
+          <Button onClick={addRow} disabled={isCreating}>
             {isCreating ? (
               <>
                 <LoadingSpinner className="w-4 h-4 mr-2" />
@@ -728,7 +938,7 @@ const TableEditor = ({ datasetId, tableType, projectId, scenarioId }: TableEdito
         onClose={() => setShowBulkEditModal(false)}
         tableType={tableType}
         selectedRows={getSelectedRows()}
-        onEditComplete={(updatedRows) => {
+        onEditComplete={updatedRows => {
           // Handle the updated rows - this would typically update the data
           toast.success(`Updated ${updatedRows.length} records`)
           setShowBulkEditModal(false)
