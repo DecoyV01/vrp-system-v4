@@ -472,8 +472,58 @@ function applyOperation(
   // Apply operation based on type
   switch (operation.operation) {
     case 'set':
-      if (updatedRow[operation.field] !== operation.value) {
-        updatedRow[operation.field] = operation.value
+      // Convert value to proper type based on field type
+      let convertedValue = operation.value
+
+      // Type conversion for numeric fields
+      if (typeof operation.value === 'string' && operation.value !== '') {
+        // Check if this is a numeric field based on common field names
+        const isNumericField =
+          operation.field.includes('Lat') ||
+          operation.field.includes('Lon') ||
+          operation.field.includes('Cost') ||
+          operation.field.includes('Time') ||
+          operation.field.includes('Factor') ||
+          operation.field.includes('Tasks') ||
+          operation.field.includes('Priority') ||
+          operation.field === 'setup' ||
+          operation.field === 'service' ||
+          operation.field === 'priority'
+
+        if (isNumericField) {
+          const numValue = parseFloat(operation.value)
+          if (!isNaN(numValue)) {
+            convertedValue = numValue
+          }
+        }
+      }
+
+      // Handle array fields (capacity, skills, delivery, pickup, etc.)
+      if (typeof operation.value === 'string' && operation.value !== '') {
+        const isArrayField =
+          operation.field === 'capacity' ||
+          operation.field === 'skills' ||
+          operation.field === 'delivery' ||
+          operation.field === 'pickup'
+
+        if (isArrayField) {
+          try {
+            const parsed = JSON.parse(operation.value)
+            if (Array.isArray(parsed)) {
+              convertedValue = parsed
+            }
+          } catch {
+            // If JSON parsing fails, treat as single value array
+            const numValue = parseFloat(operation.value)
+            if (!isNaN(numValue)) {
+              convertedValue = [numValue]
+            }
+          }
+        }
+      }
+
+      if (updatedRow[operation.field] !== convertedValue) {
+        updatedRow[operation.field] = convertedValue
         hasChanged = true
       }
       break

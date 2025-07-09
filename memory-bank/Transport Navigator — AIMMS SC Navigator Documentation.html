@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <meta property="article:modified_time" content="2025-06-06T10:11:33+00:00" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+<title>Transport Navigator &mdash; AIMMS SC Navigator Documentation</title>
+
+ 
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/aimms_css/styles.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+    <link rel="canonical" href="https://scnavigator-manual.aimms.com/sc-navigator/sc-navigator-application/transport-navigator/index.html" />
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5T37RFM');</script>
+<!-- End Google Tag Manager -->
+
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/copycode.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+        <script src="../../../_static/design-tabs.js"></script>
+    <script src="../../../_static/js/theme.js"></script>  
+
+
+<!-- support menu -->
+<script>
+(function(){
+	var script = document.createElement('script');
+	script.src = 'https://aimms.com/support-menu/js/asm.min.js?v=' + new Date().getTime();
+	script.setAttribute('data-id', 'scnavigator');
+	document.head.appendChild(script);
+})();
+</script>
+<!-- end support menu -->
+
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/copycode.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+        <script src="../../../_static/design-tabs.js"></script>
+    <script src="../../../_static/js/theme.js"></script> 
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Data" href="tn-page-data.html" />
+    <link rel="prev" title="Power BI Embedded" href="../power-bi/index.html" />
+
+
+
+<!-- Algolia's docsearch stylesheet -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css" />
+<style>
+/*---------- Algolia search ----------*/
+/*In order to have the search widget on top of the content */
+.wy-side-nav-search {top: 0;background-color: #f5f5f5;}
+.wy-menu-vertical {width: 300px;}
+.wy-side-scroll {overflow: auto;}
+.wy-nav-side { overflow: visible; }
+.ds-input {vertical-align: inherit!important;}
+.algolia-autocomplete .ds-dropdown-menu [class^=ds-dataset-] {position: fixed; max-height: 600px;}
+@media (max-width: 700px) { .algolia-autocomplete .ds-dropdown-menu [class^=ds-dataset-] {max-height: 400px; max-width: 300px;} }
+</style>
+
+<link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+ 
+
+<style>
+
+/*---------- Algolia search ----------*/
+/* CSS rules to add a proper icon in front of every search hit */
+a.algolia-docsearch-suggestion[href*="getting-started/"] span.algolia-docsearch-suggestion--category-header-lvl0:before, li.toctree-l1 a.reference.internal[href*="getting-started/"]:before{content:"";display:block;background:url(../../../_images/rocket-512px.png) no-repeat;width:20px;height:20px;float:left;background-size:20px;margin:0 6px 0 0}
+a.algolia-docsearch-suggestion[href*="data-navigator/"] span.algolia-docsearch-suggestion--category-header-lvl0:before, li.toctree-l1 a.reference.internal[href*="data-navigator/"]:before{content:"";display:block;background:url(../../../_images/AIMMS-E2E-DataNavigator-110px.png) no-repeat;width:20px;height:20px;float:left;background-size:20px;margin:0 6px 0 0}
+a.algolia-docsearch-suggestion[href*="network-design/"] span.algolia-docsearch-suggestion--category-header-lvl0:before, li.toctree-l1 a.reference.internal[href*="network-design/"]:before{content:"";display:block;background:url(../../../_images/AIMMS-NetworkNavigator-NetworkDesignNavigator-110px.png) no-repeat;width:20px;height:20px;float:left;background-size:20px;margin:0 6px 0 0}
+a.algolia-docsearch-suggestion[href*="center-of-gravity/"] span.algolia-docsearch-suggestion--category-header-lvl0:before, li.toctree-l1 a.reference.internal[href*="center-of-gravity/"]:before{content:"";display:block;background:url(../../../_images/AIMMS-NetworkNavigator-CenterOfGravity-110px.png) no-repeat;width:20px;height:20px;float:left;background-size:20px;margin:0 6px 0 0}
+a.algolia-docsearch-suggestion[href*="secondary-transport-costing/"] span.algolia-docsearch-suggestion--category-header-lvl0:before, li.toctree-l1 a.reference.internal[href*="secondary-transport-costing/"]:before{content:"";display:block;background:url(../../../_images/AIMMS-NetworkNavigator-SecondaryTransportationCosting-110px.png) no-repeat;width:20px;height:20px;float:left;background-size:20px;margin:0 6px 0 0}
+a.algolia-docsearch-suggestion[href*="ibp/"] span.algolia-docsearch-suggestion--category-header-lvl0:before, li.toctree-l1 a.reference.internal[href*="ibp/"]:before{content:"";display:block;background:url(../../../_images/AIMMS-PlanningNavigator-IBP-110px.png) no-repeat;width:20px;height:20px;float:left;background-size:20px;margin:0 6px 0 0}
+a.algolia-docsearch-suggestion[href*="demand-forecasting/"] span.algolia-docsearch-suggestion--category-header-lvl0:before, li.toctree-l1 a.reference.internal[href*="demand-forecasting/"]:before{content:"";display:block;background:url(../../../_images/AIMMS-InventoryDemandAndLifecycle-ForecastingNavigator-110px.png) no-repeat;width:20px;height:20px;float:left;background-size:20px;margin:0 6px 0 0}
+a.algolia-docsearch-suggestion[href*="lifecycle-navigator/"] span.algolia-docsearch-suggestion--category-header-lvl0:before, li.toctree-l1 a.reference.internal[href*="lifecycle-navigator/"]:before{content:"";display:block;background:url(../../../_images/AIMMS-InventoryDemandAndLifecycle-LifecycleNavigator-110px.png) no-repeat;width:20px;height:20px;float:left;background-size:20px;margin:0 6px 0 0}
+a.algolia-docsearch-suggestion[href*="inventory-planning/"] span.algolia-docsearch-suggestion--category-header-lvl0:before, li.toctree-l1 a.reference.internal[href*="inventory-planning/"]:before{content:"";display:block;background:url(../../../_images/AIMMS-InventoryDemandAndLifecycle-MultiEchelonInventoryOptimization-110px.png) no-repeat;width:20px;height:20px;float:left;background-size:20px;margin:0 6px 0 0}
+a.algolia-docsearch-suggestion[href*="sc-navigator/"] span.algolia-docsearch-suggestion--category-header-lvl0:before, li.toctree-l1 a.reference.internal[href*="sc-navigator/"]:before{content:"";display:block;background:url(../../../_images/AIMMS-SCNavigator-RoseSCN-110px.png) no-repeat;width:20px;height:20px;float:left;background-size:20px;margin:0 6px 0 0}
+a.algolia-docsearch-suggestion[href*="best-practices/"] span.algolia-docsearch-suggestion--category-header-lvl0:before, li.toctree-l1 a.reference.internal[href*="best-practices/"]:before{content:"";display:block;background:url(../../../_images/best-practice.png) no-repeat;width:20px;height:20px;float:left;background-size:20px;margin:0 6px 0 0}
+a.algolia-docsearch-suggestion[href*="data-integration/"] span.algolia-docsearch-suggestion--category-header-lvl0:before, li.toctree-l1 a.reference.internal[href*="data-integration/"]:before{content:"";display:block;background:url(../../../_images/data-integration.png) no-repeat;width:20px;height:20px;float:left;background-size:20px;margin:0 6px 0 0}
+.wy-menu-vertical li.toctree-l1 button.toctree-expand:before {display:none;}
+a.algolia-docsearch-suggestion[href*="system-configuration/"] span.algolia-docsearch-suggestion--category-header-lvl0:before, li.toctree-l1 a.reference.internal[href*="system-configuration/"]:before{content:"";display:block;background:url(../../../_images/AIMMS-E2E-DistributedControlTower-110px.png) no-repeat;width:20px;height:20px;float:left;background-size:20px;margin:0 6px 0 0}
+.wy-menu-vertical li.toctree-l1 button.toctree-expand:before {display:none;}
+</style>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5T37RFM"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+   
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+<div role="search">
+  <h3><a href= "../../../index.html">SC NAVIGATOR DOCUMENTATION</a></h3>
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search all docs" />  
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/index.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/introduction.html">Introduction to SC Navigator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting-started/data-separation/index.html">Data Separation</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">SC Navigator</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../Input_template/index.html">Input Template</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../Input_template/Template_sheets/index.html">Template Sheets</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../Input_template/Template_sheets/Notes_Settings_sheets.html">Notes, Settings and String Settings sheets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Input_template/Template_sheets/Periods_sheets.html">Periods sheets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Input_template/Template_sheets/Products_sheets.html">Product related sheets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Input_template/Template_sheets/Locations_sheets.html">Location related sheets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Input_template/Template_sheets/Supplier_sheets.html">Supplier sheets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Input_template/Template_sheets/Production_sheets.html">Production sheets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Input_template/Template_sheets/Warehouse_sheets.html">Warehouse sheets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Input_template/Template_sheets/Inventory_sheets.html">Inventory sheets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Input_template/Template_sheets/Transport_sheets.html">Transport sheets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Input_template/Template_sheets/Customer_sheets.html">Customer sheets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Input_template/Template_sheets/CustomObjectives_sheets.html">Custom Objectives sheet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Input_template/Template_sheets/Transport_navigator_sheets.html">Transport Navigator Sheets</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../Input_template/Template_Attributes/index.html">Template Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Input_template/Group_elements/index.html">Group Elements in the Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../Input_template/Constraints/index.html">Count and Ratio Constraints</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_to_use/index.html">How to Use the Application</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../how_to_use/ringfencing/index.html">User Roles and Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../how_to_use/common_screen_areas/index.html">Common Screen Areas</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../how_to_use/common_screen_areas/workflow/index.html">Workflow</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../how_to_use/common_screen_areas/statusbar/index.html">Status Bar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../how_to_use/common_screen_areas/period-selector/index.html">Period Selector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../how_to_use/common_screen_areas/filters/index.html">Filtering in SC Navigator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../how_to_use/common_screen_areas/pageactions/index.html">Page Actions and Widget Actions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../how_to_use/data_editing/index.html">Data Editing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../how_to_use/scenarios/index.html">Scenario Navigator Overview</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../how_to_use/scenarios/scenario-structure.html">Structure Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../how_to_use/scenarios/common-layout.html">Scenario Pages Layout</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../how_to_use/transport_navigator/index.html">Transport Navigator Module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../how_to_use/transport_navigator/tn-how-to.html">Getting Started with Transport Navigator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../how_to_use/transport_navigator/tn-technical.html">Transport Navigator Technical Details</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">SC Navigator Application</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../whiteboard/index.html">Whiteboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/index.html">Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../data/load-data.html">Load Data Dialog</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../data/supplier-data.html">Supplier Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../data/production-data.html">Production Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../data/warehouse-data.html">Warehouse Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../data/transport-data.html">Transport Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../data/customer-data.html">Customer Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../data/other-data.html">Other Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../data/geocodes-data.html">Geocodes Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../data/distance-data.html">Distance Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../data/manage-data.html">Manage Data</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../data-issues/index.html">Data Issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../infeasibility-analysis/index.html">Infeasibility Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../circular-flow/index.html">Circular Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../control-panel/index.html">Control Panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../results/index.html">Results</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../results/supplier-results.html">Supplier Results</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../results/production-results.html">Production Results</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../results/warehouse-results.html">Warehouse Results</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../results/transport-results.html">Transport Results</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../results/customer-results.html">Customer Results</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../results/kpi-overview.html">KPI Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../results/cost-to-serve.html">Cost To Serve Results</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../results/end-to-end.html">End To End Results</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../results/compare_results.html">Save and Compare Results</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scn-cog/index.html">Center of Gravity</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../scn-cog/determine-center-of-gravity.html">Determine Centers of Gravity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scn-cog/cog-settings.html">CoG Settings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scn-cog/cog-details.html">CoG Run Details</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scn-cog/cog-export.html">Add CoGs to set of Warehouses</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scn-cog/cog-tradeoffanalysis.html">CoG Trade-Off</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../risk-analysis/index.html">Risk Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tradeoffanalysis/index.html">Trade-Off Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarios/index.html">Scenario Navigator</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../scenarios/supplier-scenario.html">Supplier Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scenarios/production-scenario.html">Production Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scenarios/warehouse-scenario.html">Warehouse Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scenarios/transport-scenario.html">Transport Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scenarios/customer-scenario.html">Customer Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scenarios/controlpanel-scenario.html">Control Panel Scenario</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scenarios/network-scenario.html">Network Scenario</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../power-bi/index.html">Power BI Embedded</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Transport Navigator</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tn-page-data.html">Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tn-page-control-panel.html">Control Panel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tn-page-results.html">Results</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../system-configuration/index.html">System Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../system-configuration/1-data-user-group.html">Data User Group</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../system-configuration/3-sas-tokens.html">SAS Tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../system-configuration/4-file-system-management.html">File System Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../system-configuration/5-case-management.html">Case Management</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data-navigator/index.html">Data Navigator</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-navigator/configuration_summary.html">Configuration Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-navigator/generate_template.html">Generate Template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-navigator/import-dataset.html">Import Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-navigator/gis-location.html">GIS Location Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-navigator/gis-distance.html">GIS Distance Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-navigator/data-issues.html">Data Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-navigator/review.html">Data Review</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-navigator/data_management.html">Data Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-navigator/business_unit_management.html">Business Unit Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-navigator/wizard.html">Data Wizard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-navigator/commondata.html">Common Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-navigator/settings.html">Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-navigator/definitions.html">Glossary of Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../inventory-planning/index.html">Inventory Planning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../inventory-planning/phase1/index.html">Phase 1 - Start</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../inventory-planning/phase1/start.html">Start</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../inventory-planning/phase1/datavalidation.html">Data Validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../inventory-planning/phase1/reviewmasterdata.html">Review Master Data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../inventory-planning/phase2/index.html">Phase 2 - Create Scenario</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../inventory-planning/phase2/createscenario.html">Create Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../inventory-planning/phase2/resourceproductdata.html">Resource Product Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../inventory-planning/phase2/scenarioresults.html">Scenario Results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../inventory-planning/phase2/rebalancing.html">Re-balancing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../inventory-planning/phase3/index.html">Phase 3 - Compare Scenarios</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../inventory-planning/phase3/comparescenarios.html">Compare Scenarios</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../best-practices/index.html">Best Practices</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../best-practices/brand%20the%20login%20page.html">How to customize your Login page?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../best-practices/Roundtrip/index.html">Roundtrip Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../best-practices/using_sc_navigator_%26_inventory_planning_together.html">How to Approach Inventory Strategy Decisions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../best-practices/locations-overview.html">How to Use Locations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../best-practices/groups-overview.html">How to Use and Define Groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../best-practices/essential-tabs.html">Which Sheets are Essential</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../best-practices/simplest-model.html">What is the Simplest Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../best-practices/transfer-scn-output.html">How to Transfer SC Navigator Output to Inventory App</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../best-practices/get-the-most-out-of-sensai.html">How to Get the Most Out of SENSAI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data-integration/index.html">Data Integration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-integration/accessing-azure-datalake.html">Accessing Azure Data Lake Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-integration/exchange-data-with-scnav.html">Exchange Data with SC Navigator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-integration/export-data-from-aimms-to-databricks.html">Exporting data from SC Navigator into Databricks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-integration/import-data-from-databricks-to-aimms.html">Importing data from Databricks into SC Navigator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-integration/export-data-from-aimms-to-snowflake.html">Exporting data from SC Navigator into Snowflake</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-integration/import-data-from-snowflake-to-aimms.html">Importing data from Snowflake into SC Navigator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-integration/export-data-from-aimms-to-google-bigquery.html">Exporting data from SC Navigator into Google BigQuery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-integration/import-data-from-bigquery-to-aimms.html">Importing data from BigQuery into SC Navigator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-integration/import-data-from-alteryx-to-aimms.html">Importing data from Alteryx into SC Navigator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data-integration/power-bi.html">Power BI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release-notes/release-notes-scn.html">Release Notes</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AIMMS SC Navigator Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+             
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+     
+    <nav class="main-menu">
+        <a href="https://aimms.com/" class="logo"><img src="../../../_static/AIMMS_logo_H_RGB.png" alt="AIMMS Logo" title="AIMMS Help &amp; Support"></a>
+    </nav>
+    
+    
+    
+        <ul class="wy-breadcrumbs">
+            
+            <li><a href="../../../index.html">SC Navigator documentation</a> &raquo;</li>
+            
+            <li><a href="../../index.html">SC Navigator</a> &raquo;</li>
+            
+            <li><a href="../index.html">SC Navigator Application</a> &raquo;</li>
+            
+            <li>Transport Navigator</li>
+             
+            <li class="side-rate-review" style="float:right;">
+            
+            </li>
+        </ul>
+
+        
+    
+    
+</div>
+
+
+
+
+
+<div class="localtoc">
+    
+    <div class="caption"> 
+      
+      Table Of Contents</div>
+    <ul>
+<li><a class="reference internal" href="#">Transport Navigator</a><ul>
+<li><a class="reference internal" href="#transport-navigator-map">Transport Navigator Map</a><ul>
+<li><a class="reference internal" href="#showing-and-hiding-routes-via-the-map-widget">Showing and Hiding Routes via the Map Widget</a></li>
+<li><a class="reference internal" href="#map-settings">Map Settings</a></li>
+<li><a class="reference internal" href="#route-details-on-the-map">Route Details on the Map</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#select-route">Select Route</a></li>
+<li><a class="reference internal" href="#route-details">Route Details</a></li>
+<li><a class="reference internal" href="#period-selector">Period Selector</a></li>
+<li><a class="reference internal" href="#filter-side-panels">Filter Side Panels</a></li>
+<li><a class="reference internal" href="#kpi-summary">KPI Summary</a></li>
+</ul>
+</li>
+</ul>
+
+    
+</div>
+ 
+
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article"> 
+           <div itemprop="articleBody">
+             
+  <section id="transport-navigator">
+<span id="page-transport-navigator"></span><h1>Transport Navigator<a class="headerlink" href="#transport-navigator" title="Permalink to this headline"></a></h1>
+<p><em>Transport Navigator</em> is the main page for transport optimization functionality in SC Navigator. Sub-pages in the Transport Navigator module are outlined in the following sections:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tn-page-data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tn-page-control-panel.html">Control Panel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tn-page-results.html">Results</a></li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>The <a class="reference internal" href="../../how_to_use/transport_navigator/index.html#pd-transport-navigator-overview"><span class="std std-ref">Transport Navigator Module</span></a> section in <a class="reference internal" href="../../how_to_use/index.html#pd-how-to-use-application"><span class="std std-ref">How to Use the Application</span></a> introduces the purpose and benefits of Transport Navigator functionality.</p></li>
+<li><p>The <a class="reference internal" href="../../how_to_use/transport_navigator/tn-how-to.html#pd-transport-navigator-how-to"><span class="std std-ref">Getting Started with Transport Navigator</span></a> section details best practices for getting started with Transport Navigator.</p></li>
+</ul>
+</div>
+<p>The <em>Transport Navigator</em> page contains four widgets: a map, a route selector list, a route details table, a period selector, and a set of filter side panels.</p>
+<img alt="../../../_images/tn_tn.png" class="align-center" src="../../../_images/tn_tn.png" />
+<p></p>
+<p>Routes will only be shown on this page when the optimization has been completed. For details on configuring and starting the optimization, refer to <a class="reference internal" href="../../how_to_use/transport_navigator/tn-how-to.html#pd-transport-navigator-how-to"><span class="std std-ref">Getting Started with Transport Navigator</span></a>. Once the optimization has run, it is possible to view the routes on the map, and the route details in the <em>Route Details</em> table. Selecting the routes displayed on the map and in the table can be done in two ways: (1) by making a selection in the <em>Select Route</em> widget, or (2) by right-clicking on a customer or warehouse on the map and selecting the <em>Show Routes</em> item action. When using option (2), all routes that service the selected customer will be shown, which can result in multiple route selections. Each route follows a consistent naming format that consists of [Warehouse Name] – [Route Sequence Number] – [Vehicle Departure Timestamp]. When a route is selected, the map will display its path, showing how the vehicle travels from the warehouse to each customer and then returns. Similarly, the <em>Route Detail</em> table will show important data for each leg of the selected routes.</p>
+<section id="transport-navigator-map">
+<h2>Transport Navigator Map<a class="headerlink" href="#transport-navigator-map" title="Permalink to this headline"></a></h2>
+<p>The map on the <em>Transport Navigator</em> page shows the locations of all suppliers, productions, warehouses, and customers in the supply chain. When a route is selected using either of the options described above, it will be shown on the map.</p>
+<img alt="../../../_images/tn_tn_map.png" class="align-center" src="../../../_images/tn_tn_map.png" />
+<p></p>
+<section id="showing-and-hiding-routes-via-the-map-widget">
+<h3>Showing and Hiding Routes via the Map Widget<a class="headerlink" href="#showing-and-hiding-routes-via-the-map-widget" title="Permalink to this headline"></a></h3>
+<p>Selecting routes directly from the map can be done by right-clicking on a warehouse or customer and selecting <em>Show Routes</em>. Similarly, all routes associated with a customer or warehouse can be deselected by choosing <em>Hide Routes</em> in the same option menu, as shown in the image below.</p>
+<img alt="../../../_images/tn_tn_map_itemaction.png" class="align-center" src="../../../_images/tn_tn_map_itemaction.png" />
+<p></p>
+</section>
+<section id="map-settings">
+<h3>Map Settings<a class="headerlink" href="#map-settings" title="Permalink to this headline"></a></h3>
+<p>Similar to the main map in SC Navigator, the map in Transport Navigator has several widget options. There is a new option to allow users to choose whether curved or straight lines are shown on the map, depending on their preference. Toggling labels on and off will either show or hide the leg number on each arc, respectively.</p>
+<img alt="../../../_images/tn_tn_map_widgetactions.png" class="align-center" src="../../../_images/tn_tn_map_widgetactions.png" />
+<p></p>
+</section>
+<section id="route-details-on-the-map">
+<h3>Route Details on the Map<a class="headerlink" href="#route-details-on-the-map" title="Permalink to this headline"></a></h3>
+<p>When a trip is shown on the map, hovering over a leg (single arc on the map) shows more information about the route. The image below shows that the user is hovering over leg 9 of route <em>Yakima - 26 - Wed 05:06</em>, and that in this leg the vehicle is traveling from customer <em>99356</em> to customer <em>98952</em>.</p>
+<img alt="../../../_images/tn_tn_map_tooltip.png" class="align-center" src="../../../_images/tn_tn_map_tooltip.png" />
+<p></p>
+</section>
+</section>
+<section id="select-route">
+<h2>Select Route<a class="headerlink" href="#select-route" title="Permalink to this headline"></a></h2>
+<p>The <em>Select Route</em> widget can be used to choose which routes are shown on the map and in the <em>Route Details</em> widget. The search bar at the top of the widget can be used to find a specific route, or a set of routes. All routes can be selected or deselected by clicking on <em>SELECT</em> or <em>DESELECT</em> under the search bar.</p>
+<img alt="../../../_images/tn_tn_routeselector.png" class="align-center" src="../../../_images/tn_tn_routeselector.png" />
+<p></p>
+</section>
+<section id="route-details">
+<h2>Route Details<a class="headerlink" href="#route-details" title="Permalink to this headline"></a></h2>
+<p>The <em>Route Details</em> widget shows important data for each leg of the selected routes.</p>
+<img alt="../../../_images/tn_tn_routedetail.png" class="align-center" src="../../../_images/tn_tn_routedetail.png" />
+<p></p>
+<p>The table below indicates what data is provided in the <em>Route Details</em> widget.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 77%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Field</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Vehicle</p></td>
+<td><p>The vehicle’s name that performs this leg/route.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Route Location</p></td>
+<td><p>The destination location of this leg.</p></td>
+</tr>
+<tr class="row-even"><td><p>Week</p></td>
+<td><p>The week number of the year for this delivery.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Leg Start Time</p></td>
+<td><p>The timestamp when the vehicle departs from the previous stop.</p></td>
+</tr>
+<tr class="row-even"><td><p>Drive Time</p></td>
+<td><p>Time taken to travel from the previous stop to the current one.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Arrival Time</p></td>
+<td><p>The timestamp when the vehicle arrives at this Route Location.</p></td>
+</tr>
+<tr class="row-even"><td><p>Time Window Begin</p></td>
+<td><p>The earliest allowed delivery time for this customer.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Time Window End</p></td>
+<td><p>The latest allowed delivery time for this customer.</p></td>
+</tr>
+<tr class="row-even"><td><p>Departure</p></td>
+<td><p>The timestamp when the vehicle departs this location.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Distance</p></td>
+<td><p>The distance from the previous Route Location to this one.</p></td>
+</tr>
+<tr class="row-even"><td><p>Volume at Arrival</p></td>
+<td><p>The volume carried by the vehicle when arriving at this location.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Demand Volume</p></td>
+<td><p>The demand in volume required by this customer.</p></td>
+</tr>
+<tr class="row-even"><td><p>Weight at Arrival</p></td>
+<td><p>The weight carried by the vehicle when arriving at this location.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Demand Weight</p></td>
+<td><p>The demand in weight required by this customer.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="period-selector">
+<h2>Period Selector<a class="headerlink" href="#period-selector" title="Permalink to this headline"></a></h2>
+<p>The <a class="reference internal" href="../../how_to_use/common_screen_areas/period-selector/index.html#pd-period-selector"><span class="std std-ref">Period Selector</span></a> can be used to filter the data displayed on the page by period. This can be useful if you are dealing with a multi-period model and wish to easily change which results are currently shown on the screen.</p>
+<img alt="../../../_images/tn_tn_periodselector.png" class="align-center" src="../../../_images/tn_tn_periodselector.png" />
+<p></p>
+</section>
+<section id="filter-side-panels">
+<h2>Filter Side Panels<a class="headerlink" href="#filter-side-panels" title="Permalink to this headline"></a></h2>
+<p>Just like <a class="reference internal" href="../../how_to_use/common_screen_areas/filters/index.html#pd-filtering-in-scnavigator"><span class="std std-ref">Filtering in SC Navigator</span></a>, data shown on the <em>Transport Navigator</em> page can be filtered by using the side panels. The following filter side panels are included:</p>
+<ol class="arabic simple">
+<li><p>Supplier and Production Filters - select which suppliers and productions are shown on the map.</p></li>
+<li><p>Warehouse Filter - select which warehouses are shown on the map and which routes can be shown based on their originating warehouse.</p></li>
+<li><p>Customer Filter - select which customers are shown on the map and displays only the routes that serve them.</p></li>
+<li><p>Time Filters:</p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>Dispatch Day Filter to narrow down the routes based on their departure day. When applied, it not only filters the available routes in the selection widget but also limits the displayed customers on the map to those whose deliveries are part of routes departing on the selected day. For instance, if you filter on Friday, the system might reduce the list to 50 routes, and only customers associated with those routes will remain visible.</p></li>
+<li><p>Delivery Day Filter to select routes and customers based on their scheduled delivery day. When applied, it limits both the routes in the selection widget and the customers on the map to those scheduled for delivery on the selected day. For example, choosing Wednesday may display 66 routes and show only the customers receiving deliveries on Wednesdays.</p></li>
+<li><p>To help visualize these selections, you can enable color coding on the map based on either dispatch day or delivery day. Only one color mode can be active at a time - enabling one will automatically turn off the other.</p></li>
+<li><p>Time Window Filter to allow users to adjust a slider to display only customers whose delivery time windows fall within a specific range, such as mornings or afternoons.</p></li>
+</ul>
+</div></blockquote>
+<img alt="../../../_images/tn_tn_filtersidepanel.png" class="align-center" src="../../../_images/tn_tn_filtersidepanel.png" />
+<p></p>
+</section>
+<section id="kpi-summary">
+<span id="pd-tn-kpi-summary"></span><h2>KPI Summary<a class="headerlink" href="#kpi-summary" title="Permalink to this headline"></a></h2>
+<p>A summary of KPIs for the solution is given in the <em>KPI Summary</em> dialog, which can be opened from the status bar. The <em>KPI Summary</em> is divided into three sections: <em>Cost</em>, <em>Service</em>, and <em>Vehicle</em>. Note than in the case of multi-period SC Navigator data, the KPIs are averaged across all periods.</p>
+<img alt="../../../_images/tn_tn_kpi_summary.png" class="align-center" src="../../../_images/tn_tn_kpi_summary.png" />
+<p></p>
+<p>In the <em>Cost</em> section, the following cost buckets are shown, each being the sum of their associated cost type:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Total Distance Cost</p></li>
+<li><p>Total Hourly Cost</p></li>
+<li><p>Total Dispatch Cost</p></li>
+<li><p>Total Stop Cost</p></li>
+<li><p>Total Layover Cost</p></li>
+<li><p>Total Vehicle/Day Cost</p></li>
+<li><p>Total Lateness Cost</p></li>
+<li><p>Total Cost</p></li>
+</ul>
+</div></blockquote>
+<p>These costs are presented in the <em>Cost Breakdown</em> visual, below the <em>Cost</em> KPIs.</p>
+<p>In the <em>Service</em> section, the following KPIs are shown:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Field</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Number of Visits</p></td>
+<td><p>The total number of stops made across all routes (excluding warehouses).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Number of Customers Served</p></td>
+<td><p>The number of unique customer locations that received at least one delivery.</p></td>
+</tr>
+<tr class="row-even"><td><p>Number of Visits per Store</p></td>
+<td><p>The average number of visits made per customer location.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Total Volume</p></td>
+<td><p>The total volume of goods delivered across all routes.</p></td>
+</tr>
+<tr class="row-even"><td><p>Total Weight</p></td>
+<td><p>The total weight of goods delivered across all routes.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Average Distance</p></td>
+<td><p>The average distance traveled per route.</p></td>
+</tr>
+<tr class="row-even"><td><p>Volume Weighted Average Distance</p></td>
+<td><p>The average route distance weighted by the volume of goods delivered.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Weight Weighted Average Distance</p></td>
+<td><p>The average route distance weighted by the weight of goods delivered.</p></td>
+</tr>
+<tr class="row-even"><td><p>Number of Late Deliveries</p></td>
+<td><p>The count of deliveries that arrived after the specified time window.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Average Lateness</p></td>
+<td><p>The average delay of late deliveries beyond their allowed time windows.</p></td>
+</tr>
+</tbody>
+</table>
+<p></p>
+<p>In the <em>Vehicle</em> section, the following KPIs are shown:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 68%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Field</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Number of Vehicles</p></td>
+<td><p>The total number of unique vehicles used across all routes.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Total Distance</p></td>
+<td><p>The cumulative distance traveled by all vehicles.</p></td>
+</tr>
+<tr class="row-even"><td><p>Number of Routes</p></td>
+<td><p>The total number of distinct delivery routes generated.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Stops per Route</p></td>
+<td><p>The average number of stops made on each route.</p></td>
+</tr>
+<tr class="row-even"><td><p>Number of Layovers</p></td>
+<td><p>The total number of layovers required due to duty or drive time limits.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Average Layover Duration</p></td>
+<td><p>The average time spent on each layover.</p></td>
+</tr>
+<tr class="row-even"><td><p>Volume Utilization</p></td>
+<td><p>The average proportion of volume capacity used across all routes.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Volume Utilization - Reduced Capacity</p></td>
+<td><p>The average volume utilization after accounting for per-stop capacity reductions.</p></td>
+</tr>
+<tr class="row-even"><td><p>Weight Utilization</p></td>
+<td><p>The average proportion of weight capacity used across all routes.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Time Utilization - Driving</p></td>
+<td><p>The average proportion of time spent driving.</p></td>
+</tr>
+<tr class="row-even"><td><p>Time Utilization - Loading/unloading</p></td>
+<td><p>The average proportion of time spent loading or unloading goods.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Time Utilization - Waiting</p></td>
+<td><p>The average proportion of time spent waiting.</p></td>
+</tr>
+<tr class="row-even"><td><p>Time Utilization - Layover</p></td>
+<td><p>The average proportion of time spent on layovers relative to total duty time.</p></td>
+</tr>
+</tbody>
+</table>
+<p></p>
+<p>Additionally, the <em>Vehicle</em> section contains an additional table named <em>Vehicle Group KPIs</em> if vehicle groups are used. This table shows how many vehicles per vehicle group are used.</p>
+</section>
+</section>
+
+
+           </div>
+          </div> 
+ <div style="margin-bottom: 1em;">Last updated: Jun 06, 2025 </div> 
+
+
+
+          <footer>
+    
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        
+        <a href="tn-page-data.html" class="btn btn-neutral float-right" title="Data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>  
+        <a href="../power-bi/index.html" class="btn btn-neutral float-left" title="Power BI Embedded" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a> 
+    </div>
+    
+
+    <hr/>
+    <ul class="social">
+        <li><a href="https://facebook.com/aimms"><i class="fa fa-facebook"></i></a></li>
+        <li><a href="https://twitter.com/aimms"><i class="fa fa-twitter"></i></a></li>
+        <li><a href="https://www.linkedin.com/company/aimms"><i class="fa fa-linkedin"></i></a></li>
+        <li><a href="https://www.youtube.com/user/AIMMSChannel"><i class="fa fa-youtube"></i></a></li>
+    </ul>
+    <div class="links">
+        <div class="logo"><a href="https://aimms.com"><img src="../../../_static/AIMMS_logo_H_RGB.png" alt="AIMMS"></a></div>
+        <div class="btn"><a href="https://community.aimms.com/">AIMMS COMMUNITY</a></div>
+        <div class="btn"><a href="https://documentation.aimms.com/">AIMMS DOCS</a></div>
+        <div><a href="https://aimms.com/english/disclaimer/">DISCLAIMER</a></div>
+        <div><a href="https://aimms.com/english/privacy-statement/">PRIVACY STATEMENT</a></div>
+    </div>
+
+    <div class="copy">© 1989 - 2025 AIMMS B.V.</div> 
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+
+
+
+
+<!-- Insided embeddable -->
+<script>
+    (function(w, d, s) {
+        var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s);
+        j.async = true;
+        j.src = '//embeddable-widgets-euw1.insided.com/aimms-en.insided-conversational.js';
+        f.parentNode.insertBefore(j, f);
+    })(window, document, 'script');
+</script>
+
+ 
+
+
+
+<!-- Algolia docsearch BEGIN -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<script type="text/javascript"> 
+docsearch({
+  appId: 'X8E206F34P',
+  apiKey: '43ef1f0150501f08420498895282a3bf',
+  indexName: 'ainms_scnavigator-manual',
+  inputSelector: '#rtd-search-form input[type=text]',
+  transformData: function(hits) {},
+/* This was the logic that search per section.
+  
+  transformData: function(hits) {
+     // modify hits. Filters only hits that are part of the current subsection. Example: On demand-forecasting/home.html, show only hits contained in demand-forecasting/ section.
+    const newHits = hits.filter(hit => hit.url.indexOf( "sc-navigator/" ) > -1) 
+    return newHits;
+  },
+  
+*/
+  debug: true, // Set debug to true if you want to inspect the dropdown
+  algoliaOptions: {
+    hitsPerPage: 20,
+    // See https://www.algolia.com/doc/api-reference/api-parameters/
+  },
+  });
+</script>
+<!-- Algolia docsearch END -->
+
+ 
+
+</body>
+</html>
