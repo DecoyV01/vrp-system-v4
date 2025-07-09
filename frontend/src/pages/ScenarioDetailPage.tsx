@@ -126,7 +126,7 @@ const DatasetCard = ({
             <Calendar className="w-4 h-4" />
             <span>
               Created{' '}
-              {formatDistanceToNow(new Date(dataset.createdAt), {
+              {formatDistanceToNow(new Date(dataset._creationTime), {
                 addSuffix: true,
               })}
             </span>

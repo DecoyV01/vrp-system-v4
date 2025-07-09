@@ -119,7 +119,7 @@ const ScenarioCard = ({
             <Calendar className="w-4 h-4" />
             <span>
               Created{' '}
-              {formatDistanceToNow(new Date(scenario.createdAt), {
+              {formatDistanceToNow(new Date(scenario._creationTime), {
                 addSuffix: true,
               })}
             </span>

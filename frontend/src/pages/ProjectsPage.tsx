@@ -104,7 +104,7 @@ const ProjectCard = ({ project }: { project: any }) => {
             <Calendar className="w-4 h-4" />
             <span>
               Created{' '}
-              {formatDistanceToNow(new Date(project.createdAt), {
+              {formatDistanceToNow(new Date(project._creationTime), {
                 addSuffix: true,
               })}
             </span>
