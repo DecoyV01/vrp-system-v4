@@ -12,7 +12,17 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Separator } from '@/components/ui/separator'
-import { Plus, Trash2, Edit2, Upload, Download, X, Check } from 'lucide-react'
+import {
+  Plus,
+  Trash2,
+  Edit2,
+  Upload,
+  Download,
+  X,
+  Check,
+  Play,
+  Zap,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import {
@@ -38,6 +48,7 @@ import {
   useDeleteVehicle,
   useDeleteJob,
   useDeleteLocation,
+  useOptimizationWorkflow,
 } from '@/hooks/useVRPData'
 
 interface TableEditorProps {
@@ -301,6 +312,9 @@ const TableEditor = ({
   const deleteLocation = useDeleteLocation()
   // const deleteRoute = useDeleteRoute() // Not implemented yet
 
+  // Optimization workflow hook
+  const optimizationWorkflow = useOptimizationWorkflow(scenarioId)
+
   // Local state
   const [editingCell, setEditingCell] = useState<{
     row: number
@@ -313,6 +327,13 @@ const TableEditor = ({
   const [showImportModal, setShowImportModal] = useState(false)
   const [showExportModal, setShowExportModal] = useState(false)
   const [showBulkEditModal, setShowBulkEditModal] = useState(false)
+
+  // Bulk update state
+  const [isBulkUpdating, setIsBulkUpdating] = useState(false)
+  const [bulkUpdateProgress, setBulkUpdateProgress] = useState({
+    current: 0,
+    total: 0,
+  })
 
   // Get current data based on table type
   const currentData = useMemo(() => {
@@ -619,6 +640,132 @@ const TableEditor = ({
     }
   }
 
+  // Bulk update handler - saves changes to database
+  const handleBulkEditComplete = async (updatedRows: any[]) => {
+    if (updatedRows.length === 0) {
+      toast.info('No changes to save')
+      setShowBulkEditModal(false)
+      return
+    }
+
+    setIsBulkUpdating(true)
+    setBulkUpdateProgress({ current: 0, total: updatedRows.length })
+
+    let successCount = 0
+    let errorCount = 0
+    const errors: string[] = []
+
+    try {
+      // Process each updated row
+      for (let i = 0; i < updatedRows.length; i++) {
+        const row = updatedRows[i]
+
+        try {
+          // Prepare update data (exclude system fields)
+          const { _id, _creationTime, ...updateData } = row
+
+          // Call appropriate mutation based on table type
+          switch (tableType) {
+            case 'vehicles':
+              await updateVehicle({ id: _id, ...updateData })
+              break
+            case 'jobs':
+              await updateJob({ id: _id, ...updateData })
+              break
+            case 'locations':
+              await updateLocation({ id: _id, ...updateData })
+              break
+            case 'routes':
+              toast.error('Route updates not implemented yet')
+              return
+          }
+
+          successCount++
+        } catch (error) {
+          errorCount++
+          const errorMessage =
+            error instanceof Error ? error.message : 'Unknown error'
+          errors.push(`Row ${i + 1}: ${errorMessage}`)
+          console.error(`Failed to update row ${i + 1}:`, error)
+        }
+
+        // Update progress
+        setBulkUpdateProgress({ current: i + 1, total: updatedRows.length })
+
+        // Small delay to prevent overwhelming the server
+        if (i % 10 === 0) {
+          await new Promise(resolve => setTimeout(resolve, 100))
+        }
+      }
+
+      // Show results
+      if (successCount > 0) {
+        toast.success(
+          `Successfully updated ${successCount} record${successCount !== 1 ? 's' : ''}`
+        )
+      }
+
+      if (errorCount > 0) {
+        toast.error(
+          `Failed to update ${errorCount} record${errorCount !== 1 ? 's' : ''}. Check console for details.`
+        )
+        console.error('Bulk update errors:', errors)
+      }
+
+      // Clear selection after successful updates
+      if (successCount > 0) {
+        clearSelection()
+      }
+    } catch (error) {
+      console.error('Bulk update failed:', error)
+      toast.error('Bulk update failed')
+    } finally {
+      setIsBulkUpdating(false)
+      setBulkUpdateProgress({ current: 0, total: 0 })
+      setShowBulkEditModal(false)
+    }
+  }
+
+  // Optimization handler
+  const handleOptimization = async () => {
+    if (!scenarioId) {
+      toast.error('No scenario selected for optimization')
+      return
+    }
+
+    if (optimizationWorkflow.isOptimizing) {
+      toast.info('Optimization is already running')
+      return
+    }
+
+    try {
+      toast.info('Starting VROOM optimization...')
+
+      const result = await optimizationWorkflow.runOptimization({
+        scenarioId,
+        datasetId,
+        optimizationSettings: {
+          algorithm: 'vroom',
+          threads: 4,
+          timeLimit: 300, // 5 minutes
+        },
+      })
+
+      if (result.success) {
+        toast.success(
+          `Optimization completed! Generated ${result.routes} routes with ${result.unassigned} unassigned jobs.`
+        )
+      } else {
+        toast.error('Optimization failed to complete')
+      }
+    } catch (error) {
+      console.error('Optimization failed:', error)
+      toast.error(
+        `Optimization failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
+    }
+  }
+
   const renderCellValue = (value: any, column: any) => {
     if (value === undefined || value === null) {
       return <span className="text-muted-foreground italic">Empty</span>
@@ -708,6 +855,55 @@ const TableEditor = ({
             )}
           </Button>
 
+          {/* Optimization Button - Only show if we have data and scenario */}
+          {scenarioId && currentData.length > 0 && (
+            <>
+              <Separator orientation="vertical" className="h-6" />
+              <Button
+                onClick={handleOptimization}
+                size="sm"
+                disabled={
+                  optimizationWorkflow.isOptimizing ||
+                  !optimizationWorkflow.canOptimize
+                }
+                variant={
+                  optimizationWorkflow.hasCompleted ? 'default' : 'secondary'
+                }
+              >
+                {optimizationWorkflow.isOptimizing ? (
+                  <>
+                    <LoadingSpinner className="w-4 h-4 mr-2" />
+                    Optimizing...
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-4 h-4 mr-2" />
+                    Run Optimization
+                  </>
+                )}
+              </Button>
+
+              {/* Optimization Status */}
+              {optimizationWorkflow.latestRun && (
+                <div className="text-xs text-muted-foreground">
+                  {optimizationWorkflow.hasCompleted && (
+                    <span className="text-green-600">
+                      ✓ Last run:{' '}
+                      {optimizationWorkflow.latestRun.totalRoutes || 0} routes
+                    </span>
+                  )}
+                  {optimizationWorkflow.hasFailed && (
+                    <span className="text-red-600">
+                      ✗ Failed:{' '}
+                      {optimizationWorkflow.latestRun.errorMessage ||
+                        'Unknown error'}
+                    </span>
+                  )}
+                </div>
+              )}
+            </>
+          )}
+
           {/* Bulk Operations Section - Only show when rows are selected */}
           {selectionStatus.hasSelection && (
             <>
@@ -726,9 +922,20 @@ const TableEditor = ({
                     variant="outline"
                     size="sm"
                     onClick={() => setShowBulkEditModal(true)}
+                    disabled={isBulkUpdating}
                   >
-                    <Edit2 className="w-4 h-4 mr-2" />
-                    Bulk Edit
+                    {isBulkUpdating ? (
+                      <>
+                        <LoadingSpinner className="w-4 h-4 mr-2" />
+                        Updating ({bulkUpdateProgress.current}/
+                        {bulkUpdateProgress.total})
+                      </>
+                    ) : (
+                      <>
+                        <Edit2 className="w-4 h-4 mr-2" />
+                        Bulk Edit
+                      </>
+                    )}
                   </Button>
 
                   <Button
@@ -938,11 +1145,7 @@ const TableEditor = ({
         onClose={() => setShowBulkEditModal(false)}
         tableType={tableType}
         selectedRows={getSelectedRows()}
-        onEditComplete={updatedRows => {
-          // Handle the updated rows - this would typically update the data
-          toast.success(`Updated ${updatedRows.length} records`)
-          setShowBulkEditModal(false)
-        }}
+        onEditComplete={handleBulkEditComplete}
         availableFields={schema.columns.map(col => col.key)}
       />
     </div>
