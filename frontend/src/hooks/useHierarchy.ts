@@ -1,19 +1,19 @@
 import { create } from 'zustand'
 import { useProjects, useScenarios, useDatasets } from './useVRPData'
 import { useMemo } from 'react'
-import type { Id } from '../../convex/_generated/dataModel'
+import type { Id } from '../../../convex/_generated/dataModel'
 
 export interface TreeNode {
   id: string
   type: 'project' | 'scenario' | 'dataset' | 'table'
   name: string
-  realId?: Id<"projects"> | Id<"scenarios"> | Id<"datasets"> | string // Real Convex ID
+  realId?: Id<'projects'> | Id<'scenarios'> | Id<'datasets'> | string // Real Convex ID
   children?: TreeNode[]
   expanded?: boolean
   metadata?: {
-    projectId?: Id<"projects">
-    scenarioId?: Id<"scenarios">
-    datasetId?: Id<"datasets">
+    projectId?: Id<'projects'>
+    scenarioId?: Id<'scenarios'>
+    datasetId?: Id<'datasets'>
     tableType?: 'vehicles' | 'jobs' | 'locations' | 'routes'
   }
 }
@@ -21,7 +21,7 @@ export interface TreeNode {
 interface HierarchyState {
   selectedNode: TreeNode | null
   expandedNodes: Set<string>
-  
+
   setSelectedNode: (node: TreeNode | null) => void
   toggleNode: (nodeId: string) => void
   expandNode: (nodeId: string) => void
@@ -32,32 +32,35 @@ interface HierarchyState {
 export const useHierarchy = create<HierarchyState>()((set, get) => ({
   selectedNode: null,
   expandedNodes: new Set(),
-  
-  setSelectedNode: (node) => set({ selectedNode: node }),
-  
-  toggleNode: (nodeId) => set((state) => {
-    const newExpandedNodes = new Set(state.expandedNodes)
-    if (newExpandedNodes.has(nodeId)) {
-      newExpandedNodes.delete(nodeId)
-    } else {
-      newExpandedNodes.add(nodeId)
-    }
-    return { expandedNodes: newExpandedNodes }
-  }),
-  
-  expandNode: (nodeId) => set((state) => {
-    const newExpandedNodes = new Set(state.expandedNodes)
-    newExpandedNodes.add(nodeId)
-    return { expandedNodes: newExpandedNodes }
-  }),
-  
-  collapseNode: (nodeId) => set((state) => {
-    const newExpandedNodes = new Set(state.expandedNodes)
-    newExpandedNodes.delete(nodeId)
-    return { expandedNodes: newExpandedNodes }
-  }),
 
-  isNodeExpanded: (nodeId) => get().expandedNodes.has(nodeId),
+  setSelectedNode: node => set({ selectedNode: node }),
+
+  toggleNode: nodeId =>
+    set(state => {
+      const newExpandedNodes = new Set(state.expandedNodes)
+      if (newExpandedNodes.has(nodeId)) {
+        newExpandedNodes.delete(nodeId)
+      } else {
+        newExpandedNodes.add(nodeId)
+      }
+      return { expandedNodes: newExpandedNodes }
+    }),
+
+  expandNode: nodeId =>
+    set(state => {
+      const newExpandedNodes = new Set(state.expandedNodes)
+      newExpandedNodes.add(nodeId)
+      return { expandedNodes: newExpandedNodes }
+    }),
+
+  collapseNode: nodeId =>
+    set(state => {
+      const newExpandedNodes = new Set(state.expandedNodes)
+      newExpandedNodes.delete(nodeId)
+      return { expandedNodes: newExpandedNodes }
+    }),
+
+  isNodeExpanded: nodeId => get().expandedNodes.has(nodeId),
 }))
 
 // Hook to build tree data from Convex queries
@@ -79,7 +82,7 @@ export const useTreeData = () => {
         realId: project._id,
         expanded: isExpanded,
         metadata: { projectId: project._id },
-        children: isExpanded ? [] : undefined // Will be populated by child components
+        children: isExpanded ? [] : undefined, // Will be populated by child components
       }
 
       return projectNode
@@ -90,7 +93,7 @@ export const useTreeData = () => {
 }
 
 // Hook for getting scenarios for a specific project
-export const useProjectScenarios = (projectId: Id<"projects"> | undefined) => {
+export const useProjectScenarios = (projectId: Id<'projects'> | undefined) => {
   const scenarios = useScenarios(projectId)
   const { expandedNodes } = useHierarchy()
 
@@ -107,11 +110,11 @@ export const useProjectScenarios = (projectId: Id<"projects"> | undefined) => {
         name: scenario.name,
         realId: scenario._id,
         expanded: isExpanded,
-        metadata: { 
+        metadata: {
           projectId: projectId,
-          scenarioId: scenario._id 
+          scenarioId: scenario._id,
         },
-        children: isExpanded ? [] : undefined // Will be populated by child components
+        children: isExpanded ? [] : undefined, // Will be populated by child components
       }
 
       return scenarioNode
@@ -120,7 +123,10 @@ export const useProjectScenarios = (projectId: Id<"projects"> | undefined) => {
 }
 
 // Hook for getting datasets for a specific scenario
-export const useScenarioDatasets = (scenarioId: Id<"scenarios"> | undefined, projectId?: Id<"projects">) => {
+export const useScenarioDatasets = (
+  scenarioId: Id<'scenarios'> | undefined,
+  projectId?: Id<'projects'>
+) => {
   const datasets = useDatasets(scenarioId)
   const { expandedNodes } = useHierarchy()
 
@@ -137,57 +143,59 @@ export const useScenarioDatasets = (scenarioId: Id<"scenarios"> | undefined, pro
         name: `${dataset.name} v${dataset.version}`,
         realId: dataset._id,
         expanded: isExpanded,
-        metadata: { 
+        metadata: {
           projectId: projectId,
           scenarioId: scenarioId,
-          datasetId: dataset._id 
+          datasetId: dataset._id,
         },
-        children: isExpanded ? [
-          {
-            id: `table-${dataset._id}-vehicles`,
-            type: 'table',
-            name: 'Vehicles',
-            metadata: { 
-              projectId: projectId,
-              scenarioId: scenarioId,
-              datasetId: dataset._id,
-              tableType: 'vehicles'
-            }
-          },
-          {
-            id: `table-${dataset._id}-jobs`,
-            type: 'table',
-            name: 'Jobs',
-            metadata: { 
-              projectId: projectId,
-              scenarioId: scenarioId,
-              datasetId: dataset._id,
-              tableType: 'jobs'
-            }
-          },
-          {
-            id: `table-${dataset._id}-locations`,
-            type: 'table',
-            name: 'Locations',
-            metadata: { 
-              projectId: projectId,
-              scenarioId: scenarioId,
-              datasetId: dataset._id,
-              tableType: 'locations'
-            }
-          },
-          {
-            id: `table-${dataset._id}-routes`,
-            type: 'table',
-            name: 'Routes',
-            metadata: { 
-              projectId: projectId,
-              scenarioId: scenarioId,
-              datasetId: dataset._id,
-              tableType: 'routes'
-            }
-          }
-        ] : undefined
+        children: isExpanded
+          ? [
+              {
+                id: `table-${dataset._id}-vehicles`,
+                type: 'table',
+                name: 'Vehicles',
+                metadata: {
+                  projectId: projectId,
+                  scenarioId: scenarioId,
+                  datasetId: dataset._id,
+                  tableType: 'vehicles',
+                },
+              },
+              {
+                id: `table-${dataset._id}-jobs`,
+                type: 'table',
+                name: 'Jobs',
+                metadata: {
+                  projectId: projectId,
+                  scenarioId: scenarioId,
+                  datasetId: dataset._id,
+                  tableType: 'jobs',
+                },
+              },
+              {
+                id: `table-${dataset._id}-locations`,
+                type: 'table',
+                name: 'Locations',
+                metadata: {
+                  projectId: projectId,
+                  scenarioId: scenarioId,
+                  datasetId: dataset._id,
+                  tableType: 'locations',
+                },
+              },
+              {
+                id: `table-${dataset._id}-routes`,
+                type: 'table',
+                name: 'Routes',
+                metadata: {
+                  projectId: projectId,
+                  scenarioId: scenarioId,
+                  datasetId: dataset._id,
+                  tableType: 'routes',
+                },
+              },
+            ]
+          : undefined,
       }
 
       return datasetNode

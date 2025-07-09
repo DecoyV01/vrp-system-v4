@@ -1,12 +1,12 @@
 import { useState, useCallback, useEffect } from 'react'
-import type { Id } from '../../convex/_generated/dataModel'
+import type { Id } from '../../../convex/_generated/dataModel'
 
-export type ModalType = 
-  | 'edit-project' 
-  | 'edit-scenario' 
+export type ModalType =
+  | 'edit-project'
+  | 'edit-scenario'
   | 'edit-dataset'
   | 'delete-project'
-  | 'delete-scenario' 
+  | 'delete-scenario'
   | 'delete-dataset'
   | 'clone-scenario'
   | 'clone-dataset'
@@ -44,25 +44,43 @@ export interface UseModalStateOptions {
 export interface UseModalStateReturn {
   // State
   modalState: ModalState
-  
+
   // Actions
   openModal: (type: ModalType, data?: ModalData) => void
   closeModal: () => void
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
   updateModalData: (data: Partial<ModalData>) => void
-  
+
   // Helpers
   isModalOpen: (type?: ModalType) => boolean
   isAnyModalOpen: () => boolean
   getCurrentModalType: () => ModalType | null
   getCurrentModalData: () => ModalData | null
-  
+
   // Workflow helpers
-  openEditModal: (entityType: 'project' | 'scenario' | 'dataset', id: Id<any>, name: string) => void
-  openDeleteModal: (entityType: 'project' | 'scenario' | 'dataset', id: Id<any>, name: string, cascadeInfo?: ModalData['cascadeInfo']) => void
-  openCloneModal: (entityType: 'scenario' | 'dataset', id: Id<any>, name: string, parentId?: Id<any>) => void
-  openBulkModal: (operation: 'delete' | 'clone', selectedIds: string[], entityType: 'scenario' | 'dataset') => void
+  openEditModal: (
+    entityType: 'project' | 'scenario' | 'dataset',
+    id: Id<any>,
+    name: string
+  ) => void
+  openDeleteModal: (
+    entityType: 'project' | 'scenario' | 'dataset',
+    id: Id<any>,
+    name: string,
+    cascadeInfo?: ModalData['cascadeInfo']
+  ) => void
+  openCloneModal: (
+    entityType: 'scenario' | 'dataset',
+    id: Id<any>,
+    name: string,
+    parentId?: Id<any>
+  ) => void
+  openBulkModal: (
+    operation: 'delete' | 'clone',
+    selectedIds: string[],
+    entityType: 'scenario' | 'dataset'
+  ) => void
 }
 
 /**
@@ -70,12 +88,14 @@ export interface UseModalStateReturn {
  * Provides type-safe modal management with loading states and error handling
  * Following React.dev patterns for state management and side effects
  */
-export const useModalState = (options: UseModalStateOptions = {}): UseModalStateReturn => {
+export const useModalState = (
+  options: UseModalStateOptions = {}
+): UseModalStateReturn => {
   const {
     onSuccess,
     onError,
     closeOnEscape = true,
-    closeOnOverlayClick = true
+    closeOnOverlayClick = true,
   } = options
 
   // Core modal state
@@ -84,7 +104,7 @@ export const useModalState = (options: UseModalStateOptions = {}): UseModalState
     type: null,
     data: null,
     isLoading: false,
-    error: null
+    error: null,
   })
 
   // Open modal with type and optional data
@@ -94,7 +114,7 @@ export const useModalState = (options: UseModalStateOptions = {}): UseModalState
       type,
       data,
       isLoading: false,
-      error: null
+      error: null,
     })
   }, [])
 
@@ -105,7 +125,7 @@ export const useModalState = (options: UseModalStateOptions = {}): UseModalState
       type: null,
       data: null,
       isLoading: false,
-      error: null
+      error: null,
     })
   }, [])
 
@@ -114,38 +134,44 @@ export const useModalState = (options: UseModalStateOptions = {}): UseModalState
     setModalState(prev => ({
       ...prev,
       isLoading: loading,
-      error: loading ? null : prev.error // Clear error when starting loading
+      error: loading ? null : prev.error, // Clear error when starting loading
     }))
   }, [])
 
   // Set error state
-  const setError = useCallback((error: string | null) => {
-    setModalState(prev => ({
-      ...prev,
-      error,
-      isLoading: false // Stop loading when error occurs
-    }))
-    
-    if (error && onError && modalState.type) {
-      onError(modalState.type, error)
-    }
-  }, [onError, modalState.type])
+  const setError = useCallback(
+    (error: string | null) => {
+      setModalState(prev => ({
+        ...prev,
+        error,
+        isLoading: false, // Stop loading when error occurs
+      }))
+
+      if (error && onError && modalState.type) {
+        onError(modalState.type, error)
+      }
+    },
+    [onError, modalState.type]
+  )
 
   // Update modal data while keeping modal open
   const updateModalData = useCallback((data: Partial<ModalData>) => {
     setModalState(prev => ({
       ...prev,
-      data: prev.data ? { ...prev.data, ...data } : data
+      data: prev.data ? { ...prev.data, ...data } : data,
     }))
   }, [])
 
   // Helper functions
-  const isModalOpen = useCallback((type?: ModalType): boolean => {
-    if (type) {
-      return modalState.isOpen && modalState.type === type
-    }
-    return modalState.isOpen
-  }, [modalState.isOpen, modalState.type])
+  const isModalOpen = useCallback(
+    (type?: ModalType): boolean => {
+      if (type) {
+        return modalState.isOpen && modalState.type === type
+      }
+      return modalState.isOpen
+    },
+    [modalState.isOpen, modalState.type]
+  )
 
   const isAnyModalOpen = useCallback((): boolean => {
     return modalState.isOpen
@@ -160,60 +186,72 @@ export const useModalState = (options: UseModalStateOptions = {}): UseModalState
   }, [modalState.data])
 
   // Workflow helper functions for common modal patterns
-  const openEditModal = useCallback((
-    entityType: 'project' | 'scenario' | 'dataset',
-    id: Id<any>,
-    name: string
-  ) => {
-    const modalType = `edit-${entityType}` as ModalType
-    openModal(modalType, {
-      id,
-      name,
-      type: entityType
-    })
-  }, [openModal])
+  const openEditModal = useCallback(
+    (
+      entityType: 'project' | 'scenario' | 'dataset',
+      id: Id<any>,
+      name: string
+    ) => {
+      const modalType = `edit-${entityType}` as ModalType
+      openModal(modalType, {
+        id,
+        name,
+        type: entityType,
+      })
+    },
+    [openModal]
+  )
 
-  const openDeleteModal = useCallback((
-    entityType: 'project' | 'scenario' | 'dataset',
-    id: Id<any>,
-    name: string,
-    cascadeInfo?: ModalData['cascadeInfo']
-  ) => {
-    const modalType = `delete-${entityType}` as ModalType
-    openModal(modalType, {
-      id,
-      name,
-      type: entityType,
-      cascadeInfo
-    })
-  }, [openModal])
+  const openDeleteModal = useCallback(
+    (
+      entityType: 'project' | 'scenario' | 'dataset',
+      id: Id<any>,
+      name: string,
+      cascadeInfo?: ModalData['cascadeInfo']
+    ) => {
+      const modalType = `delete-${entityType}` as ModalType
+      openModal(modalType, {
+        id,
+        name,
+        type: entityType,
+        cascadeInfo,
+      })
+    },
+    [openModal]
+  )
 
-  const openCloneModal = useCallback((
-    entityType: 'scenario' | 'dataset',
-    id: Id<any>,
-    name: string,
-    parentId?: Id<any>
-  ) => {
-    const modalType = `clone-${entityType}` as ModalType
-    openModal(modalType, {
-      id,
-      name,
-      type: entityType,
-      parentId
-    })
-  }, [openModal])
+  const openCloneModal = useCallback(
+    (
+      entityType: 'scenario' | 'dataset',
+      id: Id<any>,
+      name: string,
+      parentId?: Id<any>
+    ) => {
+      const modalType = `clone-${entityType}` as ModalType
+      openModal(modalType, {
+        id,
+        name,
+        type: entityType,
+        parentId,
+      })
+    },
+    [openModal]
+  )
 
-  const openBulkModal = useCallback((
-    operation: 'delete' | 'clone',
-    selectedIds: string[],
-    entityType: 'scenario' | 'dataset'
-  ) => {
-    const modalType = `bulk-${operation}` as ModalType
-    openModal(modalType, {
-      selectedIds,
-      type: entityType
-    })
-  }, [openModal])
+  const openBulkModal = useCallback(
+    (
+      operation: 'delete' | 'clone',
+      selectedIds: string[],
+      entityType: 'scenario' | 'dataset'
+    ) => {
+      const modalType = `bulk-${operation}` as ModalType
+      openModal(modalType, {
+        selectedIds,
+        type: entityType,
+      })
+    },
+    [openModal]
+  )
 
   // Keyboard event handling for ESC key
   useEffect(() => {
@@ -231,33 +269,45 @@ export const useModalState = (options: UseModalStateOptions = {}): UseModalState
 
   // Success callback trigger
   useEffect(() => {
-    if (onSuccess && modalState.type && modalState.data && !modalState.isLoading && !modalState.error) {
+    if (
+      onSuccess &&
+      modalState.type &&
+      modalState.data &&
+      !modalState.isLoading &&
+      !modalState.error
+    ) {
       // Only trigger success if we're not currently in a loading or error state
       // This prevents multiple success calls during normal operation
     }
-  }, [onSuccess, modalState.type, modalState.data, modalState.isLoading, modalState.error])
+  }, [
+    onSuccess,
+    modalState.type,
+    modalState.data,
+    modalState.isLoading,
+    modalState.error,
+  ])
 
   return {
     // State
     modalState,
-    
+
     // Actions
     openModal,
     closeModal,
     setLoading,
     setError,
     updateModalData,
-    
+
     // Helpers
     isModalOpen,
     isAnyModalOpen,
     getCurrentModalType,
     getCurrentModalData,
-    
+
     // Workflow helpers
     openEditModal,
     openDeleteModal,
     openCloneModal,
-    openBulkModal
+    openBulkModal,
   }
 }

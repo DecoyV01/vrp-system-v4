@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { AlertTriangle, Trash2, AlertCircle } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import type { Id } from '../../../convex/_generated/dataModel'
+import type { Id } from '../../../../convex/_generated/dataModel'
 
 export interface CascadeInfo {
   childCount: number
@@ -59,7 +59,7 @@ export const DeleteConfirmationModal = ({
   onConfirm,
   isLoading = false,
   error = null,
-  requireNameConfirmation = true
+  requireNameConfirmation = true,
 }: DeleteConfirmationModalProps) => {
   const [confirmationName, setConfirmationName] = useState('')
   const [isNameValid, setIsNameValid] = useState(false)
@@ -67,12 +67,14 @@ export const DeleteConfirmationModal = ({
   // Validate confirmation name
   const handleNameChange = (value: string) => {
     setConfirmationName(value)
-    setIsNameValid(data ? value.toLowerCase() === data.name.toLowerCase() : false)
+    setIsNameValid(
+      data ? value.toLowerCase() === data.name.toLowerCase() : false
+    )
   }
 
   const handleConfirm = async () => {
     if (requireNameConfirmation && !isNameValid) return
-    
+
     try {
       await onConfirm()
       onClose()
@@ -91,15 +93,13 @@ export const DeleteConfirmationModal = ({
 
   if (!data) return null
 
-  const entityTypeDisplayName = data.type.charAt(0).toUpperCase() + data.type.slice(1)
+  const entityTypeDisplayName =
+    data.type.charAt(0).toUpperCase() + data.type.slice(1)
   const hasCascadeWarnings = data.cascadeInfo && data.cascadeInfo.childCount > 0
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent 
-        className="sm:max-w-lg"
-        onKeyDown={handleKeyDown}
-      >
+      <AlertDialogContent className="sm:max-w-lg" onKeyDown={handleKeyDown}>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2 text-lg font-semibold">
             <Trash2 className="w-5 h-5 text-destructive" />
@@ -108,8 +108,11 @@ export const DeleteConfirmationModal = ({
           <AlertDialogDescription asChild>
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground">
-                Are you sure you want to delete <strong className="font-normal text-foreground">"{data.name}"</strong>? 
-                This action cannot be undone.
+                Are you sure you want to delete{' '}
+                <strong className="font-normal text-foreground">
+                  "{data.name}"
+                </strong>
+                ? This action cannot be undone.
               </p>
 
               {/* Cascade warnings */}
@@ -124,32 +127,52 @@ export const DeleteConfirmationModal = ({
                       <div className="flex flex-wrap gap-2">
                         {data.cascadeInfo?.affectedEntities?.scenarios && (
                           <Badge variant="destructive" className="text-xs">
-                            {data.cascadeInfo.affectedEntities.scenarios} scenario{data.cascadeInfo.affectedEntities.scenarios !== 1 ? 's' : ''}
+                            {data.cascadeInfo.affectedEntities.scenarios}{' '}
+                            scenario
+                            {data.cascadeInfo.affectedEntities.scenarios !== 1
+                              ? 's'
+                              : ''}
                           </Badge>
                         )}
                         {data.cascadeInfo?.affectedEntities?.datasets && (
                           <Badge variant="destructive" className="text-xs">
-                            {data.cascadeInfo.affectedEntities.datasets} dataset{data.cascadeInfo.affectedEntities.datasets !== 1 ? 's' : ''}
+                            {data.cascadeInfo.affectedEntities.datasets} dataset
+                            {data.cascadeInfo.affectedEntities.datasets !== 1
+                              ? 's'
+                              : ''}
                           </Badge>
                         )}
                         {data.cascadeInfo?.affectedEntities?.vehicles && (
                           <Badge variant="destructive" className="text-xs">
-                            {data.cascadeInfo.affectedEntities.vehicles} vehicle{data.cascadeInfo.affectedEntities.vehicles !== 1 ? 's' : ''}
+                            {data.cascadeInfo.affectedEntities.vehicles} vehicle
+                            {data.cascadeInfo.affectedEntities.vehicles !== 1
+                              ? 's'
+                              : ''}
                           </Badge>
                         )}
                         {data.cascadeInfo?.affectedEntities?.jobs && (
                           <Badge variant="destructive" className="text-xs">
-                            {data.cascadeInfo.affectedEntities.jobs} job{data.cascadeInfo.affectedEntities.jobs !== 1 ? 's' : ''}
+                            {data.cascadeInfo.affectedEntities.jobs} job
+                            {data.cascadeInfo.affectedEntities.jobs !== 1
+                              ? 's'
+                              : ''}
                           </Badge>
                         )}
                         {data.cascadeInfo?.affectedEntities?.locations && (
                           <Badge variant="destructive" className="text-xs">
-                            {data.cascadeInfo.affectedEntities.locations} location{data.cascadeInfo.affectedEntities.locations !== 1 ? 's' : ''}
+                            {data.cascadeInfo.affectedEntities.locations}{' '}
+                            location
+                            {data.cascadeInfo.affectedEntities.locations !== 1
+                              ? 's'
+                              : ''}
                           </Badge>
                         )}
                       </div>
                       {data.cascadeInfo?.warnings?.map((warning, index) => (
-                        <p key={index} className="text-xs text-muted-foreground">
+                        <p
+                          key={index}
+                          className="text-xs text-muted-foreground"
+                        >
                           {warning}
                         </p>
                       ))}
@@ -170,15 +193,23 @@ export const DeleteConfirmationModal = ({
               {requireNameConfirmation && (
                 <div className="space-y-2 pt-2">
                   <Label htmlFor="confirm-name" className="text-sm font-normal">
-                    Type <code className="text-xs bg-muted px-1 py-0.5 rounded">{data.name}</code> to confirm deletion:
+                    Type{' '}
+                    <code className="text-xs bg-muted px-1 py-0.5 rounded">
+                      {data.name}
+                    </code>{' '}
+                    to confirm deletion:
                   </Label>
                   <Input
                     id="confirm-name"
                     value={confirmationName}
-                    onChange={(e) => handleNameChange(e.target.value)}
+                    onChange={e => handleNameChange(e.target.value)}
                     placeholder={data.name}
                     disabled={isLoading}
-                    className={confirmationName && !isNameValid ? 'border-destructive' : ''}
+                    className={
+                      confirmationName && !isNameValid
+                        ? 'border-destructive'
+                        : ''
+                    }
                     autoFocus
                   />
                   {confirmationName && !isNameValid && (
@@ -193,9 +224,7 @@ export const DeleteConfirmationModal = ({
         </AlertDialogHeader>
 
         <AlertDialogFooter className="gap-2 sm:gap-0">
-          <AlertDialogCancel disabled={isLoading}>
-            Cancel
-          </AlertDialogCancel>
+          <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={isLoading || (requireNameConfirmation && !isNameValid)}

@@ -15,7 +15,7 @@ import {
   useProjectStats,
 } from '@/hooks/useVRPData'
 import { useQuery } from 'convex/react'
-import { api } from '../../convex/_generated/api'
+import { api } from '../../../convex/_generated/api'
 import { Navigate } from 'react-router-dom'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { useState } from 'react'

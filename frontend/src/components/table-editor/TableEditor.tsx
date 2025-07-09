@@ -22,7 +22,7 @@ import {
 } from './bulk-operations'
 import { CSVExportModal } from './bulk-operations/export/CSVExportModal'
 import { BulkEditModal } from './bulk-operations/edit/BulkEditModal'
-import type { Id } from '../../../convex/_generated/dataModel'
+import type { Id } from '../../../../convex/_generated/dataModel'
 import {
   useVehicles,
   useJobs,

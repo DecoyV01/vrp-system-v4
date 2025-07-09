@@ -5,13 +5,12 @@ import { useConfirmation } from './ConfirmationDialogProvider'
 import { EditModal } from './EditModal'
 import { DeleteConfirmationModal } from './DeleteConfirmationModal'
 import { CloneModal } from './CloneModal'
-import { confirmationMessages, getCascadeDeleteMessage } from '@/utils/confirmationMessages'
-import { 
-  useProject, 
-  useScenario, 
-  useDataset 
-} from '@/hooks/useVRPData'
-import type { Id } from '../../../convex/_generated/dataModel'
+import {
+  confirmationMessages,
+  getCascadeDeleteMessage,
+} from '@/utils/confirmationMessages'
+import { useProject, useScenario, useDataset } from '@/hooks/useVRPData'
+import type { Id } from '../../../../convex/_generated/dataModel'
 
 export interface ModalManagerProps {
   // Optional callbacks for custom handling
@@ -28,31 +27,32 @@ export interface ModalManagerProps {
 export const ModalManager = ({
   onEditSuccess,
   onDeleteSuccess,
-  onCloneSuccess
+  onCloneSuccess,
 }: ModalManagerProps) => {
-  const {
-    modalState,
-    closeModal,
-    setLoading,
-    setError
-  } = useModalState()
+  const { modalState, closeModal, setLoading, setError } = useModalState()
 
   // Fetch current entity data for editing
   const currentProject = useProject(
-    modalState.isOpen && modalState.type === 'edit-project' && modalState.data?.id
-      ? modalState.data.id as Id<'projects'>
+    modalState.isOpen &&
+      modalState.type === 'edit-project' &&
+      modalState.data?.id
+      ? (modalState.data.id as Id<'projects'>)
       : undefined
   )
-  
+
   const currentScenario = useScenario(
-    modalState.isOpen && modalState.type === 'edit-scenario' && modalState.data?.id
-      ? modalState.data.id as Id<'scenarios'>
+    modalState.isOpen &&
+      modalState.type === 'edit-scenario' &&
+      modalState.data?.id
+      ? (modalState.data.id as Id<'scenarios'>)
       : undefined
   )
-  
+
   const currentDataset = useDataset(
-    modalState.isOpen && modalState.type === 'edit-dataset' && modalState.data?.id
-      ? modalState.data.id as Id<'datasets'>
+    modalState.isOpen &&
+      modalState.type === 'edit-dataset' &&
+      modalState.data?.id
+      ? (modalState.data.id as Id<'datasets'>)
       : undefined
   )
 
@@ -62,21 +62,14 @@ export const ModalManager = ({
     cloneEntity,
     isUpdating,
     isDeleting,
-    isCloning
+    isCloning,
   } = useHierarchyOperations()
 
   const confirmationDialog = useConfirmation()
-  const {
-    confirmDelete,
-    confirmClone,
-    confirmSave
-  } = confirmationDialog || {}
+  const { confirmDelete, confirmClone, confirmSave } = confirmationDialog || {}
 
-  const {
-    notifyOperationResult,
-    startProgress,
-    updateProgress
-  } = useToastNotifications()
+  const { notifyOperationResult, startProgress, updateProgress } =
+    useToastNotifications()
 
   // Edit modal handlers
   const handleEditSave = async (updatedData: any) => {
@@ -91,14 +84,21 @@ export const ModalManager = ({
         setLoading(true)
         await updateEntity(modalState.data.type, {
           id: modalState.data.id,
-          ...updatedData
+          ...updatedData,
         })
-        
-        updateProgress(toastId, true, `${entityType.charAt(0).toUpperCase() + entityType.slice(1)} "${entityName}" updated successfully`)
+
+        updateProgress(
+          toastId,
+          true,
+          `${entityType.charAt(0).toUpperCase() + entityType.slice(1)} "${entityName}" updated successfully`
+        )
         onEditSuccess?.(modalState.data.type, modalState.data.id)
         closeModal()
       } catch (error) {
-        const message = error instanceof Error ? error.message : `Failed to update ${entityType}`
+        const message =
+          error instanceof Error
+            ? error.message
+            : `Failed to update ${entityType}`
         updateProgress(toastId, false, message)
         setError(message)
       } finally {
@@ -126,12 +126,19 @@ export const ModalManager = ({
         modalState.data.id,
         { skipCascadeCheck: true } // Already handled in modal display
       )
-      
-      updateProgress(toastId, true, `${entityType.charAt(0).toUpperCase() + entityType.slice(1)} "${entityName}" deleted successfully`)
+
+      updateProgress(
+        toastId,
+        true,
+        `${entityType.charAt(0).toUpperCase() + entityType.slice(1)} "${entityName}" deleted successfully`
+      )
       onDeleteSuccess?.(modalState.data.type, modalState.data.id)
       closeModal()
     } catch (error) {
-      const message = error instanceof Error ? error.message : `Failed to delete ${entityType}`
+      const message =
+        error instanceof Error
+          ? error.message
+          : `Failed to delete ${entityType}`
       updateProgress(toastId, false, message)
       setError(message)
     } finally {
@@ -141,7 +148,12 @@ export const ModalManager = ({
 
   // Clone modal handlers
   const handleClone = async (newName: string) => {
-    if (!modalState.data?.type || !modalState.data?.id || !modalState.data?.parentId) return
+    if (
+      !modalState.data?.type ||
+      !modalState.data?.id ||
+      !modalState.data?.parentId
+    )
+      return
 
     const performClone = async () => {
       const entityType = modalState.data.type
@@ -156,12 +168,19 @@ export const ModalManager = ({
           newName,
           modalState.data.parentId
         )
-        
-        updateProgress(toastId, true, `${entityType.charAt(0).toUpperCase() + entityType.slice(1)} "${originalName}" cloned as "${newName}"`)
+
+        updateProgress(
+          toastId,
+          true,
+          `${entityType.charAt(0).toUpperCase() + entityType.slice(1)} "${originalName}" cloned as "${newName}"`
+        )
         onCloneSuccess?.(modalState.data.type)
         closeModal()
       } catch (error) {
-        const message = error instanceof Error ? error.message : `Failed to clone ${entityType}`
+        const message =
+          error instanceof Error
+            ? error.message
+            : `Failed to clone ${entityType}`
         updateProgress(toastId, false, message)
         setError(message)
       } finally {
@@ -172,7 +191,7 @@ export const ModalManager = ({
     // Use confirmation dialog for clone operations
     const entityName = modalState.data.name || 'Unknown'
     const entityType = modalState.data.type
-    
+
     if (confirmClone && entityType === 'scenario') {
       const message = confirmationMessages.scenario.clone(entityName)
       confirmClone(entityName, entityType, performClone)
@@ -188,7 +207,7 @@ export const ModalManager = ({
   // Get current entity data for editing
   const getCurrentEntityData = () => {
     if (!modalState.data?.type || !modalState.data?.id) return null
-    
+
     let currentEntity = null
     switch (modalState.data.type) {
       case 'project':
@@ -201,14 +220,14 @@ export const ModalManager = ({
         currentEntity = currentDataset
         break
     }
-    
+
     if (!currentEntity) return null
-    
+
     return {
       id: modalState.data.id,
       name: currentEntity.name || '',
       description: currentEntity.description || '',
-      type: modalState.data.type
+      type: modalState.data.type,
     }
   }
 
@@ -216,7 +235,9 @@ export const ModalManager = ({
     <>
       {/* Edit Modal */}
       <EditModal
-        isOpen={modalState.isOpen && modalState.type?.startsWith('edit-') === true}
+        isOpen={
+          modalState.isOpen && modalState.type?.startsWith('edit-') === true
+        }
         onClose={closeModal}
         data={getCurrentEntityData()}
         onSave={handleEditSave}
@@ -226,14 +247,20 @@ export const ModalManager = ({
 
       {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal
-        isOpen={modalState.isOpen && modalState.type?.startsWith('delete-') === true}
+        isOpen={
+          modalState.isOpen && modalState.type?.startsWith('delete-') === true
+        }
         onClose={closeModal}
-        data={modalState.data ? {
-          id: modalState.data.id!,
-          name: modalState.data.name!,
-          type: modalState.data.type!,
-          cascadeInfo: modalState.data.cascadeInfo
-        } : null}
+        data={
+          modalState.data
+            ? {
+                id: modalState.data.id!,
+                name: modalState.data.name!,
+                type: modalState.data.type!,
+                cascadeInfo: modalState.data.cascadeInfo,
+              }
+            : null
+        }
         onConfirm={handleDeleteConfirm}
         isLoading={isDeleting || modalState.isLoading}
         error={modalState.error}
@@ -242,14 +269,20 @@ export const ModalManager = ({
 
       {/* Clone Modal */}
       <CloneModal
-        isOpen={modalState.isOpen && modalState.type?.startsWith('clone-') === true}
+        isOpen={
+          modalState.isOpen && modalState.type?.startsWith('clone-') === true
+        }
         onClose={closeModal}
-        data={modalState.data ? {
-          id: modalState.data.id! as Id<'scenarios'> | Id<'datasets'>,
-          name: modalState.data.name!,
-          type: modalState.data.type! as 'scenario' | 'dataset',
-          parentId: modalState.data.parentId
-        } : null}
+        data={
+          modalState.data
+            ? {
+                id: modalState.data.id! as Id<'scenarios'> | Id<'datasets'>,
+                name: modalState.data.name!,
+                type: modalState.data.type! as 'scenario' | 'dataset',
+                parentId: modalState.data.parentId,
+              }
+            : null
+        }
         onClone={handleClone}
         isLoading={isCloning || modalState.isLoading}
         error={modalState.error}
@@ -261,12 +294,12 @@ export const ModalManager = ({
 // Export hook for components to access modal functionality
 export const useModalManager = () => {
   const modalState = useModalState()
-  
+
   return {
     ...modalState,
     // Convenience methods for opening modals
     openEditModal: modalState.openEditModal,
     openDeleteModal: modalState.openDeleteModal,
-    openCloneModal: modalState.openCloneModal
+    openCloneModal: modalState.openCloneModal,
   }
 }

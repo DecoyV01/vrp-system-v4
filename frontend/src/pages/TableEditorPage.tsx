@@ -1,12 +1,18 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { ArrowLeft, Database, Table as TableIcon } from 'lucide-react'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import TableEditor from '@/components/table-editor/TableEditor'
 import { useProject, useScenario, useDataset } from '@/hooks/useVRPData'
-import type { Id } from '../../convex/_generated/dataModel'
+import type { Id } from '../../../convex/_generated/dataModel'
 
 const TableEditorPage = () => {
   const { projectId, scenarioId, datasetId, tableType } = useParams()
@@ -14,14 +20,16 @@ const TableEditorPage = () => {
 
   // Validate and type the URL parameters
   const validTableTypes = ['vehicles', 'jobs', 'locations', 'routes'] as const
-  const isValidTableType = (type: string | undefined): type is typeof validTableTypes[number] => {
+  const isValidTableType = (
+    type: string | undefined
+  ): type is (typeof validTableTypes)[number] => {
     return type !== undefined && validTableTypes.includes(type as any)
   }
 
   // Fetch data for breadcrumb and validation
-  const project = useProject(projectId as Id<"projects">)
-  const scenario = useScenario(scenarioId as Id<"scenarios">)
-  const dataset = useDataset(datasetId as Id<"datasets">)
+  const project = useProject(projectId as Id<'projects'>)
+  const scenario = useScenario(scenarioId as Id<'scenarios'>)
+  const dataset = useDataset(datasetId as Id<'datasets'>)
 
   // Validate parameters
   if (!projectId || !scenarioId || !datasetId || !isValidTableType(tableType)) {
@@ -40,7 +48,8 @@ const TableEditorPage = () => {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-600 mb-4">
-                Expected format: /projects/[projectId]/scenarios/[scenarioId]/datasets/[datasetId]/[tableType]
+                Expected format:
+                /projects/[projectId]/scenarios/[scenarioId]/datasets/[datasetId]/[tableType]
               </p>
               <Button onClick={() => navigate('/projects')}>
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -54,7 +63,11 @@ const TableEditorPage = () => {
   }
 
   // Loading state
-  if (project === undefined || scenario === undefined || dataset === undefined) {
+  if (
+    project === undefined ||
+    scenario === undefined ||
+    dataset === undefined
+  ) {
     return (
       <div className="flex flex-col h-full bg-white">
         <div className="flex items-center justify-center flex-1">
@@ -121,7 +134,11 @@ const TableEditorPage = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => handleBreadcrumbNav(`/projects/${projectId}/scenarios/${scenarioId}`)}
+            onClick={() =>
+              handleBreadcrumbNav(
+                `/projects/${projectId}/scenarios/${scenarioId}`
+              )
+            }
             className="h-auto p-0 text-blue-600 hover:text-blue-800"
           >
             {scenario.name}
@@ -130,7 +147,11 @@ const TableEditorPage = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => handleBreadcrumbNav(`/projects/${projectId}/scenarios/${scenarioId}/datasets/${datasetId}`)}
+            onClick={() =>
+              handleBreadcrumbNav(
+                `/projects/${projectId}/scenarios/${scenarioId}/datasets/${datasetId}`
+              )
+            }
             className="h-auto p-0 text-blue-600 hover:text-blue-800"
           >
             {dataset.name} v{dataset.version}
@@ -149,22 +170,24 @@ const TableEditorPage = () => {
               Manage {tableType} data for {dataset.name} v{dataset.version}
             </p>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Badge variant="outline">{project.name}</Badge>
             <Badge variant="outline">{scenario.name}</Badge>
-            <Badge variant="secondary">{dataset.name} v{dataset.version}</Badge>
+            <Badge variant="secondary">
+              {dataset.name} v{dataset.version}
+            </Badge>
           </div>
         </div>
       </div>
-      
+
       {/* Table Editor */}
       <div className="flex-1 p-6 overflow-auto">
         <TableEditor
-          datasetId={datasetId as Id<"datasets">}
+          datasetId={datasetId as Id<'datasets'>}
           tableType={tableType}
-          projectId={projectId as Id<"projects">}
-          scenarioId={scenarioId as Id<"scenarios">}
+          projectId={projectId as Id<'projects'>}
+          scenarioId={scenarioId as Id<'scenarios'>}
         />
       </div>
     </div>

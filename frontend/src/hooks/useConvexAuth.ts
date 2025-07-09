@@ -1,6 +1,6 @@
 import { useQuery } from 'convex/react'
 import { useAuthActions } from '@convex-dev/auth/react'
-import { api } from '../../convex/_generated/api'
+import { api } from '../../../convex/_generated/api'
 import { useEffect, useState } from 'react'
 
 // Current implementation uses the official Convex Auth

@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Copy, AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import type { Id } from '../../../convex/_generated/dataModel'
+import type { Id } from '../../../../convex/_generated/dataModel'
 
 export interface CloneModalData {
   id: Id<'scenarios'> | Id<'datasets'>
@@ -42,10 +42,12 @@ export const CloneModal = ({
   data,
   onClone,
   isLoading = false,
-  error = null
+  error = null,
 }: CloneModalProps) => {
   const [newName, setNewName] = useState('')
-  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({})
 
   // Generate smart default name when modal opens
   useEffect(() => {
@@ -54,16 +56,16 @@ export const CloneModal = ({
         const copyPattern = /^(.+?)(?:\s+\(copy(?:\s+\d+)?\))?$/i
         const match = originalName.match(copyPattern)
         const baseName = match ? match[1] : originalName
-        
+
         // Generate name with current timestamp for uniqueness
         const timestamp = new Date().toLocaleString('en-US', {
           month: 'short',
           day: 'numeric',
           hour: 'numeric',
           minute: '2-digit',
-          hour12: true
+          hour12: true,
         })
-        
+
         return `${baseName} (copy ${timestamp})`
       }
 
@@ -75,22 +77,25 @@ export const CloneModal = ({
   // Form validation
   const validateForm = () => {
     const errors: Record<string, string> = {}
-    
+
     if (!newName.trim()) {
       errors.name = 'Name is required'
     } else if (newName.trim().length > 100) {
       errors.name = 'Name must be 100 characters or less'
-    } else if (data && newName.trim().toLowerCase() === data.name.toLowerCase()) {
+    } else if (
+      data &&
+      newName.trim().toLowerCase() === data.name.toLowerCase()
+    ) {
       errors.name = 'New name must be different from the original'
     }
-    
+
     setValidationErrors(errors)
     return Object.keys(errors).length === 0
   }
 
   const handleClone = async () => {
     if (!data || !validateForm()) return
-    
+
     try {
       await onClone(newName.trim())
       onClose()
@@ -117,21 +122,20 @@ export const CloneModal = ({
 
   if (!data) return null
 
-  const entityTypeDisplayName = data.type.charAt(0).toUpperCase() + data.type.slice(1)
+  const entityTypeDisplayName =
+    data.type.charAt(0).toUpperCase() + data.type.slice(1)
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent 
-        className="sm:max-w-md"
-        onKeyDown={handleKeyDown}
-      >
+      <DialogContent className="sm:max-w-md" onKeyDown={handleKeyDown}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg font-semibold">
             <Copy className="w-5 h-5" />
             Clone {entityTypeDisplayName}
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
-            Create a copy of "{data.name}" with a new name. All associated data will be duplicated.
+            Create a copy of "{data.name}" with a new name. All associated data
+            will be duplicated.
           </DialogDescription>
         </DialogHeader>
 
@@ -150,14 +154,16 @@ export const CloneModal = ({
             <Input
               id="clone-name"
               value={newName}
-              onChange={(e) => handleNameChange(e.target.value)}
+              onChange={e => handleNameChange(e.target.value)}
               placeholder={`Enter new ${data.type} name`}
               disabled={isLoading}
               className={validationErrors.name ? 'border-destructive' : ''}
               autoFocus
             />
             {validationErrors.name && (
-              <p className="text-sm text-destructive">{validationErrors.name}</p>
+              <p className="text-sm text-destructive">
+                {validationErrors.name}
+              </p>
             )}
             <p className="text-xs text-muted-foreground">
               The clone will include all data from the original {data.type}.
@@ -196,7 +202,11 @@ export const CloneModal = ({
           </Button>
           <Button
             onClick={handleClone}
-            disabled={isLoading || !newName.trim() || Object.keys(validationErrors).length > 0}
+            disabled={
+              isLoading ||
+              !newName.trim() ||
+              Object.keys(validationErrors).length > 0
+            }
           >
             {isLoading ? (
               <>

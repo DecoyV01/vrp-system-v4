@@ -14,7 +14,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import type { Id } from '../../../convex/_generated/dataModel'
+import type { Id } from '../../../../convex/_generated/dataModel'
 
 export interface EditModalData {
   id: Id<'projects'> | Id<'scenarios'> | Id<'datasets'>
@@ -36,26 +36,28 @@ export interface EditModalProps {
  * EditModal - Reusable modal for editing project, scenario, and dataset entities
  * Following shadcn/ui v4 patterns with proper accessibility and design system compliance
  */
-export const EditModal = ({ 
-  isOpen, 
-  onClose, 
-  data, 
-  onSave, 
-  isLoading = false, 
-  error = null 
+export const EditModal = ({
+  isOpen,
+  onClose,
+  data,
+  onSave,
+  isLoading = false,
+  error = null,
 }: EditModalProps) => {
   const [formData, setFormData] = useState({
     name: '',
-    description: ''
+    description: '',
   })
-  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({})
 
   // Reset form when modal opens with new data
   useEffect(() => {
     if (data) {
       setFormData({
         name: data.name || '',
-        description: data.description || ''
+        description: data.description || '',
       })
       setValidationErrors({})
     }
@@ -64,29 +66,29 @@ export const EditModal = ({
   // Form validation
   const validateForm = () => {
     const errors: Record<string, string> = {}
-    
+
     if (!formData.name.trim()) {
       errors.name = 'Name is required'
     } else if (formData.name.trim().length > 100) {
       errors.name = 'Name must be 100 characters or less'
     }
-    
+
     if (formData.description && formData.description.length > 1000) {
       errors.description = 'Description must be 1000 characters or less'
     }
-    
+
     setValidationErrors(errors)
     return Object.keys(errors).length === 0
   }
 
   const handleSave = async () => {
     if (!data || !validateForm()) return
-    
+
     try {
       await onSave({
         id: data.id,
         name: formData.name.trim(),
-        description: formData.description.trim() || undefined
+        description: formData.description.trim() || undefined,
       })
       onClose()
     } catch (error) {
@@ -104,14 +106,12 @@ export const EditModal = ({
 
   if (!data) return null
 
-  const entityTypeDisplayName = data.type.charAt(0).toUpperCase() + data.type.slice(1)
+  const entityTypeDisplayName =
+    data.type.charAt(0).toUpperCase() + data.type.slice(1)
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent 
-        className="sm:max-w-md"
-        onKeyDown={handleKeyDown}
-      >
+      <DialogContent className="sm:max-w-md" onKeyDown={handleKeyDown}>
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
             Edit {entityTypeDisplayName}
@@ -136,14 +136,18 @@ export const EditModal = ({
             <Input
               id="edit-name"
               value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, name: e.target.value }))
+              }
               placeholder={`Enter ${data.type} name`}
               disabled={isLoading}
               className={validationErrors.name ? 'border-destructive' : ''}
               autoFocus
             />
             {validationErrors.name && (
-              <p className="text-sm text-destructive">{validationErrors.name}</p>
+              <p className="text-sm text-destructive">
+                {validationErrors.name}
+              </p>
             )}
           </div>
 
@@ -154,14 +158,20 @@ export const EditModal = ({
             <Textarea
               id="edit-description"
               value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, description: e.target.value }))
+              }
               placeholder={`Enter ${data.type} description (optional)`}
               disabled={isLoading}
-              className={validationErrors.description ? 'border-destructive' : ''}
+              className={
+                validationErrors.description ? 'border-destructive' : ''
+              }
               rows={3}
             />
             {validationErrors.description && (
-              <p className="text-sm text-destructive">{validationErrors.description}</p>
+              <p className="text-sm text-destructive">
+                {validationErrors.description}
+              </p>
             )}
           </div>
         </div>
