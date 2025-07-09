@@ -9,7 +9,7 @@ import ScenarioDetailPage from './pages/ScenarioDetailPage'
 import DatasetDetailPage from './pages/DatasetDetailPage'
 import TableEditorPage from './pages/TableEditorPage'
 import LoginPage from './pages/auth/LoginPage'
-import { ProtectedRoute } from './components/ProtectedRoute'
+import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import UATErrorBoundary from './components/UATErrorBoundary'
 import { ConfirmationDialogProvider } from './components/ui/ConfirmationDialogProvider'
 import './App.css'
@@ -26,6 +26,10 @@ export default function App() {
               {/* Public routes */}
               <Route
                 path="/auth/login"
+                element={user ? <Navigate to="/" replace /> : <LoginPage />}
+              />
+              <Route
+                path="/auth/register"
                 element={user ? <Navigate to="/" replace /> : <LoginPage />}
               />
 
@@ -72,7 +76,12 @@ export default function App() {
                 element={
                   user === undefined ? (
                     <div className="flex justify-center items-center min-h-screen">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                      <div className="flex flex-col items-center space-y-4">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        <p className="text-sm text-muted-foreground">
+                          Loading application...
+                        </p>
+                      </div>
                     </div>
                   ) : user ? (
                     <Navigate to="/" replace />

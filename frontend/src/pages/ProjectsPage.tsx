@@ -14,13 +14,15 @@ import {
   useDeleteProject,
   useProjectStats,
 } from '@/hooks/useVRPData'
-import { useCurrentUser } from '@/hooks/useConvexAuth'
+import { useQuery } from 'convex/react'
+import { api } from '../convex/_generated/api'
 import { Navigate } from 'react-router-dom'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
 import { formatDistanceToNow } from 'date-fns'
+import { VRPErrorHandling, logError } from '@/utils/errorHandling'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,8 +50,11 @@ const ProjectCard = ({ project }: { project: any }) => {
       await deleteProject({ id: project._id })
       toast.success('Project deleted successfully')
     } catch (error) {
-      console.error('Failed to delete project:', error)
-      toast.error('Failed to delete project')
+      logError(error, 'Delete project')
+
+      // Use centralized error handling
+      const errorMessage = VRPErrorHandling.project.delete(error)
+      toast.error(errorMessage)
     } finally {
       setIsDeleting(false)
     }
@@ -147,13 +152,14 @@ const ProjectCard = ({ project }: { project: any }) => {
 }
 
 const ProjectsPage = () => {
-  const { isAuthenticated, isLoading: authLoading } = useCurrentUser()
+  // Use chef pattern - direct query instead of custom hook
+  const user = useQuery(api.auth.currentUser)
   const projects = useProjects()
   const createProject = useCreateProject()
   const [isCreating, setIsCreating] = useState(false)
 
-  // Add auth check before rendering
-  if (!authLoading && !isAuthenticated) {
+  // Add auth check before rendering using chef pattern
+  if (user === null) {
     return <Navigate to="/auth/login" replace />
   }
 
@@ -168,14 +174,17 @@ const ProjectsPage = () => {
       })
       toast.success('Project created successfully')
     } catch (error) {
-      console.error('Failed to create project:', error)
-      toast.error('Failed to create project')
+      logError(error, 'Create project')
+
+      // Use centralized error handling
+      const errorMessage = VRPErrorHandling.project.create(error)
+      toast.error(errorMessage)
     } finally {
       setIsCreating(false)
     }
   }
 
-  if (authLoading || projects === undefined) {
+  if (user === undefined || projects === undefined) {
     return (
       <div className="flex flex-col h-full bg-white">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">

@@ -81,52 +81,60 @@ module.exports = {
       name: 'convex-auth-login-page'
     },
 
-    // Step 4: Test sign-up tab functionality
+    // Step 4: Navigate to registration mode (dual-mode LoginPage)
     {
-      action: 'click',
-      selector: '[data-value="signup"]',
+      action: 'navigate',
+      url: 'https://vrp-system-v4.pages.dev/auth/login?mode=register',
       validate: [
-        ['elementVisible', '#signup-name'],
-        ['elementVisible', '#signup-email'],
-        ['elementVisible', '#signup-password']
+        ['elementVisible', 'input[id*="name"]'],
+        ['elementVisible', 'input[id*="email"]'],
+        ['elementVisible', 'input[id*="password"]'],
+        ['elementVisible', 'input[id*="confirmPassword"]']
       ]
     },
 
     // Step 5: Test password validation with weak password
     {
       action: 'fill',
-      fields: {
-        '#signup-name': 'Test User',
-        '#signup-email': 'testuser@example.com',
-        '#signup-password': 'weak'
-      },
-      validate: [
-        ['inputHasValue', '#signup-name', 'Test User'],
-        ['inputHasValue', '#signup-email', 'testuser@example.com']
-      ]
+      selector: 'input[id*="name"]',
+      value: 'Test User'
+    },
+    {
+      action: 'fill', 
+      selector: 'input[id*="email"]',
+      value: 'testuser@example.com'
+    },
+    {
+      action: 'fill',
+      selector: 'input[id*="password"]',
+      value: 'weak'
     },
 
     {
       action: 'click',
-      selector: 'button[type="submit"]:contains("Create Account")',
+      selector: 'button[type="submit"]',
       waitFor: 'networkIdle',
       validate: [
-        ['elementVisible', '.text-red-700'],  // Error message should appear
-        ['textContains', '.text-red-700', 'Password must']
+        ['elementVisible', '.text-red-600, .text-red-500'],  // Error message should appear
+        ['textContains', 'body', 'Password must']
       ]
     },
 
     // Step 6: Create account with strong password
     {
       action: 'fill',
-      fields: {
-        '#signup-password': 'StrongPass123!'
-      }
+      selector: 'input[id*="password"]',
+      value: 'StrongPass123!'
+    },
+    {
+      action: 'fill',
+      selector: 'input[id*="confirmPassword"]', 
+      value: 'StrongPass123!'
     },
 
     {
       action: 'click',
-      selector: 'button[type="submit"]:contains("Create Account")',
+      selector: 'button[type="submit"]',
       waitFor: 'networkIdle',
       validate: [
         ['healthCheck', 'hasErrors', false]
@@ -151,15 +159,15 @@ module.exports = {
     // Step 8: Test logout functionality with new UI
     {
       action: 'click',
-      selector: '[data-testid="user-menu-trigger"]',
+      selector: 'button:has(div:contains("@")), .rounded-full',
       validate: [
-        ['elementVisible', '[data-testid="sign-out-button"]']
+        ['elementVisible', 'span:contains("Sign out")']
       ]
     },
 
     {
       action: 'click',
-      selector: '[data-testid="sign-out-button"]',
+      selector: 'span:contains("Sign out")',
       waitFor: 'networkIdle'
     },
 
@@ -173,30 +181,30 @@ module.exports = {
       ]
     },
 
-    // Step 10: Test sign-in with created account
+    // Step 10: Test sign-in with created account (login mode is default)
     {
-      action: 'click',
-      selector: '[data-value="signin"]',
+      action: 'navigate',
+      url: 'https://vrp-system-v4.pages.dev/auth/login',
       validate: [
-        ['elementVisible', '#signin-email'],
-        ['elementVisible', '#signin-password']
+        ['elementVisible', 'input[id*="email"]'],
+        ['elementVisible', 'input[id*="password"]']
       ]
     },
 
     {
       action: 'fill',
-      fields: {
-        '#signin-email': 'testuser@example.com',
-        '#signin-password': 'StrongPass123!'
-      },
-      validate: [
-        ['inputHasValue', '#signin-email', 'testuser@example.com']
-      ]
+      selector: 'input[id*="email"]',
+      value: 'testuser@example.com'
+    },
+    {
+      action: 'fill',
+      selector: 'input[id*="password"]',
+      value: 'StrongPass123!'
     },
 
     {
       action: 'click',
-      selector: 'button[type="submit"]:contains("Sign In")',
+      selector: 'button[type="submit"]',
       waitFor: 'networkIdle'
     },
 
@@ -222,19 +230,19 @@ module.exports = {
       url: 'https://vrp-system-v4.pages.dev/projects',
       validate: [
         ['healthCheck', 'isAuthenticated', true],
-        ['elementVisible', '.projects-container']
+        ['elementVisible', '.text-2xl:contains("Projects")']
       ]
     },
 
     // Step 13: Final logout test
     {
       action: 'click',
-      selector: '[data-testid="user-menu-trigger"]'
+      selector: 'button:has(div:contains("@")), .rounded-full'
     },
 
     {
       action: 'click',
-      selector: '[data-testid="sign-out-button"]',
+      selector: 'span:contains("Sign out")',
       waitFor: 'networkIdle'
     },
 

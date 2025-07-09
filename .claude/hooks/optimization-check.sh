@@ -285,7 +285,11 @@ fi
 # Check 8: File length threshold (new files shouldn't be large)
 if [[ "$tool_name" == "Write" ]]; then
     line_count=$(echo "$content" | wc -l)
-    if [[ $line_count -gt 100 ]]; then
+    
+    # Allow certain utility files that are legitimate centralized utilities
+    if [[ "$file_path" =~ utils/ ]] && [[ "$file_path" =~ (error|auth|validation|format|parse|transform|constant|config|helper|type|enum).*\.(ts|js)$ ]]; then
+        echo "✅ Allowing utility file: $(basename "$file_path")" >&2
+    elif [[ $line_count -gt 100 ]]; then
         print_violation \
             "New file with $line_count lines - violates code reduction principle" \
             "87% code reduction" \

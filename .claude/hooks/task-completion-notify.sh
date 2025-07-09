@@ -30,10 +30,10 @@ Add-Type -AssemblyName System.Speech;
 \$synth = New-Object System.Speech.Synthesis.SpeechSynthesizer; 
 \$synth.Rate = 1; 
 \$synth.Volume = 95; 
-try { \$synth.SelectVoice('Microsoft Eva Desktop') } catch { 
+try { \$synth.SelectVoice('Microsoft Julie Desktop') } catch { 
   try { \$synth.SelectVoice('Microsoft Zira Desktop') } catch { }
 }; 
-\$synth.Speak('Hey G, come quickly, your task is complete!!! These are the days...')
+\$synth.Speak('Hey G, a task is complete!!! These are the days...')
 " 2>/dev/null || \
 echo "🎉 Task complete!"
 

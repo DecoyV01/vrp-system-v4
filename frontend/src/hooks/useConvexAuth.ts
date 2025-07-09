@@ -1,5 +1,5 @@
-import { useConvexAuth } from 'convex/react'
 import { useQuery } from 'convex/react'
+import { useAuthActions } from '@convex-dev/auth/react'
 import { api } from '../convex/_generated/api'
 import { useEffect, useState } from 'react'
 
@@ -43,36 +43,10 @@ export const useVRPAuthActions = () => {
   return {
     signIn: async (email: string, password: string) => {
       try {
-        // Call our JWT authentication endpoint
-        const response = await fetch(
-          `${import.meta.env.VITE_CONVEX_URL.replace('.convex.cloud', '.convex.site')}/jwt-login`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email,
-              password,
-              flow: 'signIn',
-            }),
-          }
-        )
-
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.error || 'Authentication failed')
-        }
-
-        const { token, user } = await response.json()
-
-        // Note: Client auth will be set when app initializes with stored token
-
-        // Store token in localStorage for persistence
-        localStorage.setItem('convex-auth-token', token)
-        localStorage.setItem('convex-user', JSON.stringify(user))
-
-        return { success: true, user }
+        // Use Convex Auth directly following chef pattern
+        const { signIn: convexSignIn } = useAuthActions()
+        await convexSignIn('password', { email, password })
+        return { success: true }
       } catch (error: any) {
         console.error('Sign in error:', error)
         // Provide user-friendly error messages
