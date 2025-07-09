@@ -475,68 +475,156 @@ function applyOperation(
       // Convert value to proper type based on field type
       let convertedValue = operation.value
 
-      // Type conversion for numeric fields
-      if (typeof operation.value === 'string' && operation.value !== '') {
-        // Check if this is a numeric field based on common field names
-        const isNumericField =
-          operation.field.includes('Lat') ||
-          operation.field.includes('Lon') ||
-          operation.field.includes('Cost') ||
-          operation.field.includes('Time') ||
-          operation.field.includes('Factor') ||
-          operation.field.includes('Tasks') ||
-          operation.field.includes('Priority') ||
-          operation.field === 'setup' ||
-          operation.field === 'service' ||
-          operation.field === 'priority'
+      // Define field type mappings based on Convex validators
+      const fieldTypes = {
+        // Vehicle fields
+        description: 'string',
+        profile: 'string',
+        startLat: 'number',
+        startLon: 'number',
+        endLat: 'number',
+        endLon: 'number',
+        startLocationId: 'id',
+        endLocationId: 'id',
+        capacity: 'array_number',
+        skills: 'array_number',
+        timeWindow: 'array_number',
+        speedFactor: 'number',
+        maxTasks: 'number',
+        maxTravelTime: 'number',
+        maxDistance: 'number',
+        costFixed: 'number',
+        costPerHour: 'number',
+        costPerKm: 'number',
+        datasetName: 'string',
+        datasetVersion: 'number',
 
-        if (isNumericField) {
-          const numValue = parseFloat(operation.value)
-          if (!isNaN(numValue)) {
-            convertedValue = numValue
-          }
-        }
+        // Job fields
+        locationId: 'id',
+        locationLat: 'number',
+        locationLon: 'number',
+        setup: 'number',
+        service: 'number',
+        delivery: 'array_number',
+        pickup: 'array_number',
+        priority: 'number',
+        timeWindows: 'array_array_number',
+
+        // Location fields
+        name: 'string',
+        clusterId: 'id',
+        address: 'string',
+        locationType: 'string',
+        operatingHours: 'string',
+        contactInfo: 'string',
+        timezone: 'string',
       }
 
-      // Handle array fields (capacity, skills, delivery, pickup, etc.)
-      if (operation.value !== undefined && operation.value !== null) {
-        const isArrayField =
-          operation.field === 'capacity' ||
-          operation.field === 'skills' ||
-          operation.field === 'delivery' ||
-          operation.field === 'pickup'
+      const fieldType = fieldTypes[operation.field as keyof typeof fieldTypes]
 
-        if (isArrayField) {
-          // If it's already an array, use it directly
-          if (Array.isArray(operation.value)) {
-            convertedValue = operation.value
-          } else if (
-            typeof operation.value === 'string' &&
-            operation.value !== ''
-          ) {
-            // Try to parse as JSON array first
-            try {
-              const parsed = JSON.parse(operation.value)
-              if (Array.isArray(parsed)) {
-                convertedValue = parsed
-              } else {
-                // If parsed value is not an array, wrap it in array
-                convertedValue = [parsed]
-              }
-            } catch {
-              // If JSON parsing fails, treat as single value array
+      // Convert based on detected field type
+      if (
+        fieldType &&
+        operation.value !== undefined &&
+        operation.value !== null
+      ) {
+        switch (fieldType) {
+          case 'number':
+            if (typeof operation.value === 'string' && operation.value !== '') {
               const numValue = parseFloat(operation.value)
               if (!isNaN(numValue)) {
-                convertedValue = [numValue]
-              } else {
-                // For non-numeric strings, wrap in array
-                convertedValue = [operation.value]
+                convertedValue = numValue
               }
+            } else if (typeof operation.value === 'number') {
+              convertedValue = operation.value
             }
-          } else {
-            // For non-string values, wrap in array
-            convertedValue = [operation.value]
-          }
+            break
+
+          case 'string':
+            if (typeof operation.value !== 'string') {
+              convertedValue = String(operation.value)
+            }
+            break
+
+          case 'id':
+            // IDs should be strings in the correct format
+            if (typeof operation.value !== 'string') {
+              convertedValue = String(operation.value)
+            }
+            break
+
+          case 'array_number':
+            // Handle array of numbers (capacity, skills, delivery, pickup, timeWindow)
+            if (Array.isArray(operation.value)) {
+              // Convert array elements to numbers
+              convertedValue = operation.value.map(val => {
+                const num = parseFloat(val)
+                return isNaN(num) ? 0 : num
+              })
+            } else if (
+              typeof operation.value === 'string' &&
+              operation.value !== ''
+            ) {
+              try {
+                const parsed = JSON.parse(operation.value)
+                if (Array.isArray(parsed)) {
+                  convertedValue = parsed.map(val => {
+                    const num = parseFloat(val)
+                    return isNaN(num) ? 0 : num
+                  })
+                } else {
+                  const num = parseFloat(parsed)
+                  convertedValue = [isNaN(num) ? 0 : num]
+                }
+              } catch {
+                const num = parseFloat(operation.value)
+                convertedValue = [isNaN(num) ? 0 : num]
+              }
+            } else {
+              const num = parseFloat(operation.value)
+              convertedValue = [isNaN(num) ? 0 : num]
+            }
+            break
+
+          case 'array_array_number':
+            // Handle array of arrays of numbers (timeWindows)
+            if (Array.isArray(operation.value)) {
+              convertedValue = operation.value.map(item => {
+                if (Array.isArray(item)) {
+                  return item.map(val => {
+                    const num = parseFloat(val)
+                    return isNaN(num) ? 0 : num
+                  })
+                }
+                return [parseFloat(item) || 0]
+              })
+            } else if (
+              typeof operation.value === 'string' &&
+              operation.value !== ''
+            ) {
+              try {
+                const parsed = JSON.parse(operation.value)
+                if (Array.isArray(parsed)) {
+                  convertedValue = parsed.map(item => {
+                    if (Array.isArray(item)) {
+                      return item.map(val => parseFloat(val) || 0)
+                    }
+                    return [parseFloat(item) || 0]
+                  })
+                } else {
+                  convertedValue = [[parseFloat(parsed) || 0]]
+                }
+              } catch {
+                convertedValue = [[parseFloat(operation.value) || 0]]
+              }
+            } else {
+              convertedValue = [[parseFloat(operation.value) || 0]]
+            }
+            break
+
+          default:
+            // For unknown types, keep original value
+            convertedValue = operation.value
         }
       }
 
