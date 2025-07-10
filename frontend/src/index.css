@@ -1,52 +1,115 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: oklch(1 0 0);
-  --color-foreground: oklch(0.145 0 0);
-  --color-card: oklch(1 0 0);
-  --color-card-foreground: oklch(0.145 0 0);
-  --color-popover: oklch(1 0 0);
-  --color-popover-foreground: oklch(0.145 0 0);
-  --color-primary: oklch(0.205 0 0);
-  --color-primary-foreground: oklch(0.985 0 0);
-  --color-secondary: oklch(0.959 0 0);
-  --color-secondary-foreground: oklch(0.205 0 0);
-  --color-muted: oklch(0.959 0 0);
-  --color-muted-foreground: oklch(0.461 0 0);
-  --color-accent: oklch(0.959 0 0);
-  --color-accent-foreground: oklch(0.205 0 0);
-  --color-destructive: oklch(0.602 0.2 29);
-  --color-destructive-foreground: oklch(0.985 0 0);
-  --color-border: oklch(0.9 0 0);
-  --color-input: oklch(0.9 0 0);
-  --color-ring: oklch(0.205 0 0);
+  /* Decoy Brand Colors (OKLCH format) */
+  --color-primary: oklch(65% 0.15 160);     /* Decoy Green #00d084 */
+  --color-background: oklch(22% 0.02 260);   /* Dark Navy #1e293b */
+  --color-foreground: oklch(95% 0.01 270);   /* White */
+  --color-muted: oklch(45% 0.01 260);        /* Gray */
+  
+  /* Card and surface colors */
+  --color-card: oklch(25% 0.02 260);         /* Slightly lighter than background */
+  --color-card-foreground: oklch(95% 0.01 270);
+  --color-popover: oklch(25% 0.02 260);
+  --color-popover-foreground: oklch(95% 0.01 270);
+  
+  /* Primary brand colors */
+  --color-primary-foreground: oklch(15% 0.01 260);
+  
+  /* Secondary colors */
+  --color-secondary: oklch(30% 0.02 260);
+  --color-secondary-foreground: oklch(95% 0.01 270);
+  
+  /* Muted colors */
+  --color-muted-foreground: oklch(65% 0.01 260);
+  
+  /* Accent colors */
+  --color-accent: oklch(30% 0.02 260);
+  --color-accent-foreground: oklch(95% 0.01 270);
+  
+  /* Semantic colors */
+  --color-success: oklch(60% 0.12 145);      /* Green */
+  --color-warning: oklch(70% 0.15 65);       /* Amber */
+  --color-destructive: oklch(58% 0.15 25);   /* Red */
+  --color-destructive-foreground: oklch(95% 0.01 270);
+  --color-info: oklch(65% 0.12 250);         /* Blue */
+  
+  /* Border and input colors */
+  --color-border: oklch(35% 0.02 260);
+  --color-input: oklch(35% 0.02 260);
+  --color-ring: oklch(65% 0.15 160);         /* Focus ring using primary color */
+  
+  /* Component tokens */
   --radius: 0.5rem;
 }
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant light (&:is(.light *));
 
-.dark {
-  --color-background: oklch(0.145 0 0);
-  --color-foreground: oklch(0.985 0 0);
-  --color-card: oklch(0.145 0 0);
-  --color-card-foreground: oklch(0.985 0 0);
-  --color-popover: oklch(0.145 0 0);
-  --color-popover-foreground: oklch(0.985 0 0);
-  --color-primary: oklch(0.985 0 0);
-  --color-primary-foreground: oklch(0.205 0 0);
-  --color-secondary: oklch(0.159 0 0);
-  --color-secondary-foreground: oklch(0.985 0 0);
-  --color-muted: oklch(0.159 0 0);
-  --color-muted-foreground: oklch(0.649 0 0);
-  --color-accent: oklch(0.159 0 0);
-  --color-accent-foreground: oklch(0.985 0 0);
-  --color-destructive: oklch(0.306 0.2 29);
-  --color-destructive-foreground: oklch(0.985 0 0);
-  --color-border: oklch(0.159 0 0);
-  --color-input: oklch(0.159 0 0);
-  --color-ring: oklch(0.839 0 0);
+/* Light theme variant - less commonly used */
+.light {
+  --color-background: oklch(98% 0.01 270);   /* Light background */
+  --color-foreground: oklch(15% 0.01 260);   /* Dark text */
+  --color-card: oklch(95% 0.01 270);
+  --color-card-foreground: oklch(15% 0.01 260);
+  --color-popover: oklch(95% 0.01 270);
+  --color-popover-foreground: oklch(15% 0.01 260);
+  
+  /* Primary stays Decoy green in light theme */
+  --color-primary: oklch(65% 0.15 160);      /* Decoy Green */
+  --color-primary-foreground: oklch(95% 0.01 270);
+  
+  /* Adjusted secondary colors for light theme */
+  --color-secondary: oklch(90% 0.01 260);
+  --color-secondary-foreground: oklch(25% 0.01 260);
+  
+  /* Muted colors adjusted for light theme */
+  --color-muted: oklch(90% 0.01 260);
+  --color-muted-foreground: oklch(45% 0.01 260);
+  
+  /* Accent colors for light theme */
+  --color-accent: oklch(90% 0.01 260);
+  --color-accent-foreground: oklch(25% 0.01 260);
+  
+  /* Semantic colors maintain contrast in light theme */
+  --color-success: oklch(50% 0.12 145);
+  --color-warning: oklch(55% 0.15 65);
+  --color-destructive: oklch(55% 0.15 25);
+  --color-info: oklch(55% 0.12 250);
+  
+  /* Border and input colors for light theme */
+  --color-border: oklch(85% 0.01 260);
+  --color-input: oklch(85% 0.01 260);
+  --color-ring: oklch(65% 0.15 160);         /* Focus ring remains primary color */
 }
 
+/* Design System Standards */
+
+/* Typography System - Only 4 sizes and 2 weights allowed */
+@theme {
+  --font-size-sm: 0.875rem;    /* 14px - Small text, labels */
+  --font-size-base: 1rem;      /* 16px - Body text */
+  --font-size-lg: 1.125rem;    /* 18px - Subheadings */
+  --font-size-xl: 1.25rem;     /* 20px - Main headings */
+  
+  --font-weight-normal: 400;   /* Body text, regular content */
+  --font-weight-semibold: 600; /* Headings, emphasis */
+}
+
+/* 8pt Grid Spacing System - All values divisible by 4 */
+@theme {
+  --spacing-1: 0.25rem;  /* 4px */
+  --spacing-2: 0.5rem;   /* 8px */
+  --spacing-3: 0.75rem;  /* 12px */
+  --spacing-4: 1rem;     /* 16px */
+  --spacing-6: 1.5rem;   /* 24px */
+  --spacing-8: 2rem;     /* 32px */
+  --spacing-12: 3rem;    /* 48px */
+  --spacing-16: 4rem;    /* 64px */
+  --spacing-20: 5rem;    /* 80px */
+  --spacing-24: 6rem;    /* 96px */
+}
+
+/* Base Element Styles */
 * {
   border-color: var(--color-border);
 }
@@ -54,4 +117,23 @@
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.5;
+}
+
+/* Data attribute support for theme switching */
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* Focus management for accessibility */
+:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
 }

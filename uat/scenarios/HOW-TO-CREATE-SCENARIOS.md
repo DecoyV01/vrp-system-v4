@@ -6,6 +6,24 @@
 
 All UAT test scenarios are stored as **`.js` files** in the `scenarios/` directory. Each file represents a complete test workflow for a specific feature.
 
+## 🗺️ Master Locations System UAT Scenarios
+
+### Available Location Testing Scenarios
+
+1. **location-crud.cjs** - Core CRUD operations for locations
+2. **location-map.cjs** - Map interface and geocoding functionality  
+3. **location-bulk.cjs** - Bulk operations and CSV import/export
+4. **location-search.cjs** - Search and filtering capabilities
+5. **location-integration.cjs** - Integration with vehicles/jobs/shipments
+
+### Location Testing Best Practices
+
+- **Geocoding Testing**: Always test with real addresses for geocoding validation
+- **Multi-View Testing**: Verify functionality across map, grid, and list views
+- **Performance Testing**: Include tests with large datasets (1000+ locations)
+- **Integration Testing**: Test location references in vehicles, jobs, and shipments
+- **Error Scenarios**: Test invalid coordinates, failed geocoding, and network errors
+
 ## 🔧 Step-by-Step Process
 
 ### 1. Create the Scenario File

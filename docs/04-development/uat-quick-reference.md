@@ -25,6 +25,9 @@ Use these phrases with Claude Code for automatic UAT execution:
 - **login-flow.cjs** - Complete login and logout testing
 - **vehicle-crud.cjs** - Vehicle CRUD operations testing  
 - **error-handling.cjs** - Error handling and validation testing
+- **location-crud.cjs** - Master Locations System CRUD testing
+- **location-map.cjs** - Location map interface and geocoding testing
+- **location-bulk.cjs** - Location bulk operations testing
 
 ## Manual Commands (Alternative)
 

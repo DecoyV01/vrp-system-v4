@@ -38,6 +38,12 @@ This directory contains comprehensive production readiness documentation for the
    - User experience and recovery patterns
    - Monitoring and debugging approaches
 
+6. **[Master Locations System Documentation](./04-development/master-locations-user-guide.md)**
+   - Comprehensive user guide for location management
+   - Developer integration patterns and API reference
+   - Performance optimization and troubleshooting
+   - Migration guide from coordinate-based system
+
 ## Documentation Structure
 
 ```
@@ -55,8 +61,13 @@ docs/
 ├── 03-integration/         # API docs, integration guides, webhooks
 │   └── api-specifications.md        # ✅ Production readiness
 ├── 04-development/         # Dev guidelines, patterns, optimization
-│   ├── functional-requirements.md  # ✅ Production readiness
-│   ├── error-handling-patterns.md  # ✅ Production readiness
+│   ├── functional-requirements.md      # ✅ Production readiness
+│   ├── error-handling-patterns.md      # ✅ Production readiness
+│   ├── master-locations-user-guide.md  # ✅ Location system user guide
+│   ├── master-locations-integration-guide.md  # ✅ Developer API reference
+│   ├── master-locations-troubleshooting.md    # ✅ Troubleshooting guide
+│   ├── master-locations-performance.md        # ✅ Performance optimization
+│   ├── master-locations-migration.md          # ✅ Migration procedures
 │   ├── development-workflow.md
 │   ├── table-editor.md
 │   ├── uat-quick-reference.md
