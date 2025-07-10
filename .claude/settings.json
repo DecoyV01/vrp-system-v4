@@ -7,6 +7,10 @@
           {
             "type": "command",
             "command": "/mnt/c/projects/vrp-system/v4/.claude/hooks/optimization-check.sh"
+          },
+          {
+            "type": "command",
+            "command": "/mnt/c/projects/vrp-system/v4/.claude/hooks/contract-creation-validation.sh"
           }
         ]
       }

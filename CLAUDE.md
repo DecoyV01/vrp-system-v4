@@ -30,6 +30,15 @@ npm run lint                    # ESLint check - ALWAYS run before commits
 npm run type-check             # TypeScript validation
 ```
 
+### Tech Contract Validation
+```bash
+# Automatic validation on git commits via .claude/hooks/optimization-check.sh
+# Manual validation of specific files:
+bash .claude/hooks/optimization-check.sh path/to/file.tsx
+# View validation logs:
+ls logs/contract-validation-*.log
+```
+
 ### Convex Backend
 ```bash
 npx convex dev                 # Start development backend  
@@ -176,6 +185,48 @@ mcp__playwright__fill <selector> <value>  # Fill forms
 mcp__playwright__screenshot <name>     # Capture state
 ```
 
+## Tech Contract Validation System
+
+### Workflow Overview
+The VRP System implements a comprehensive tech contract validation system that ensures code meets PRD requirements:
+
+1. **PRD Creation**: Business requirements documented in `docs/10-pr/`
+2. **Tech Contracts**: Technical specifications in `docs/11-tech-contracts/` (JSON format)
+3. **Automated Validation**: Git hooks validate code against contracts
+4. **Iterative Development**: Failed validations block commits with specific guidance
+5. **Compliance Tracking**: Validation logs stored in `logs/contract-validation-*.log`
+
+### Tech Contract Structure
+```json
+{
+  "contractId": "TBL-CSV-001",
+  "prdName": "table-editor-bulk", 
+  "name": "CSV Import File Upload and Validation",
+  "appliesTo": {
+    "filePatterns": [".*CSVImport.*", ".*csv.*import.*"],
+    "excludePatterns": [".*test.*", ".*spec.*"]
+  },
+  "requirements": {
+    "fileSizeLimit": {
+      "validation": {
+        "codePatterns": ["50.*MB", "52428800"],
+        "required": true
+      }
+    }
+  }
+}
+```
+
+### Contract Validation Process
+- **Automatic**: Runs on every git commit via `.claude/hooks/optimization-check.sh`
+- **Manual**: `bash .claude/hooks/optimization-check.sh <file-path>`
+- **Reporting**: Detailed logs with pass/fail status for each requirement
+- **Blocking**: Failed validations prevent commits until resolved
+
+### Existing Contracts
+- **TBL-CSV-001**: CSV Import functionality validation
+- **LOC-GEO-001**: Master Locations geocoding integration
+
 ## Key Development Guidelines
 
 ### Code Patterns
@@ -183,9 +234,11 @@ mcp__playwright__screenshot <name>     # Capture state
 - Leverage comprehensive schema and validation systems  
 - Prefer editing existing files over creating new ones
 - Follow shadcn/ui component patterns and Tailwind CSS v4
+- **Tech Contracts**: Ensure implementation matches PRD-derived contracts
 
 ### Testing
 - **Frontend**: Run `npm run lint` and `npm run type-check`
+- **Tech Contracts**: Automatic validation on commits via hooks
 - **UAT**: Use natural language UAT commands for integration testing
 - **Backend**: Convex built-in validation and real-time error handling
 
@@ -193,12 +246,17 @@ mcp__playwright__screenshot <name>     # Capture state
 - **Frontend**: @frontend/src/ with components/, hooks/, pages/, stores/
 - **Backend**: @convex/ with separate files per entity (projects.ts, vehicles.ts, etc.)
 - **Documentation**: @memory-bank/documentation/ with 9 organized categories
+- **Tech Contracts**: @docs/11-tech-contracts/ with JSON contract files
+- **Validation Logs**: @logs/ with timestamped validation results
 
 ## Important Files Reference
 
 - **@convex/schema.ts**: Complete VRP database schema and relationships
 - **@frontend/src/components/table-editor/TableEditor.tsx**: Main table editing component  
 - **@frontend/src/hooks/useVRPData.ts**: Comprehensive VRP data hooks (338 lines)
+- **@.claude/hooks/optimization-check.sh**: LEVER framework + tech contract validation
+- **@docs/11-tech-contracts/**: Technical contract specifications (JSON)
+- **@logs/contract-validation-*.log**: Validation result logs
 - **@docs/architecture.md**: Detailed system architecture
 - **@docs/development-workflow.md**: Complete development commands and workflow
 - **@docs/table-editor.md**: Table editor architecture and bulk operations

@@ -1,42 +1,42 @@
 @import "tailwindcss";
 
 @theme {
-  /* Decoy Brand Colors (OKLCH format) */
+  /* Professional Light Theme Colors - matching the target mockup */
   --color-primary: oklch(65% 0.15 160);     /* Decoy Green #00d084 */
-  --color-background: oklch(22% 0.02 260);   /* Dark Navy #1e293b */
-  --color-foreground: oklch(95% 0.01 270);   /* White */
-  --color-muted: oklch(45% 0.01 260);        /* Gray */
+  --color-background: oklch(98% 0.01 270);   /* Clean White #fafafa */
+  --color-foreground: oklch(15% 0.01 260);   /* Dark Text #1f2937 */
+  --color-muted: oklch(95% 0.01 260);        /* Light Gray #f3f4f6 */
   
-  /* Card and surface colors */
-  --color-card: oklch(25% 0.02 260);         /* Slightly lighter than background */
-  --color-card-foreground: oklch(95% 0.01 270);
-  --color-popover: oklch(25% 0.02 260);
-  --color-popover-foreground: oklch(95% 0.01 270);
+  /* Card and surface colors - clean whites and grays */
+  --color-card: oklch(100% 0 0);             /* Pure White #ffffff */
+  --color-card-foreground: oklch(15% 0.01 260); /* Dark text on white */
+  --color-popover: oklch(100% 0 0);          /* Pure White */
+  --color-popover-foreground: oklch(15% 0.01 260);
   
   /* Primary brand colors */
-  --color-primary-foreground: oklch(15% 0.01 260);
+  --color-primary-foreground: oklch(100% 0 0); /* White text on green */
   
-  /* Secondary colors */
-  --color-secondary: oklch(30% 0.02 260);
-  --color-secondary-foreground: oklch(95% 0.01 270);
+  /* Secondary colors - subtle grays */
+  --color-secondary: oklch(95% 0.01 260);    /* Light gray #f3f4f6 */
+  --color-secondary-foreground: oklch(25% 0.01 260); /* Dark gray text */
   
-  /* Muted colors */
-  --color-muted-foreground: oklch(65% 0.01 260);
+  /* Muted colors for subtle text */
+  --color-muted-foreground: oklch(45% 0.01 260); /* Medium gray #6b7280 */
   
   /* Accent colors */
-  --color-accent: oklch(30% 0.02 260);
-  --color-accent-foreground: oklch(95% 0.01 270);
+  --color-accent: oklch(95% 0.01 260);       /* Light gray accent */
+  --color-accent-foreground: oklch(25% 0.01 260);
   
-  /* Semantic colors */
-  --color-success: oklch(60% 0.12 145);      /* Green */
-  --color-warning: oklch(70% 0.15 65);       /* Amber */
-  --color-destructive: oklch(58% 0.15 25);   /* Red */
-  --color-destructive-foreground: oklch(95% 0.01 270);
-  --color-info: oklch(65% 0.12 250);         /* Blue */
+  /* Semantic colors - professional and clear */
+  --color-success: oklch(60% 0.12 145);      /* Green #10b981 */
+  --color-warning: oklch(70% 0.15 65);       /* Amber #f59e0b */
+  --color-destructive: oklch(58% 0.15 25);   /* Red #ef4444 */
+  --color-destructive-foreground: oklch(100% 0 0); /* White text */
+  --color-info: oklch(65% 0.12 250);         /* Blue #3b82f6 */
   
-  /* Border and input colors */
-  --color-border: oklch(35% 0.02 260);
-  --color-input: oklch(35% 0.02 260);
+  /* Border and input colors - clean and subtle */
+  --color-border: oklch(85% 0.01 260);       /* Light gray border #e5e7eb */
+  --color-input: oklch(85% 0.01 260);        /* Input background */
   --color-ring: oklch(65% 0.15 160);         /* Focus ring using primary color */
   
   /* Component tokens */

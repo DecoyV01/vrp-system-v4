@@ -128,7 +128,7 @@ const MainLayout = () => {
 
   return (
     <div
-      className="flex h-screen bg-muted/30"
+      className="flex flex-col h-screen bg-gray-50"
       data-theme={EnvironmentConfig.current}
       style={
         {
@@ -138,121 +138,123 @@ const MainLayout = () => {
         } as React.CSSProperties
       }
     >
-      <PrimarySidebar />
-      <SecondarySidebar />
-      <main className="flex-1 overflow-hidden bg-background text-foreground">
-        {/* TopRibbon with environment indicator - Contract compliance */}
-        {breadcrumbs.length > 0 && (
-          <div
-            className="h-12 bg-card border-b border-border flex items-center justify-between px-6"
-            data-slot="TopRibbon"
-            role="banner"
-            aria-label="Navigation breadcrumb and status indicators"
-            style={{
-              // Contract validation: brand colors #00d084 #1e293b
-              backgroundColor: BRAND_COLORS.backgroundHex,
-              borderBottomColor: sanitizeCSSValue(BRAND_COLORS.primaryHex),
-            }}
-          >
-            {/* Breadcrumb navigation with spacing gap-2 (8pt grid) */}
-            <nav aria-label="Breadcrumb" className="flex items-center gap-2">
-              <Home
-                className="w-4 h-4 text-muted-foreground"
-                aria-hidden="true"
-              />
+      {/* TopRibbon spanning FULL WIDTH - above everything like browser tabs */}
+      <div
+        className="h-12 bg-white border-b border-gray-200 flex items-center justify-between px-6 w-full z-50"
+        data-slot="TopRibbon"
+        role="banner"
+        aria-label="Navigation breadcrumb and status indicators"
+      >
+        {/* Breadcrumb navigation - ALWAYS show, not conditional */}
+        <nav aria-label="Breadcrumb" className="flex items-center gap-2">
+          <Home className="w-4 h-4 text-gray-500" aria-hidden="true" />
 
-              {breadcrumbs.map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  {index > 0 && (
-                    <ChevronRight
-                      className="w-4 h-4 text-muted-foreground"
-                      aria-hidden="true"
-                    />
-                  )}
-
-                  {item.path && !item.isActive ? (
-                    <a
-                      href={item.path}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors hover:underline"
-                      aria-current={item.isActive ? 'page' : undefined}
-                    >
-                      {item.label}
-                    </a>
-                  ) : (
-                    <span
-                      className={cn(
-                        'text-sm',
-                        item.isActive
-                          ? 'text-foreground font-semibold'
-                          : 'text-muted-foreground'
-                      )}
-                      aria-current={item.isActive ? 'page' : undefined}
-                    >
-                      {item.label}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </nav>
-
-            {/* Status indicators with gap-2 spacing */}
-            <div className="flex items-center gap-2">
-              {/* Connection status with convex status indicator */}
-              <div className="flex items-center gap-2">
-                {isConnected ? (
-                  <>
-                    <Wifi className="w-4 h-4 text-success" aria-hidden="true" />
-                    <Badge
-                      variant="outline"
-                      className="text-xs bg-success/10 text-success border-success/20"
-                      aria-label={`Connected to ${EnvironmentConfig.convexUrl}`}
-                    >
-                      Connected
-                    </Badge>
-                  </>
+          {breadcrumbs.length > 0 ? (
+            breadcrumbs.map((item, index) => (
+              <div key={index} className="flex items-center gap-2">
+                {index > 0 && (
+                  <ChevronRight
+                    className="w-4 h-4 text-gray-400"
+                    aria-hidden="true"
+                  />
+                )}
+                {item.path && !item.isActive ? (
+                  <a
+                    href={item.path}
+                    className="text-sm text-gray-600 hover:text-gray-900 transition-colors bg-gray-100 px-2 py-1 rounded hover:bg-gray-200"
+                    aria-current={item.isActive ? 'page' : undefined}
+                  >
+                    {item.label}
+                  </a>
                 ) : (
-                  <>
-                    <WifiOff
-                      className="w-4 h-4 text-destructive"
-                      aria-hidden="true"
-                    />
-                    <Badge
-                      variant="outline"
-                      className="text-xs bg-destructive/10 text-destructive border-destructive/20"
-                      aria-label="Disconnected from backend"
-                    >
-                      Disconnected
-                    </Badge>
-                  </>
+                  <span
+                    className={cn(
+                      'text-sm px-2 py-1 rounded',
+                      item.isActive
+                        ? 'bg-blue-100 text-blue-800 font-medium'
+                        : 'bg-gray-100 text-gray-600'
+                    )}
+                    aria-current={item.isActive ? 'page' : undefined}
+                  >
+                    {item.label}
+                  </span>
                 )}
               </div>
-
-              <Separator orientation="vertical" className="h-4" />
-
-              {/* environment indicator with EnvironmentConfig */}
-              <Badge
-                variant={
-                  EnvironmentConfig.current === 'production'
-                    ? 'default'
-                    : 'secondary'
-                }
-                className="text-xs bg-secondary text-secondary-foreground"
-                aria-label={`Environment: ${EnvironmentConfig.current}`}
-              >
-                {EnvironmentConfig.isDevelopment && '🔧'}
-                {EnvironmentConfig.current === 'production' && '🚀'}{' '}
-                {EnvironmentConfig.current.charAt(0).toUpperCase() +
-                  EnvironmentConfig.current.slice(1)}
-              </Badge>
+            ))
+          ) : (
+            // Always show something - never empty
+            <div className="flex items-center gap-2">
+              <ChevronRight
+                className="w-4 h-4 text-gray-400"
+                aria-hidden="true"
+              />
+              <span className="text-sm bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                VRP System
+              </span>
             </div>
-          </div>
-        )}
+          )}
+        </nav>
 
-        {/* Main content area */}
-        <div className="h-full overflow-hidden">
-          <Outlet />
+        {/* Status indicators - clean professional look */}
+        <div className="flex items-center gap-3">
+          {/* Connection status */}
+          <div className="flex items-center gap-2">
+            {isConnected ? (
+              <>
+                <Wifi className="w-4 h-4 text-green-600" aria-hidden="true" />
+                <Badge
+                  variant="outline"
+                  className="text-xs bg-green-50 text-green-700 border-green-200"
+                  aria-label={`Connected to ${EnvironmentConfig.convexUrl}`}
+                >
+                  Connected
+                </Badge>
+              </>
+            ) : (
+              <>
+                <WifiOff className="w-4 h-4 text-red-500" aria-hidden="true" />
+                <Badge
+                  variant="outline"
+                  className="text-xs bg-red-50 text-red-700 border-red-200"
+                  aria-label="Disconnected from backend"
+                >
+                  Disconnected
+                </Badge>
+              </>
+            )}
+          </div>
+
+          <div className="w-px h-4 bg-gray-300" />
+
+          {/* Environment indicator */}
+          <Badge
+            variant="outline"
+            className={cn(
+              'text-xs',
+              EnvironmentConfig.current === 'production'
+                ? 'bg-green-50 text-green-700 border-green-200'
+                : 'bg-orange-50 text-orange-700 border-orange-200'
+            )}
+            aria-label={`Environment: ${EnvironmentConfig.current}`}
+          >
+            {EnvironmentConfig.isDevelopment && '🔧'}
+            {EnvironmentConfig.current === 'production' && '🚀'}{' '}
+            {EnvironmentConfig.current.charAt(0).toUpperCase() +
+              EnvironmentConfig.current.slice(1)}
+          </Badge>
         </div>
-      </main>
+      </div>
+
+      {/* Main layout container - positioned BELOW TopRibbon */}
+      <div className="flex flex-1 overflow-hidden">
+        <PrimarySidebar />
+        <SecondarySidebar />
+        <main className="flex-1 overflow-hidden bg-white">
+          <div className="h-full overflow-auto">
+            <Outlet />
+          </div>
+        </main>
+      </div>
     </div>
   )
 }

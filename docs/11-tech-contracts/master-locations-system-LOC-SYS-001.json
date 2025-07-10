@@ -1,0 +1,402 @@
+{
+  "contractId": "LOC-SYS-001",
+  "prdName": "master-locations-system",
+  "name": "Master Locations System - Complete Implementation",
+  "prdReference": "docs/10-pr/2025-01-10-master-locations-system-prd.md",
+  "appliesTo": {
+    "filePatterns": [
+      ".*locations.*",
+      ".*LocationsPage.*",
+      ".*LocationMap.*",
+      ".*LocationForm.*",
+      ".*geocod.*",
+      ".*mapbox.*",
+      ".*cluster.*",
+      "convex/locations\\.ts",
+      "convex/locationClusters\\.ts"
+    ],
+    "excludePatterns": [".*test.*", ".*spec.*", ".*\\.d\\.ts$"]
+  },
+  "requirements": {
+    "functionOrganization": {
+      "description": "Convex backend functions follow model-API separation for locations",
+      "validation": {
+        "codePatterns": [
+          "export.*=.*query\\(",
+          "export.*=.*mutation\\(",
+          "getCurrentUser\\(",
+          "api\\.locations\\.",
+          "api\\.locationClusters\\."
+        ],
+        "required": true
+      }
+    },
+    "queryOptimization": {
+      "description": "Location queries use proper indexing and pagination",
+      "validation": {
+        "codePatterns": [
+          "\\.withIndex\\(",
+          "by_project",
+          "by_dataset",
+          "by_type",
+          "by_cluster",
+          "\\.paginate\\("
+        ],
+        "required": true
+      }
+    },
+    "securityValidation": {
+      "description": "Location operations enforce project ownership and authorization",
+      "validation": {
+        "codePatterns": [
+          "throw new Error\\(.*[Uu]nauthorized",
+          "getUserIdentity\\(\\)",
+          "project.*owner",
+          "access.*control"
+        ],
+        "required": true
+      }
+    },
+    "dataValidation": {
+      "description": "Location data validation using schema and custom validators",
+      "validation": {
+        "codePatterns": [
+          "validateLocation",
+          "validateCoordinates",
+          "schema\\.parse\\(",
+          "v\\.[a-zA-Z]+\\(\\)",
+          "locationLat.*-90.*90",
+          "locationLon.*-180.*180"
+        ],
+        "required": true
+      }
+    },
+    "geocodingIntegration": {
+      "description": "Mapbox geocoding API integration with error handling and caching",
+      "validation": {
+        "codePatterns": [
+          "mapbox.*geocod",
+          "forward.*geocod",
+          "reverse.*geocod",
+          "batch.*geocod",
+          "geocod.*cache",
+          "rate.*limit",
+          "api.*key"
+        ],
+        "required": true
+      }
+    },
+    "locationMasterReference": {
+      "description": "Enforce location master as single source of truth for coordinates",
+      "validation": {
+        "codePatterns": [
+          "locationId.*reference",
+          "master.*location",
+          "referential.*integrity",
+          "location.*exists",
+          "cascade.*delete",
+          "dependency.*check"
+        ],
+        "required": true
+      }
+    },
+    "clusteringAlgorithms": {
+      "description": "Location clustering with geographic and semantic grouping",
+      "validation": {
+        "codePatterns": [
+          "cluster.*algorithm",
+          "kmeans|dbscan|geographic",
+          "cluster.*radius",
+          "cluster.*center",
+          "bounding.*box",
+          "member.*count"
+        ],
+        "required": true
+      }
+    },
+    "typographyCompliance": {
+      "description": "Typography follows 4-size, 2-weight design system",
+      "validation": {
+        "codePatterns": [
+          "text-(sm|base|lg|xl)",
+          "font-(normal|semibold)"
+        ],
+        "forbidden": [
+          "text-(xs|2xl|3xl|4xl|5xl|6xl|7xl|8xl|9xl)",
+          "font-(thin|light|medium|bold|extrabold|black)"
+        ],
+        "required": true
+      }
+    },
+    "spacingCompliance": {
+      "description": "Spacing follows 8pt grid system (4px increments)",
+      "validation": {
+        "codePatterns": [
+          "[pm]-(2|4|6|8|12|16|20|24|32|40|48|56|64)",
+          "gap-(2|4|6|8|12|16|20|24|32|40|48|56|64)",
+          "space-(2|4|6|8|12|16|20|24|32|40|48|56|64)"
+        ],
+        "forbidden": [
+          "[pm]-(1|3|5|7|9|10|11|13|14|15|17|18|19)",
+          "gap-(1|3|5|7|9|10|11|13|14|15|17|18|19)",
+          "space-(1|3|5|7|9|10|11|13|14|15|17|18|19)"
+        ],
+        "required": true
+      }
+    },
+    "colorCompliance": {
+      "description": "Colors follow 60/30/10 design system with semantic tokens",
+      "validation": {
+        "codePatterns": [
+          "bg-background",
+          "text-foreground",
+          "bg-primary",
+          "text-primary",
+          "bg-secondary",
+          "text-secondary",
+          "bg-muted",
+          "text-muted-foreground",
+          "border-border"
+        ],
+        "forbidden": [
+          "bg-\\[#[0-9a-fA-F]+\\]",
+          "text-\\[#[0-9a-fA-F]+\\]",
+          "border-\\[#[0-9a-fA-F]+\\]"
+        ],
+        "required": true
+      }
+    },
+    "componentCompliance": {
+      "description": "UI components use shadcn/ui with proper data-slot patterns",
+      "validation": {
+        "codePatterns": [
+          "data-slot",
+          "import.*@/components/ui/",
+          "Dialog",
+          "Button",
+          "Table",
+          "Input",
+          "Select",
+          "Card",
+          "Sheet",
+          "Popover"
+        ],
+        "required": true
+      }
+    },
+    "mapIntegration": {
+      "description": "Mapbox GL integration with responsive design and performance optimization",
+      "validation": {
+        "codePatterns": [
+          "mapbox-gl",
+          "Map.*component",
+          "marker",
+          "cluster",
+          "zoom.*level",
+          "viewport",
+          "fitBounds",
+          "mobile.*responsive"
+        ],
+        "required": true
+      }
+    },
+    "realTimeUpdates": {
+      "description": "Real-time location updates using Convex subscriptions",
+      "validation": {
+        "codePatterns": [
+          "useQuery.*locations",
+          "useMutation.*location",
+          "real.*time",
+          "subscription",
+          "live.*update",
+          "optimistic.*update",
+          "websocket"
+        ],
+        "required": true
+      }
+    },
+    "bulkOperations": {
+      "description": "Efficient bulk operations for import/export and batch editing",
+      "validation": {
+        "codePatterns": [
+          "bulk.*import",
+          "bulk.*edit",
+          "bulk.*delete",
+          "csv.*import",
+          "batch.*process",
+          "progress.*indicator",
+          "10000.*location"
+        ],
+        "required": true
+      }
+    },
+    "performanceOptimization": {
+      "description": "Performance optimization for large datasets with virtualization",
+      "validation": {
+        "codePatterns": [
+          "virtual.*scroll",
+          "lazy.*load",
+          "pagination",
+          "debounce",
+          "throttle",
+          "memo",
+          "50000.*location",
+          "render.*performance"
+        ],
+        "required": true
+      }
+    },
+    "inputValidation": {
+      "description": "Comprehensive input validation and sanitization",
+      "validation": {
+        "codePatterns": [
+          "validateLocation",
+          "validateAddress",
+          "validateCoordinates",
+          "sanitize",
+          "escape",
+          "trim",
+          "normalize"
+        ],
+        "required": true
+      }
+    },
+    "errorHandling": {
+      "description": "Robust error handling for geocoding and API failures",
+      "validation": {
+        "codePatterns": [
+          "try.*catch",
+          "throw new Error\\(",
+          "error.*handling",
+          "geocod.*error",
+          "api.*error",
+          "fallback",
+          "retry.*logic"
+        ],
+        "required": true
+      }
+    },
+    "typeSafety": {
+      "description": "Strong TypeScript typing throughout location system",
+      "validation": {
+        "codePatterns": [
+          ": Location",
+          ": LocationCluster",
+          ": GeocodingResult",
+          "interface Location",
+          "type LocationType",
+          "Id<'locations'>",
+          "Id<'locationClusters'>"
+        ],
+        "forbidden": [
+          ": any",
+          "as any",
+          "@ts-ignore",
+          "@ts-nocheck"
+        ],
+        "required": true
+      }
+    },
+    "accessibilityCompliance": {
+      "description": "WCAG compliance for location management interfaces",
+      "validation": {
+        "codePatterns": [
+          "aria-label",
+          "aria-describedby",
+          "role=",
+          "alt=",
+          "title=",
+          "tabindex",
+          "keyboard.*navigation",
+          "screen.*reader"
+        ],
+        "required": true
+      }
+    }
+  },
+  "performance": {
+    "maxLocations": 50000,
+    "maxGeocodingTime": 5000,
+    "maxRenderTime": 2000,
+    "maxSearchTime": 300,
+    "maxMapLoadTime": 3000,
+    "maxBulkImportTime": 300000,
+    "targetFPS": 60
+  },
+  "dependencies": {
+    "required": [
+      "mapbox-gl",
+      "convex",
+      "@convex-dev/auth",
+      "react",
+      "typescript",
+      "tailwindcss"
+    ],
+    "optional": [
+      "react-map-gl",
+      "supercluster",
+      "react-virtualized",
+      "react-window"
+    ]
+  },
+  "designSystemCompliance": {
+    "components": [
+      "Button",
+      "Input", 
+      "Select",
+      "Card",
+      "Dialog",
+      "Sheet",
+      "Table",
+      "Badge",
+      "Popover",
+      "Separator"
+    ],
+    "typography": [
+      "text-sm",
+      "text-base", 
+      "text-lg",
+      "text-xl",
+      "font-normal",
+      "font-semibold"
+    ],
+    "spacing": [
+      "p-2", "p-4", "p-6", "p-8",
+      "m-2", "m-4", "m-6", "m-8", 
+      "gap-2", "gap-4", "gap-6", "gap-8",
+      "space-x-4", "space-y-4"
+    ],
+    "colors": [
+      "bg-background",
+      "text-foreground",
+      "bg-primary",
+      "text-primary",
+      "bg-secondary", 
+      "text-secondary",
+      "bg-muted",
+      "text-muted-foreground",
+      "border-border"
+    ]
+  },
+  "testingRequirements": {
+    "unitTests": {
+      "coverage": 85,
+      "patterns": ["*.test.ts", "*.test.tsx"]
+    },
+    "integrationTests": {
+      "scenarios": [
+        "location-creation-workflow",
+        "geocoding-integration",
+        "bulk-operations",
+        "map-interactions"
+      ]
+    },
+    "e2eTests": {
+      "scenarios": [
+        "complete-location-management-workflow",
+        "location-clustering-and-visualization",
+        "real-time-collaboration"
+      ]
+    }
+  }
+}

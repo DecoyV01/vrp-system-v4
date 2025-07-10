@@ -1,0 +1,334 @@
+{
+  "_comment": "Tech Contract: Frontend Design System Brand Implementation - Auto-validated by contract-creation-validation.sh hook",
+  "contractId": "FRT-BRAND-001",
+  "prdName": "frontend-design-enhancement",
+  "name": "Frontend Design System Brand Implementation",
+  "prdReference": "docs/10-pr/2025-01-10-frontend-design-enhancement-prd.md#10-15",
+  "appliesTo": {
+    "filePatterns": [
+      ".*components/.*\\.(ts|tsx)$",
+      ".*layout/.*\\.(ts|tsx)$", 
+      ".*styles/.*\\.css$",
+      ".*globals\\.css$",
+      ".*ThemeProvider.*",
+      ".*TopRibbon.*",
+      ".*PrimarySidebar.*",
+      ".*theme.*\\.(ts|tsx)$"
+    ],
+    "excludePatterns": [".*test.*", ".*spec.*", ".*\\.d\\.ts$", ".*stories.*"]
+  },
+  "requirements": {
+    "brandColorImplementation": {
+      "description": "Decoy brand colors implemented using OKLCH format with CSS custom properties",
+      "validation": {
+        "codePatterns": [
+          "oklch\\(65%.*0\\.15.*160\\)",
+          "oklch\\(22%.*0\\.02.*260\\)",
+          "--color-primary.*oklch",
+          "--color-background.*oklch",
+          "#00d084",
+          "#1e293b"
+        ],
+        "required": true
+      }
+    },
+    "typographyCompliance": {
+      "description": "Strict 4-size typography system with only 2 font weights",
+      "validation": {
+        "codePatterns": [
+          "text-(sm|base|lg|xl)",
+          "font-(normal|semibold)"
+        ],
+        "forbidden": [
+          "text-(xs|2xl|3xl|4xl|5xl|6xl)",
+          "font-(bold|medium|light|thin|black|extrabold)"
+        ],
+        "required": true
+      }
+    },
+    "spacingCompliance": {
+      "description": "8pt grid system - all spacing values divisible by 8 or 4",
+      "validation": {
+        "codePatterns": [
+          "[pm]-(2|4|6|8|12|16|20|24)",
+          "gap-(2|4|6|8|12|16|20|24)",
+          "space-(2|4|6|8|12|16|20|24)"
+        ],
+        "forbidden": [
+          "[pm]-(1|3|5|7|9|10|11|13|14|15|17|18|19|21|22|23)",
+          "gap-(1|3|5|7|9|10|11|13|14|15)",
+          "space-(1|3|5|7|9|10|11)"
+        ],
+        "required": true
+      }
+    },
+    "colorDistributionRule": {
+      "description": "60/30/10 color distribution with proper semantic usage",
+      "validation": {
+        "codePatterns": [
+          "bg-background",
+          "bg-card",
+          "text-foreground",
+          "text-muted-foreground",
+          "bg-primary",
+          "text-primary"
+        ],
+        "forbidden": [
+          "bg-\\[#[0-9a-fA-F]+\\]",
+          "text-\\[#[0-9a-fA-F]+\\]",
+          "border-\\[#[0-9a-fA-F]+\\]"
+        ],
+        "required": true
+      }
+    },
+    "componentStandards": {
+      "description": "shadcn/ui components with proper data-slot attributes and CVA patterns",
+      "validation": {
+        "codePatterns": [
+          "data-slot",
+          "Dialog",
+          "Button",
+          "Input",
+          "Select",
+          "Card",
+          "Popover",
+          "VariantProps",
+          "cva\\("
+        ],
+        "required": true
+      }
+    },
+    "themeProviderImplementation": {
+      "description": "Enhanced ThemeProvider with environment detection and OKLCH color support",
+      "validation": {
+        "codePatterns": [
+          "ThemeProvider",
+          "data-theme",
+          "useTheme",
+          "defaultTheme.*dark",
+          "storageKey",
+          "document\\.documentElement\\.setAttribute.*data-theme"
+        ],
+        "required": true
+      }
+    },
+    "topRibbonComponent": {
+      "description": "Professional top navigation ribbon with environment awareness",
+      "validation": {
+        "codePatterns": [
+          "TopRibbon",
+          "environment.*indicator",
+          "connectionStatus",
+          "convex.*status",
+          "EnvironmentConfig",
+          "mild-elephant-70"
+        ],
+        "required": true
+      }
+    },
+    "sidebarEnhancement": {
+      "description": "Primary sidebar with modern iconography and collapsible functionality",
+      "validation": {
+        "codePatterns": [
+          "PrimarySidebar",
+          "collapsible",
+          "activeItem",
+          "navigationItems",
+          "sidebar.*collapsed",
+          "20px.*24px.*icon"
+        ],
+        "required": true
+      }
+    },
+    "performanceOptimization": {
+      "description": "Theme switching and component rendering performance targets met",
+      "validation": {
+        "codePatterns": [
+          "performance\\.mark",
+          "performance\\.measure",
+          "requestAnimationFrame",
+          "React\\.memo",
+          "useMemo",
+          "lazy\\("
+        ],
+        "required": false
+      }
+    },
+    "accessibilityCompliance": {
+      "description": "WCAG 2.1 AA compliance with proper focus management and contrast ratios",
+      "validation": {
+        "codePatterns": [
+          "aria-label",
+          "aria-describedby",
+          "role=",
+          "tabIndex",
+          "focus.*management",
+          "contrast.*ratio.*4\\.5",
+          "WCAG.*AA"
+        ],
+        "required": true
+      }
+    },
+    "cspCompliance": {
+      "description": "Content Security Policy compliance for design assets",
+      "validation": {
+        "codePatterns": [
+          "Content.*Security.*Policy",
+          "style-src.*self",
+          "font-src.*self",
+          "validateThemeInput",
+          "sanitizeCSSValue"
+        ],
+        "required": true
+      }
+    },
+    "errorHandling": {
+      "description": "Robust error handling for theme system with fallback mechanisms",
+      "validation": {
+        "codePatterns": [
+          "handleThemeError",
+          "ThemeError",
+          "toast\\.error",
+          "fallback.*default.*theme",
+          "try.*catch.*theme"
+        ],
+        "required": true
+      }
+    },
+    "bundleOptimization": {
+      "description": "Bundle size optimization with code splitting and CSS purging",
+      "validation": {
+        "codePatterns": [
+          "manualChunks",
+          "design-system.*chunk",
+          "safelist",
+          "blocklist",
+          "tailwindcss.*purge",
+          "cssnano"
+        ],
+        "required": true
+      }
+    }
+  },
+  "performance": {
+    "themeApplicationTime": 200,
+    "iconRenderingTime": 50,
+    "navigationResponseTime": 100,
+    "maxCSSBundleSize": 150,
+    "maxIconBundleSize": 50,
+    "maxComponentBundleSize": 100,
+    "accessibilityScore": 100,
+    "contrastRatio": 4.5
+  },
+  "dependencies": {
+    "required": [
+      "tailwindcss",
+      "@tailwindcss/typography", 
+      "class-variance-authority",
+      "clsx",
+      "tailwind-merge"
+    ],
+    "optional": [
+      "autoprefixer",
+      "cssnano",
+      "@storybook/addon-a11y",
+      "chromatic"
+    ]
+  },
+  "designSystemCompliance": {
+    "typography": {
+      "allowedSizes": ["text-sm", "text-base", "text-lg", "text-xl"],
+      "allowedWeights": ["font-normal", "font-semibold"],
+      "forbiddenSizes": ["text-xs", "text-2xl", "text-3xl", "text-4xl", "text-5xl", "text-6xl"],
+      "forbiddenWeights": ["font-bold", "font-medium", "font-light", "font-thin", "font-black"]
+    },
+    "spacing": {
+      "allowedValues": ["p-2", "p-4", "p-6", "p-8", "p-12", "p-16", "p-20", "p-24", "gap-2", "gap-4", "gap-6", "gap-8", "gap-12", "gap-16"],
+      "forbiddenValues": ["p-1", "p-3", "p-5", "p-7", "p-9", "p-10", "p-11", "gap-1", "gap-3", "gap-5", "gap-7", "gap-9", "gap-10"]
+    },
+    "colors": {
+      "primaryColors": ["bg-primary", "text-primary", "border-primary"],
+      "neutralColors": ["bg-background", "bg-card", "bg-muted", "border"],
+      "complementaryColors": ["text-foreground", "text-muted-foreground", "bg-secondary"],
+      "semanticColors": ["bg-destructive", "bg-success", "bg-warning", "bg-info"],
+      "forbiddenPatterns": ["bg-\\[#.*\\]", "text-\\[#.*\\]", "border-\\[#.*\\]"]
+    },
+    "components": {
+      "requiredComponents": ["Dialog", "Button", "Input", "Select", "Card", "Popover", "Badge"],
+      "dataAttributes": ["data-slot", "data-theme"],
+      "variantPatterns": ["VariantProps", "cva\\(", "cn\\("]
+    }
+  },
+  "testing": {
+    "unitTests": {
+      "typographyValidation": "validates only approved font sizes and weights are used",
+      "spacingValidation": "ensures all spacing follows 8pt grid system",
+      "colorDistribution": "validates 60/30/10 color distribution rule",
+      "componentCompliance": "checks shadcn/ui component usage patterns"
+    },
+    "integrationTests": {
+      "themeSwitch": "theme switching works within 200ms performance target",
+      "responsiveDesign": "layout adapts properly across desktop, tablet, mobile",
+      "environmentDetection": "correctly identifies and displays environment indicators",
+      "accessibility": "meets WCAG 2.1 AA standards with automated axe-core testing"
+    },
+    "visualRegressionTests": {
+      "chromatic": "automated visual regression testing across theme variants",
+      "crossBrowser": "consistent appearance across Chrome, Firefox, Safari, Edge",
+      "contrastValidation": "automated color contrast ratio validation"
+    }
+  },
+  "security": {
+    "csp": {
+      "styleSource": ["'self'", "'unsafe-inline'"],
+      "fontSource": ["'self'", "data:"],
+      "imageSource": ["'self'", "data:", "blob:"]
+    },
+    "inputValidation": {
+      "themeValues": "validateThemeInput function prevents injection",
+      "cssValues": "sanitizeCSSValue function sanitizes custom properties", 
+      "colorValues": "OKLCH format validation prevents malicious CSS"
+    },
+    "errorReporting": {
+      "noSensitiveData": "error reports exclude sensitive user information",
+      "secureLogging": "theme errors logged without exposing system details"
+    }
+  },
+  "monitoring": {
+    "performanceMetrics": [
+      "theme-switch-duration",
+      "bundle-size",
+      "icon-render-time",
+      "navigation-response-time"
+    ],
+    "accessibilityMetrics": [
+      "contrast-violations",
+      "focus-management-errors",
+      "aria-label-coverage"
+    ],
+    "usageAnalytics": [
+      "theme-selection-patterns", 
+      "component-usage-frequency",
+      "error-rate-by-component"
+    ]
+  },
+  "deployment": {
+    "buildOptimization": {
+      "cssMinification": "cssnano with design system optimizations",
+      "bundleChunking": "separate chunks for design-system, theme-provider, icons",
+      "assetCaching": "theme CSS cached with stale-while-revalidate strategy"
+    },
+    "environmentConfig": {
+      "production": {
+        "preloadThemes": true,
+        "enableAnimations": true,
+        "debugMode": false
+      },
+      "development": {
+        "preloadThemes": false,
+        "showDesignSystemGrid": true,
+        "highlightColorViolations": true
+      }
+    }
+  }
+}

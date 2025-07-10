@@ -1,0 +1,68 @@
+{
+  "contractId": "TBL-CSV-001",
+  "prdName": "table-editor-bulk",
+  "name": "CSV Import File Upload and Validation",
+  "prdReference": "docs/10-pr/2025-07-04-table-editor-bulk-operations-prd.md#2.1",
+  "appliesTo": {
+    "filePatterns": [".*CSVImport.*", ".*csv.*import.*", ".*bulk.*import.*"],
+    "excludePatterns": [".*test.*", ".*spec.*", ".*\\.d\\.ts$"]
+  },
+  "requirements": {
+    "fileSizeLimit": {
+      "description": "50MB file size limit validation",
+      "validation": {
+        "codePatterns": ["50.*MB", "52428800", "maxSize.*50", "fileSize.*50", "\\.size.*1024.*1024", "file\\.size"],
+        "required": true
+      }
+    },
+    "previewRows": {
+      "description": "Preview first 20 rows",
+      "validation": {
+        "codePatterns": ["preview.*20", "\\.slice\\(0,\\s*20\\)", "first.*20.*row", "maxRows.*20", "PreviewTable", "parseResult\\.data"],
+        "required": true
+      }
+    },
+    "dragDrop": {
+      "description": "Drag and drop interface",
+      "validation": {
+        "codePatterns": ["onDrop", "react-dropzone", "drag.*drop", "dropzone", "drop.*zone", "FileUploadZone", "upload.*drag"],
+        "required": true
+      }
+    },
+    "realTimeValidation": {
+      "description": "Real-time file validation",
+      "validation": {
+        "codePatterns": ["validation", "validate.*file", "file.*validation", "real.*time.*valid", "ValidationDisplay", "parseResult"],
+        "required": true
+      }
+    },
+    "progressTracking": {
+      "description": "Progress indicators for import operations",
+      "validation": {
+        "codePatterns": ["progress", "loading", "import.*progress", "upload.*progress", "ProgressTracker", "Progress.*value", "state\\.progress"],
+        "required": true
+      }
+    },
+    "errorReporting": {
+      "description": "Detailed error reporting for import failures",
+      "validation": {
+        "codePatterns": ["error.*report", "validation.*error", "import.*error", "error.*display", "state\\.error", "Alert.*variant.*destructive"],
+        "required": true
+      }
+    }
+  },
+  "performance": {
+    "maxFileSize": 52428800,
+    "maxPreviewRows": 20,
+    "maxValidationTime": 5000
+  },
+  "dependencies": {
+    "required": ["papaparse"],
+    "optional": ["react-dropzone"]
+  },
+  "designSystemCompliance": {
+    "components": ["Dialog", "Button", "Progress", "Table"],
+    "typography": ["text-sm", "text-base", "text-lg"],
+    "spacing": ["p-4", "p-6", "gap-4", "gap-6"]
+  }
+}

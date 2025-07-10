@@ -1,0 +1,3 @@
+# This file ensures the 11-tech-contracts directory is tracked in git
+# Tech contracts are JSON files that define validation rules for code implementation
+# File naming convention: [prd-name]-[contract-id].json

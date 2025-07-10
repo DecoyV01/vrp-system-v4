@@ -1,0 +1,68 @@
+{
+  "contractId": "LOC-GEO-001",
+  "prdName": "master-locations",
+  "name": "Master Locations Geocoding Integration",
+  "prdReference": "docs/10-pr/2025-01-10-master-locations-system-prd.md#2.1",
+  "appliesTo": {
+    "filePatterns": [".*locations.*", ".*geocod.*", ".*mapbox.*", ".*location.*form.*"],
+    "excludePatterns": [".*test.*", ".*spec.*", ".*\\.d\\.ts$"]
+  },
+  "requirements": {
+    "geocodingIntegration": {
+      "description": "Mapbox geocoding API integration for address-to-coordinate conversion",
+      "validation": {
+        "codePatterns": ["mapbox", "geocod", "address.*to.*coord", "Geocoding.*API"],
+        "required": true
+      }
+    },
+    "addressValidation": {
+      "description": "Address input validation before geocoding",
+      "validation": {
+        "codePatterns": ["address.*validation", "validate.*address", "address.*check"],
+        "required": true
+      }
+    },
+    "coordinateValidation": {
+      "description": "Coordinate range validation (-90 to 90 lat, -180 to 180 lon)",
+      "validation": {
+        "codePatterns": ["lat.*-90.*90", "lon.*-180.*180", "coordinate.*validation", "validateCoordinates"],
+        "required": true
+      }
+    },
+    "qualityScoring": {
+      "description": "Geocoding quality assessment and scoring",
+      "validation": {
+        "codePatterns": ["quality.*score", "geocod.*quality", "confidence.*score", "exact.*interpolated.*approximate"],
+        "required": true
+      }
+    },
+    "referentialIntegrity": {
+      "description": "Location reference validation in vehicles, jobs, and shipments",
+      "validation": {
+        "codePatterns": ["locationId.*validation", "reference.*validation", "location.*exists", "validateLocationReference"],
+        "required": true
+      }
+    },
+    "performanceOptimization": {
+      "description": "Clustering and virtualization for large location datasets (50k+ locations)",
+      "validation": {
+        "codePatterns": ["virtual", "cluster", "pagination", "lazy.*load", "50000.*location"],
+        "required": false
+      }
+    }
+  },
+  "performance": {
+    "maxLocations": 50000,
+    "maxGeocodingTime": 5000,
+    "maxRenderTime": 2000
+  },
+  "dependencies": {
+    "required": ["mapbox-gl"],
+    "optional": ["react-map-gl", "supercluster"]
+  },
+  "designSystemCompliance": {
+    "components": ["Input", "Button", "Select", "Card"],
+    "typography": ["text-sm", "text-base"],
+    "spacing": ["p-4", "gap-4", "m-4"]
+  }
+}

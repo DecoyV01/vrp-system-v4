@@ -678,7 +678,160 @@ This PRD outlines comprehensive bulk import/export and editing capabilities that
 
 ---
 
-*Document Status: Draft*
+## Technical Architecture Appendix
+
+### Component Design Architecture
+
+The bulk operations features will be implemented using a modular component architecture that extends the existing TableEditor system:
+
+```typescript
+// Primary component hierarchy
+<TableEditor>
+  <TableEditorToolbar>
+    <BulkOperationsToolbar />
+  </TableEditorToolbar>
+  <BulkSelectionProvider>
+    <Table>
+      <BulkSelectionColumn />
+      <DataColumns />
+    </Table>
+  </BulkSelectionProvider>
+</TableEditor>
+
+// Modal components for bulk operations
+<CSVImportModal />      // Contract: TBL-CSV-001
+<CSVExportModal />      // Contract: TBL-EXPORT-002  
+<BulkEditModal />       // Contract: TBL-BULK-003
+```
+
+### API Contracts
+
+```typescript
+interface CSVImportAPI {
+  // Contract TBL-CSV-001 requirements
+  maxFileSize: 52428800;        // 50MB limit
+  previewRows: 20;              // First 20 rows
+  supportedFormats: ['.csv'];
+  dragDropSupport: true;
+  realTimeValidation: true;
+  progressTracking: true;
+}
+
+interface BulkEditAPI {
+  // Contract TBL-BULK-003 requirements
+  maxSelectedRecords: 1000;
+  supportedOperations: ['set', 'clear', 'increment'];
+  previewChanges: true;
+  undoSupport: true;
+}
+```
+
+### Performance Requirements
+
+- **File Processing**: Max 10 seconds for 50MB CSV files
+- **Bulk Operations**: Max 1000 selected records
+- **UI Responsiveness**: <100ms response for selection operations
+- **Memory Usage**: <100MB for bulk operations
+
+### Tech Contract References
+
+#### **Contract TBL-CSV-001**: CSV Import File Upload and Validation
+- **PRD Section**: 2.1 File Upload and Validation (lines 92-101)
+- **Contract File**: `docs/11-tech-contracts/table-editor-bulk-TBL-CSV-001.json`
+- **Implementation Files**: `frontend/src/components/table-editor/bulk-operations/import/CSVImportModal.tsx`
+- **Key Requirements**:
+  - ✅ 50MB file size limit validation
+  - ✅ Preview first 20 rows
+  - ✅ Drag and drop interface
+  - ✅ Real-time file validation
+  - ✅ Progress tracking during import
+  - ✅ Detailed error reporting
+
+#### **Contract TBL-EXPORT-002**: CSV Export with Filtering Options  
+- **PRD Section**: 3.1 Flexible Export Options (lines 129-141)
+- **Implementation Files**: `frontend/src/components/table-editor/bulk-operations/export/CSVExportModal.tsx`
+- **Key Requirements**:
+  - Export all, filtered, or selected records
+  - Multiple format support (CSV, Excel, JSON)
+  - Include/exclude system fields
+  - Background processing for large exports
+
+#### **Contract TBL-BULK-003**: Multi-Row Selection and Bulk Editing
+- **PRD Section**: 4.1-4.2 Multi-Row Selection and Bulk Field Updates (lines 163-184)
+- **Implementation Files**: `frontend/src/components/table-editor/bulk-operations/edit/BulkEditModal.tsx`
+- **Key Requirements**:
+  - Max 1000 selected records
+  - Field selection for updates
+  - Preview changes before applying
+  - Undo/rollback capability
+
+### Implementation Plan
+
+#### **Phase 1: CSV Import Foundation** (Week 1)
+- **Contract**: TBL-CSV-001
+- **Tasks**:
+  - Create FileUploadZone component with drag-drop
+  - Implement 50MB file size validation
+  - Add CSV parsing with papaparse
+  - Build preview table with 20-row limit
+  - Add progress tracking for file processing
+
+#### **Phase 2: Export Functionality** (Week 2)
+- **Contract**: TBL-EXPORT-002  
+- **Tasks**:
+  - Create export modal with format selection
+  - Implement filtered/selected record export
+  - Add background processing for large datasets
+  - Create download management system
+
+#### **Phase 3: Bulk Editing** (Week 3)
+- **Contract**: TBL-BULK-003
+- **Tasks**:
+  - Implement multi-row selection with checkboxes
+  - Create bulk edit modal with field selection
+  - Add preview functionality
+  - Implement undo/rollback system
+
+#### **Phase 4: Integration & Testing** (Week 4)
+- **All Contracts**: Integration testing
+- **Tasks**:
+  - End-to-end workflow testing
+  - Performance optimization
+  - Error handling refinement
+  - Documentation completion
+
+### Validation Workflow
+
+The implementation will be validated using the automated tech contract system:
+
+1. **Developer commits code** → `.claude/hooks/optimization-check.sh` runs automatically
+2. **Hook validates** against applicable contracts in `docs/11-tech-contracts/`
+3. **If violations found** → Commit blocked with specific guidance
+4. **Developer fixes issues** → Commits again until all contracts satisfied
+5. **All contracts pass** → Code changes are allowed
+
+### Dependencies and Integration
+
+#### **External Dependencies**
+- `papaparse@5.x`: CSV parsing and generation
+- `react-dropzone@14.x`: Drag-and-drop file upload
+- `@types/papaparse`: TypeScript definitions
+
+#### **Internal Dependencies**  
+- `@/components/ui/*`: shadcn/ui component library
+- `@/hooks/useVRPData.ts`: VRP data management hooks
+- `convex/api`: Backend mutation and query functions
+
+#### **Design System Compliance**
+All components must follow the established design system guidelines:
+- **Typography**: Only `text-sm`, `text-base`, `text-lg`, `text-xl`
+- **Spacing**: 8pt grid (`p-4`, `p-6`, `p-8`, `gap-4`, etc.)
+- **Colors**: 60/30/10 rule (60% neutral, 30% complementary, 10% accent)
+- **Components**: Use shadcn/ui components exclusively
+
+---
+
+*Document Status: Enhanced with Technical Contracts*
 *Next Review: Weekly during implementation*
 *Stakeholders: Product Team, Engineering Team, UX Team*
-*Last Updated: July 4, 2025*
+*Last Updated: January 10, 2025*

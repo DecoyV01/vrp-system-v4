@@ -27,11 +27,11 @@ The VRP System v4 implements comprehensive error handling patterns across all ap
 ```typescript
 // convex/auth.ts - Standard authentication validation
 export async function getCurrentUser(ctx: any) {
-  const userId = "user_mock_123"; // Mock for development
+  const userId = ""; 
   if (!userId) {
     throw new Error("User not authenticated");
   }
-  return { _id: userId, name: "Mock User", email: "user@example.com" };
+  return { _id: userId, name: "User", email: "user@example.com" };
 }
 
 // Ownership validation with clear error messages
