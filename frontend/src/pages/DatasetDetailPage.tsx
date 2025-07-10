@@ -310,6 +310,14 @@ const DatasetDetailPage = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate(`/projects/${projectId}/scenarios/${scenarioId}/datasets/${datasetId}/locations`)}
+          >
+            <MapPin className="w-4 h-4 mr-2" />
+            Master Locations
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">

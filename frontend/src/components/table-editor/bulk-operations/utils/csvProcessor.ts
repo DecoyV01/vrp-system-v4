@@ -4,7 +4,9 @@ import type {
   ParseError, 
   ParseWarning, 
   ColumnMapping,
-  VRPTableType 
+  VRPTableType,
+  LocationAwareParseResult,
+  LocationAwareColumnMapping
 } from '../types/shared.types'
 
 interface CSVProcessorOptions {
@@ -82,6 +84,25 @@ export class CSVProcessor {
     tableType: VRPTableType,
     options?: Partial<CSVProcessorOptions>
   ): Promise<CSVParseResult> {
+    const result = await this.parseCSVWithLocationAnalysis(file, tableType, options)
+    // Return legacy format for backward compatibility
+    return {
+      data: result.data,
+      headers: result.headers,
+      errors: result.errors,
+      warnings: result.warnings,
+      meta: result.meta
+    }
+  }
+
+  /**
+   * Parse CSV file with enhanced location analysis
+   */
+  async parseCSVWithLocationAnalysis(
+    file: File, 
+    tableType: VRPTableType,
+    options?: Partial<CSVProcessorOptions>
+  ): Promise<LocationAwareParseResult> {
     const processingOptions = { ...this.defaultOptions, ...options }
 
     // Validate file first
@@ -113,7 +134,7 @@ export class CSVProcessor {
       Papa.parse(file, {
         ...processingOptions,
         complete: (results) => {
-          const processedResult = this.processParseResults(results, tableType)
+          const processedResult = this.processParseResultsWithLocationAnalysis(results, tableType)
           resolve(processedResult)
         },
         error: (error) => {
@@ -131,6 +152,16 @@ export class CSVProcessor {
               columnCount: 0,
               encoding: processingOptions.encoding || 'UTF-8',
               size: file.size
+            },
+            locationAnalysis: {
+              hasCoordinateColumns: false,
+              hasAddressColumns: false,
+              hasLocationIdColumns: false,
+              coordinateColumns: [],
+              addressColumns: [],
+              locationIdColumns: [],
+              needsLocationResolution: false,
+              estimatedLocationCount: 0
             }
           })
         }
@@ -142,6 +173,20 @@ export class CSVProcessor {
    * Process Papa Parse results into our format
    */
   private processParseResults(results: Papa.ParseResult<any>, tableType: VRPTableType): CSVParseResult {
+    const locationAwareResult = this.processParseResultsWithLocationAnalysis(results, tableType)
+    return {
+      data: locationAwareResult.data,
+      headers: locationAwareResult.headers,
+      errors: locationAwareResult.errors,
+      warnings: locationAwareResult.warnings,
+      meta: locationAwareResult.meta
+    }
+  }
+
+  /**
+   * Process Papa Parse results with location analysis
+   */
+  private processParseResultsWithLocationAnalysis(results: Papa.ParseResult<any>, tableType: VRPTableType): LocationAwareParseResult {
     const errors: ParseError[] = []
     const warnings: ParseWarning[] = []
     
@@ -190,6 +235,9 @@ export class CSVProcessor {
     errors.push(...tableValidation.errors)
     warnings.push(...tableValidation.warnings)
 
+    // Perform location analysis
+    const locationAnalysis = this.analyzeLocationColumns(headers, cleanedData)
+
     return {
       data: cleanedData,
       headers,
@@ -200,7 +248,8 @@ export class CSVProcessor {
         columnCount: headers.length,
         encoding: 'UTF-8',
         size: results.meta.size || 0
-      }
+      },
+      locationAnalysis
     }
   }
 
@@ -529,14 +578,140 @@ export class CSVProcessor {
   }
 
   /**
+   * Analyze location-related columns in the CSV
+   */
+  private analyzeLocationColumns(headers: string[], data: any[]): LocationAwareParseResult['locationAnalysis'] {
+    const analysis = {
+      hasCoordinateColumns: false,
+      hasAddressColumns: false,
+      hasLocationIdColumns: false,
+      coordinateColumns: [] as string[],
+      addressColumns: [] as string[],
+      locationIdColumns: [] as string[],
+      needsLocationResolution: false,
+      estimatedLocationCount: 0
+    }
+
+    // Identify coordinate columns
+    const coordinatePatterns = [
+      /^(location)?(lat|latitude)$/i,
+      /^(location)?(lon|lng|longitude)$/i,
+      /^(start|end)(lat|latitude)$/i,
+      /^(start|end)(lon|lng|longitude)$/i
+    ]
+
+    headers.forEach(header => {
+      const normalized = header.toLowerCase().replace(/[_\s-]/g, '')
+      
+      if (coordinatePatterns.some(pattern => pattern.test(normalized))) {
+        analysis.coordinateColumns.push(header)
+        analysis.hasCoordinateColumns = true
+      }
+    })
+
+    // Identify address columns
+    const addressPatterns = [
+      /^address$/i,
+      /^(location)?address$/i,
+      /^(start|end)address$/i,
+      /^street$/i,
+      /^fulladdress$/i
+    ]
+
+    headers.forEach(header => {
+      const normalized = header.toLowerCase().replace(/[_\s-]/g, '')
+      
+      if (addressPatterns.some(pattern => pattern.test(normalized))) {
+        analysis.addressColumns.push(header)
+        analysis.hasAddressColumns = true
+      }
+    })
+
+    // Identify location ID columns
+    const locationIdPatterns = [
+      /^(location)?id$/i,
+      /^locationid$/i,
+      /^(start|end)locationid$/i
+    ]
+
+    headers.forEach(header => {
+      const normalized = header.toLowerCase().replace(/[_\s-]/g, '')
+      
+      if (locationIdPatterns.some(pattern => pattern.test(normalized))) {
+        analysis.locationIdColumns.push(header)
+        analysis.hasLocationIdColumns = true
+      }
+    })
+
+    // Determine if location resolution is needed
+    analysis.needsLocationResolution = 
+      (analysis.hasCoordinateColumns || analysis.hasAddressColumns) && 
+      !analysis.hasLocationIdColumns
+
+    // Estimate unique location count
+    if (analysis.needsLocationResolution && data.length > 0) {
+      const uniqueLocations = new Set<string>()
+      
+      data.forEach(row => {
+        // Create location signature from available data
+        let signature = ''
+        
+        if (analysis.hasAddressColumns) {
+          const addresses = analysis.addressColumns
+            .map(col => row[col])
+            .filter(addr => addr && typeof addr === 'string')
+            .join('|')
+          signature += addresses
+        }
+        
+        if (analysis.hasCoordinateColumns) {
+          const coords = analysis.coordinateColumns
+            .map(col => row[col])
+            .filter(coord => coord != null && !isNaN(parseFloat(coord)))
+            .join(',')
+          signature += coords
+        }
+        
+        if (signature) {
+          uniqueLocations.add(signature.toLowerCase())
+        }
+      })
+      
+      analysis.estimatedLocationCount = uniqueLocations.size
+    }
+
+    return analysis
+  }
+
+  /**
    * Generate column mapping suggestions
    */
   generateColumnMappings(csvHeaders: string[], tableType: VRPTableType): ColumnMapping[] {
+    const mappings = this.generateLocationAwareColumnMappings(csvHeaders, tableType)
+    // Convert to legacy format
+    return mappings.map(mapping => ({
+      sourceColumn: mapping.sourceColumn,
+      targetField: mapping.targetField,
+      confidence: mapping.confidence,
+      dataType: mapping.dataType === 'location_id' ? 'string' : mapping.dataType === 'coordinate' ? 'number' : mapping.dataType,
+      isRequired: mapping.isRequired,
+      validation: mapping.validation
+    }))
+  }
+
+  /**
+   * Generate location-aware column mapping suggestions
+   */
+  generateLocationAwareColumnMappings(csvHeaders: string[], tableType: VRPTableType): LocationAwareColumnMapping[] {
     const mappings: ColumnMapping[] = []
     const schemaFields = this.getSchemaFields(tableType)
 
     csvHeaders.forEach(csvHeader => {
       const bestMatch = this.findBestFieldMatch(csvHeader, schemaFields)
+      
+      // Determine if this is a location-related field
+      const isLocationReference = this.isLocationReferenceField(csvHeader, tableType)
+      const requiresLocationResolution = this.requiresLocationResolution(csvHeader, tableType)
       
       mappings.push({
         sourceColumn: csvHeader,
@@ -544,6 +719,8 @@ export class CSVProcessor {
         confidence: bestMatch.confidence,
         dataType: bestMatch.dataType,
         isRequired: bestMatch.isRequired,
+        isLocationReference,
+        requiresLocationResolution,
         validation: bestMatch.validation
       })
     })
@@ -666,6 +843,55 @@ export class CSVProcessor {
   }
 
   /**
+   * Check if field is a location reference that should be mapped to locationId
+   */
+  private isLocationReferenceField(csvHeader: string, tableType: VRPTableType): boolean {
+    const normalized = csvHeader.toLowerCase().replace(/[_\s-]/g, '')
+    
+    // Direct location ID patterns
+    if (/^(location)?id$/i.test(normalized) || /^locationid$/i.test(normalized)) {
+      return true
+    }
+    
+    // Table-specific location references
+    switch (tableType) {
+      case 'vehicles':
+        return /^(start|end)locationid$/i.test(normalized)
+      case 'jobs':
+        return /^locationid$/i.test(normalized)
+      case 'shipments':
+        return /^(pickup|delivery)locationid$/i.test(normalized)
+      default:
+        return false
+    }
+  }
+
+  /**
+   * Check if field requires location resolution (coordinates/address -> locationId)
+   */
+  private requiresLocationResolution(csvHeader: string, tableType: VRPTableType): boolean {
+    const normalized = csvHeader.toLowerCase().replace(/[_\s-]/g, '')
+    
+    // Coordinate fields that should be resolved to location references
+    const coordinatePatterns = [
+      /^(location)?(lat|latitude)$/i,
+      /^(location)?(lon|lng|longitude)$/i,
+      /^(start|end)(lat|latitude)$/i,
+      /^(start|end)(lon|lng|longitude)$/i
+    ]
+    
+    // Address fields that should be resolved to location references
+    const addressPatterns = [
+      /^address$/i,
+      /^(location)?address$/i,
+      /^(start|end)address$/i
+    ]
+    
+    return coordinatePatterns.some(pattern => pattern.test(normalized)) ||
+           addressPatterns.some(pattern => pattern.test(normalized))
+  }
+
+  /**
    * Calculate edit distance between strings
    */
   private getEditDistance(str1: string, str2: string): number {
@@ -694,6 +920,100 @@ export class CSVProcessor {
     }
 
     return matrix[str2.length][str1.length]
+  }
+
+  /**
+   * Transform data for export with location master support
+   */
+  transformDataForExport(
+    data: any[], 
+    tableType: VRPTableType, 
+    locations: any[] = [], 
+    options: {
+      includeLocationNames?: boolean
+      includeCoordinates?: boolean  
+      includeAddresses?: boolean
+      legacyFormat?: boolean
+    } = {}
+  ): any[] {
+    const {
+      includeLocationNames = true,
+      includeCoordinates = false,
+      includeAddresses = false,
+      legacyFormat = false
+    } = options
+
+    return data.map(row => {
+      const transformedRow = { ...row }
+
+      // Transform location references based on table type
+      switch (tableType) {
+        case 'jobs':
+          if (row.locationId) {
+            const location = locations.find(loc => loc._id === row.locationId)
+            if (location) {
+              if (includeLocationNames) transformedRow.locationName = location.name
+              if (includeCoordinates || legacyFormat) {
+                transformedRow.locationLat = location.locationLat
+                transformedRow.locationLon = location.locationLon
+              }
+              if (includeAddresses && location.address) transformedRow.locationAddress = location.address
+              if (legacyFormat) delete transformedRow.locationId
+            }
+          }
+          break
+
+        case 'vehicles':
+          // Start location
+          if (row.startLocationId) {
+            const startLocation = locations.find(loc => loc._id === row.startLocationId)
+            if (startLocation) {
+              if (includeLocationNames) transformedRow.startLocationName = startLocation.name
+              if (includeCoordinates || legacyFormat) {
+                transformedRow.startLat = startLocation.locationLat
+                transformedRow.startLon = startLocation.locationLon
+              }
+              if (includeAddresses && startLocation.address) transformedRow.startLocationAddress = startLocation.address
+              if (legacyFormat) delete transformedRow.startLocationId
+            }
+          }
+          // End location
+          if (row.endLocationId) {
+            const endLocation = locations.find(loc => loc._id === row.endLocationId)
+            if (endLocation) {
+              if (includeLocationNames) transformedRow.endLocationName = endLocation.name
+              if (includeCoordinates || legacyFormat) {
+                transformedRow.endLat = endLocation.locationLat
+                transformedRow.endLon = endLocation.locationLon
+              }
+              if (includeAddresses && endLocation.address) transformedRow.endLocationAddress = endLocation.address
+              if (legacyFormat) delete transformedRow.endLocationId
+            }
+          }
+          break
+      }
+
+      // Remove system fields for CSV export
+      const systemFields = ['_id', '_creationTime', 'updatedAt', 'optimizerId', 'projectId', 'scenarioId', 'datasetId']
+      systemFields.forEach(field => delete transformedRow[field])
+
+      return transformedRow
+    })
+  }
+
+  /**
+   * Check if data contains location references
+   */
+  static hasLocationReferences(data: any[], tableType: VRPTableType): boolean {
+    if (!data.length) return false
+    const firstRow = data[0]
+    
+    switch (tableType) {
+      case 'jobs': return !!firstRow.locationId
+      case 'vehicles': return !!(firstRow.startLocationId || firstRow.endLocationId)
+      case 'routes': return !!firstRow.locationId
+      default: return false
+    }
   }
 }
 

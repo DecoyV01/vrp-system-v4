@@ -1,4 +1,5 @@
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
+import type * as mapboxgl from 'mapbox-gl'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -13,6 +14,26 @@ import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Separator } from '@/components/ui/separator'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
+import {
   Plus,
   Trash2,
   Edit2,
@@ -23,6 +44,9 @@ import {
   Play,
   Zap,
   Map,
+  MapPin,
+  ChevronsUpDown,
+  AlertTriangle,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
@@ -33,6 +57,8 @@ import {
 } from './bulk-operations'
 import { CSVExportModal } from './bulk-operations/export/CSVExportModal'
 import { BulkEditModal } from './bulk-operations/edit/BulkEditModal'
+import { LocationForm } from '@/components/locations/LocationForm'
+import { cn } from '@/lib/utils'
 import type { Id } from '../../../../convex/_generated/dataModel'
 import {
   useVehicles,
@@ -51,44 +77,132 @@ import {
   useDeleteLocation,
   useOptimizationWorkflow,
 } from '@/hooks/useVRPData'
+import { logError, VRPErrorHandling } from '@/utils/errorHandling'
+
+// Helper functions for map functionality with location master support
+const getCoordinates = (
+  item: any,
+  tableType: string,
+  locations?: any[]
+): [number, number] | null => {
+  if (tableType === 'locations') {
+    return item.locationLat &&
+      item.locationLon &&
+      typeof item.locationLat === 'number' &&
+      typeof item.locationLon === 'number'
+      ? [item.locationLon, item.locationLat]
+      : null
+  } else if (tableType === 'jobs') {
+    // Try location reference first
+    if (item.locationId && locations) {
+      const location = locations.find(loc => loc._id === item.locationId)
+      if (location?.locationLat && location?.locationLon) {
+        return [location.locationLon, location.locationLat]
+      }
+    }
+    // Fall back to legacy coordinates
+    return item.locationLat &&
+      item.locationLon &&
+      typeof item.locationLat === 'number' &&
+      typeof item.locationLon === 'number'
+      ? [item.locationLon, item.locationLat]
+      : null
+  } else if (tableType === 'vehicles') {
+    // Try start location reference first
+    if (item.startLocationId && locations) {
+      const location = locations.find(loc => loc._id === item.startLocationId)
+      if (location?.locationLat && location?.locationLon) {
+        return [location.locationLon, location.locationLat]
+      }
+    }
+    // Fall back to legacy coordinates
+    return item.startLat &&
+      item.startLon &&
+      typeof item.startLat === 'number' &&
+      typeof item.startLon === 'number'
+      ? [item.startLon, item.startLat]
+      : null
+  }
+  return null
+}
+
+const calculateMapCenter = (
+  data: any[],
+  tableType: string,
+  locations?: any[]
+): [number, number] => {
+  const validItems = data.filter(item =>
+    getCoordinates(item, tableType, locations)
+  )
+
+  if (validItems.length === 0) {
+    // Default to center of continental US only as absolute fallback
+    return [-98.5795, 39.8283]
+  }
+
+  // Calculate centroid of all valid coordinates
+  let totalLat = 0
+  let totalLon = 0
+
+  validItems.forEach(item => {
+    const coords = getCoordinates(item, tableType, locations)
+    if (coords) {
+      totalLon += coords[0]
+      totalLat += coords[1]
+    }
+  })
+
+  return [totalLon / validItems.length, totalLat / validItems.length]
+}
 
 // Simple map component for inline display
 const SimpleMapView = ({
   data,
   tableType,
+  locations,
 }: {
   data: any[]
   tableType: string
+  locations?: any[]
 }) => {
   const [isMapLoaded, setIsMapLoaded] = useState(false)
+  const [mapError, setMapError] = useState<string | null>(null)
   const mapContainerRef = useRef<HTMLDivElement>(null)
-  const mapRef = useRef<any>(null)
+  const mapRef = useRef<mapboxgl.Map | null>(null)
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return
 
     const initMap = async () => {
       try {
-        const mapboxgl = await import('mapbox-gl')
-        await import('mapbox-gl/dist/mapbox-gl.css')
-
         const apiKey = import.meta.env.VITE_MAPBOX_TOKEN
         if (!apiKey) {
-          console.warn('VITE_MAPBOX_TOKEN not set - map disabled')
+          setMapError('Mapbox API key not configured')
           return
         }
 
-        mapboxgl.accessToken = apiKey
-        mapRef.current = new mapboxgl.Map({
+        // Dynamic import with proper typing
+        const mapboxgl = await import('mapbox-gl')
+        await import('mapbox-gl/dist/mapbox-gl.css')
+
+        mapboxgl.default.accessToken = apiKey
+
+        // Calculate initial center from data if available
+        const center = calculateMapCenter(data, tableType, locations)
+
+        mapRef.current = new mapboxgl.default.Map({
           container: mapContainerRef.current!,
           style: 'mapbox://styles/mapbox/streets-v12',
-          center: [-95.7129, 37.0902],
-          zoom: 4,
+          center,
+          zoom: data.length > 0 ? 10 : 4,
         })
 
         setIsMapLoaded(true)
+        setMapError(null)
       } catch (error) {
-        console.error('Failed to load map:', error)
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown map error'
+        setMapError(`Failed to load map: ${errorMessage}`)
       }
     }
 
@@ -105,77 +219,69 @@ const SimpleMapView = ({
   useEffect(() => {
     if (!mapRef.current || !isMapLoaded) return
 
-    // Clear existing markers
-    const markers = mapRef.current._markers || []
-    markers.forEach((marker: any) => marker.remove())
-    mapRef.current._markers = []
+    const updateMarkers = async () => {
+      try {
+        // Clear existing markers
+        const markers = (mapRef.current as any)._markers || []
+        markers.forEach((marker: any) => marker.remove())
+        ;(mapRef.current as any)._markers = []
 
-    // Get coordinates based on table type
-    const getCoordinates = (item: any) => {
-      if (tableType === 'locations') {
-        return item.locationLat && item.locationLon
-          ? [item.locationLon, item.locationLat]
-          : null
-      } else if (tableType === 'jobs') {
-        return item.locationLat && item.locationLon
-          ? [item.locationLon, item.locationLat]
-          : null
-      } else if (tableType === 'vehicles') {
-        return item.startLat && item.startLon
-          ? [item.startLon, item.startLat]
-          : null
-      }
-      return null
-    }
-
-    const validItems = data.filter(item => getCoordinates(item))
-    if (validItems.length === 0) return
-
-    // Add markers
-    const newMarkers: any[] = []
-    validItems.forEach(item => {
-      const coords = getCoordinates(item)
-      if (!coords) return
-
-      const el = document.createElement('div')
-      el.className =
-        'w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow-md cursor-pointer'
-
-      const mapboxgl = require('mapbox-gl')
-      const marker = new mapboxgl.Marker(el)
-        .setLngLat(coords)
-        .setPopup(
-          new mapboxgl.Popup({ offset: 15 }).setHTML(`
-            <div class="p-2 text-sm">
-              <strong>${item.name || item.description || 'Location'}</strong>
-              ${item.locationType ? `<br><span class="text-gray-500">${item.locationType}</span>` : ''}
-            </div>
-          `)
+        const validItems = data.filter(item =>
+          getCoordinates(item, tableType, locations)
         )
-        .addTo(mapRef.current)
+        if (validItems.length === 0) return
 
-      newMarkers.push(marker)
-    })
+        // Import mapbox-gl for marker creation
+        const mapboxgl = await import('mapbox-gl')
 
-    mapRef.current._markers = newMarkers
+        // Add markers
+        const newMarkers: any[] = []
+        validItems.forEach(item => {
+          const coords = getCoordinates(item, tableType, locations)
+          if (!coords) return
 
-    // Fit map bounds
-    if (validItems.length > 0) {
-      const bounds = new (require('mapbox-gl').LngLatBounds)()
-      validItems.forEach(item => {
-        const coords = getCoordinates(item)
-        if (coords) bounds.extend(coords)
-      })
-      mapRef.current.fitBounds(bounds, { padding: 50, maxZoom: 15 })
+          const el = document.createElement('div')
+          el.className =
+            'w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow-md cursor-pointer'
+
+          const marker = new mapboxgl.default.Marker(el)
+            .setLngLat(coords)
+            .setPopup(
+              new mapboxgl.default.Popup({ offset: 15 }).setHTML(`
+                <div class="p-2 text-sm">
+                  <strong>${item.name || item.description || 'Location'}</strong>
+                  ${item.locationType ? `<br><span class="text-gray-500">${item.locationType}</span>` : ''}
+                </div>
+              `)
+            )
+            .addTo(mapRef.current!)
+
+          newMarkers.push(marker)
+        })
+        ;(mapRef.current as any)._markers = newMarkers
+
+        // Fit map bounds
+        if (validItems.length > 0) {
+          const bounds = new mapboxgl.default.LngLatBounds()
+          validItems.forEach(item => {
+            const coords = getCoordinates(item, tableType, locations)
+            if (coords) bounds.extend(coords)
+          })
+          mapRef.current!.fitBounds(bounds, { padding: 50, maxZoom: 15 })
+        }
+      } catch (error) {
+        logError(error, 'Map markers update')
+        setMapError('Failed to update map markers')
+      }
     }
+
+    updateMarkers()
   }, [data, tableType, isMapLoaded])
 
-  if (!import.meta.env.VITE_MAPBOX_TOKEN) {
+  if (mapError) {
     return (
       <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-        <p className="text-gray-500">
-          Map requires VITE_MAPBOX_TOKEN environment variable
-        </p>
+        <p className="text-gray-500">{mapError}</p>
       </div>
     )
   }
@@ -183,6 +289,11 @@ const SimpleMapView = ({
   return (
     <div className="h-64 rounded-lg overflow-hidden border">
       <div ref={mapContainerRef} className="w-full h-full" />
+      {!isMapLoaded && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+          <p className="text-gray-500">Loading map...</p>
+        </div>
+      )}
     </div>
   )
 }
@@ -207,28 +318,18 @@ const getTableSchema = (tableType: string) => {
           },
           { key: 'profile', label: 'Profile', type: 'string', required: false },
           {
-            key: 'startLat',
-            label: 'Start Latitude',
-            type: 'number',
+            key: 'startLocationId',
+            label: 'Start Location',
+            type: 'location',
             required: false,
+            legacy: ['startLat', 'startLon'],
           },
           {
-            key: 'startLon',
-            label: 'Start Longitude',
-            type: 'number',
+            key: 'endLocationId',
+            label: 'End Location',
+            type: 'location',
             required: false,
-          },
-          {
-            key: 'endLat',
-            label: 'End Latitude',
-            type: 'number',
-            required: false,
-          },
-          {
-            key: 'endLon',
-            label: 'End Longitude',
-            type: 'number',
-            required: false,
+            legacy: ['endLat', 'endLon'],
           },
           {
             key: 'capacity',
@@ -238,15 +339,9 @@ const getTableSchema = (tableType: string) => {
           },
           { key: 'skills', label: 'Skills', type: 'array', required: false },
           {
-            key: 'twStart',
-            label: 'Time Window Start',
-            type: 'number',
-            required: false,
-          },
-          {
-            key: 'twEnd',
-            label: 'Time Window End',
-            type: 'number',
+            key: 'timeWindow',
+            label: 'Time Window',
+            type: 'array',
             required: false,
           },
           {
@@ -291,16 +386,11 @@ const getTableSchema = (tableType: string) => {
             required: false,
           },
           {
-            key: 'locationLat',
-            label: 'Latitude',
-            type: 'number',
+            key: 'locationId',
+            label: 'Location',
+            type: 'location',
             required: false,
-          },
-          {
-            key: 'locationLon',
-            label: 'Longitude',
-            type: 'number',
-            required: false,
+            legacy: ['locationLat', 'locationLon'],
           },
           {
             key: 'setup',
@@ -519,11 +609,40 @@ const TableEditor = ({
   // Checkbox ref for indeterminate state
   const selectAllCheckboxRef = useRef<HTMLButtonElement>(null)
 
+  // Location update helper
+  const handleLocationUpdate = async (updateData: any, tableType: string) => {
+    try {
+      switch (tableType) {
+        case 'vehicles':
+          await updateVehicle(updateData)
+          break
+        case 'jobs':
+          await updateJob(updateData)
+          break
+        case 'locations':
+          await updateLocation(updateData)
+          break
+        default:
+          break
+      }
+      toast.success('Location updated successfully')
+    } catch (error) {
+      logError(error, 'Location update')
+      toast.error('Failed to update location')
+    }
+  }
+
   const handleCellClick = (
     rowIndex: number,
     colKey: string,
     currentValue: any
   ) => {
+    const column = schema.columns.find(col => col.key === colKey)
+    if (column?.type === 'location') {
+      // For location types, we'll handle this in the render method
+      setEditingCell({ row: rowIndex, col: colKey })
+      return
+    }
     setEditingCell({ row: rowIndex, col: colKey })
     setEditValue(formatValueForEdit(currentValue))
   }
@@ -539,6 +658,9 @@ const TableEditor = ({
     if (value === '') return undefined
 
     switch (type) {
+      case 'location':
+        // For location fields, the value should be a location ID
+        return value || null
       case 'number': {
         const num = parseFloat(value)
         return isNaN(num) ? undefined : num
@@ -594,8 +716,8 @@ const TableEditor = ({
 
       toast.success('Cell updated successfully')
     } catch (error) {
-      console.error('Failed to update cell:', error)
-      toast.error('Failed to update cell')
+      logError(error, 'Cell update')
+      toast.error(VRPErrorHandling.table.update(error))
     }
 
     setEditingCell(null)
@@ -634,8 +756,7 @@ const TableEditor = ({
           await createLocation({
             ...baseData,
             name: `Location ${Date.now()}`,
-            locationLat: 0,
-            locationLon: 0,
+            // Don't set default coordinates - let user specify them
           })
           break
         case 'routes':
@@ -646,14 +767,18 @@ const TableEditor = ({
 
       toast.success(`${tableType.slice(0, -1)} created successfully`)
     } catch (error) {
-      console.error('Failed to create row:', error)
-      toast.error(`Failed to create ${tableType.slice(0, -1)}`)
+      logError(error, `${tableType} creation`)
+      toast.error(VRPErrorHandling.table.create(error))
     } finally {
       setIsCreating(false)
     }
   }
 
-  const handleImport = async (data: any[], mappings: any[]) => {
+  const handleImport = async (
+    data: any[], 
+    mappings: any[], 
+    locationResolutions?: { [key: string]: string }
+  ) => {
     try {
       let successCount = 0
       let errorCount = 0
@@ -667,22 +792,59 @@ const TableEditor = ({
             optimizerId: Math.floor(Math.random() * 1000000), // Generate unique optimizer ID
           }
 
+          // Transform row data to use location references if needed
+          const transformedRow = { ...row }
+          
+          // Apply location resolutions for jobs and vehicles
+          if (locationResolutions && (tableType === 'jobs' || tableType === 'vehicles')) {
+            // For jobs: replace coordinates with locationId if resolution exists
+            if (tableType === 'jobs' && row.locationLat && row.locationLon) {
+              const coordKey = `${row.locationLat},${row.locationLon}`
+              if (locationResolutions[coordKey]) {
+                transformedRow.locationId = locationResolutions[coordKey]
+                // Remove coordinate fields when using location reference
+                delete transformedRow.locationLat
+                delete transformedRow.locationLon
+              }
+            }
+            
+            // For vehicles: replace start/end coordinates with location references
+            if (tableType === 'vehicles') {
+              if (row.startLat && row.startLon) {
+                const startCoordKey = `${row.startLat},${row.startLon}`
+                if (locationResolutions[startCoordKey]) {
+                  transformedRow.startLocationId = locationResolutions[startCoordKey]
+                  delete transformedRow.startLat
+                  delete transformedRow.startLon
+                }
+              }
+              if (row.endLat && row.endLon) {
+                const endCoordKey = `${row.endLat},${row.endLon}`
+                if (locationResolutions[endCoordKey]) {
+                  transformedRow.endLocationId = locationResolutions[endCoordKey]
+                  delete transformedRow.endLat
+                  delete transformedRow.endLon
+                }
+              }
+            }
+          }
+
           switch (tableType) {
             case 'vehicles':
-              await createVehicle({ ...baseData, ...row })
+              await createVehicle({ ...baseData, ...transformedRow })
               break
             case 'jobs':
-              await createJob({ ...baseData, ...row })
+              await createJob({ ...baseData, ...transformedRow })
               break
             case 'locations':
-              await createLocation({ ...baseData, ...row })
+              await createLocation({ ...baseData, ...transformedRow })
               break
             default:
               throw new Error(`Import not supported for ${tableType}`)
           }
           successCount++
         } catch (error) {
-          console.error('Failed to import row:', error)
+          logError(error, `${tableType} import row`)
           errorCount++
         }
       }
@@ -701,8 +863,26 @@ const TableEditor = ({
 
       setShowImportModal(false)
     } catch (error) {
-      console.error('Import failed:', error)
+      logError(error, `${tableType} bulk import`)
       toast.error('Import failed')
+    }
+  }
+
+  // Location creation handler for import conflicts
+  const handleCreateLocation = async (locationData: any) => {
+    try {
+      const result = await createLocation({
+        projectId,
+        scenarioId,
+        datasetId,
+        ...locationData,
+      })
+      toast.success(`Created location: ${locationData.name}`)
+      return result
+    } catch (error) {
+      logError(error, 'Location creation during import')
+      toast.error(`Failed to create location: ${locationData.name}`)
+      throw error
     }
   }
 
@@ -737,8 +917,8 @@ const TableEditor = ({
 
       toast.success(`${tableType.slice(0, -1)} deleted successfully`)
     } catch (error) {
-      console.error('Failed to delete row:', error)
-      toast.error(`Failed to delete ${tableType.slice(0, -1)}`)
+      logError(error, `${tableType} deletion`)
+      toast.error(VRPErrorHandling.table.delete(error))
     }
   }
 
@@ -774,8 +954,8 @@ const TableEditor = ({
       clearSelection()
       toast.success(`Deleted ${selectedIds.length} ${tableType} successfully`)
     } catch (error) {
-      console.error('Bulk delete failed:', error)
-      toast.error('Failed to delete selected records')
+      logError(error, `${tableType} bulk delete`)
+      toast.error(VRPErrorHandling.table.bulkDelete(error))
     }
   }
 
@@ -834,7 +1014,7 @@ const TableEditor = ({
           const errorMessage =
             error instanceof Error ? error.message : 'Unknown error'
           errors.push(`Row ${i + 1}: ${errorMessage}`)
-          console.error(`Failed to update row ${i + 1}:`, error)
+          logError(error, `${tableType} bulk edit row ${i + 1}`)
         }
 
         // Update progress
@@ -857,7 +1037,12 @@ const TableEditor = ({
         toast.error(
           `Failed to update ${errorCount} record${errorCount !== 1 ? 's' : ''}. Check console for details.`
         )
-        console.error('Bulk update errors:', errors)
+        if (errors.length > 0) {
+          logError(
+            new Error(errors.join('; ')),
+            `${tableType} bulk edit errors`
+          )
+        }
       }
 
       // Clear selection after successful updates
@@ -865,8 +1050,8 @@ const TableEditor = ({
         clearSelection()
       }
     } catch (error) {
-      console.error('Bulk update failed:', error)
-      toast.error('Bulk update failed')
+      logError(error, `${tableType} bulk edit`)
+      toast.error(VRPErrorHandling.table.bulkEdit(error))
     } finally {
       setIsBulkUpdating(false)
       setBulkUpdateProgress({ current: 0, total: 0 })
@@ -907,16 +1092,104 @@ const TableEditor = ({
         toast.error('Optimization failed to complete')
       }
     } catch (error) {
-      console.error('Optimization failed:', error)
+      logError(error, 'VROOM optimization')
       toast.error(
         `Optimization failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       )
     }
   }
 
-  const renderCellValue = (value: any, column: any) => {
+  // Location display helper
+  const getLocationDisplay = (locationId: Id<'locations'> | null) => {
+    if (!locationId || !locations) return null
+    return locations.find(loc => loc._id === locationId) || null
+  }
+
+  // Legacy coordinate migration helper
+  const getLegacyCoordinates = (item: any, column: any) => {
+    if (!column.legacy) return null
+    const [latField, lonField] = column.legacy
+    const lat = item[latField]
+    const lon = item[lonField]
+    if (lat && lon && typeof lat === 'number' && typeof lon === 'number') {
+      return { lat, lon }
+    }
+    return null
+  }
+
+  // Validation helper for location fields
+  const validateLocationField = (value: any, column: any, item: any) => {
+    if (column.type !== 'location') return null
+
+    // If no location ID but has legacy coordinates, show migration warning
+    if (!value && getLegacyCoordinates(item, column)) {
+      return 'Legacy coordinates detected - please select a location to replace them'
+    }
+
+    // If required and no value, show error
+    if (column.required && !value) {
+      return `${column.label} is required`
+    }
+
+    return null
+  }
+
+  const renderCellValue = (value: any, column: any, item?: any) => {
     if (value === undefined || value === null) {
       return <span className="text-muted-foreground italic">Empty</span>
+    }
+
+    // Handle location type fields
+    if (column.type === 'location') {
+      const location = getLocationDisplay(value)
+      const legacyCoords = getLegacyCoordinates(item, column)
+      const validationError = validateLocationField(value, column, item)
+
+      if (!location && !legacyCoords) {
+        return (
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground italic">No location</span>
+            {validationError && (
+              <Badge variant="destructive" className="text-xs">
+                Required
+              </Badge>
+            )}
+          </div>
+        )
+      }
+
+      if (!location && legacyCoords) {
+        return (
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-orange-500" />
+            <span className="text-orange-700 text-sm">Legacy coordinates</span>
+            <Badge variant="outline" className="text-xs font-mono">
+              {legacyCoords.lat.toFixed(2)}, {legacyCoords.lon.toFixed(2)}
+            </Badge>
+            <Badge variant="secondary" className="text-xs">
+              Needs location
+            </Badge>
+          </div>
+        )
+      }
+
+      return (
+        <div className="flex items-center gap-2">
+          <MapPin className="w-4 h-4 text-gray-400" />
+          <span className="font-medium">{location.name}</span>
+          {location.locationType && (
+            <Badge variant="outline" className="text-xs">
+              {location.locationType}
+            </Badge>
+          )}
+          {location.locationLat && location.locationLon && (
+            <span className="text-xs text-muted-foreground font-mono">
+              ({location.locationLat.toFixed(2)},{' '}
+              {location.locationLon.toFixed(2)})
+            </span>
+          )}
+        </div>
+      )
     }
 
     if (Array.isArray(value)) {
@@ -1128,20 +1401,18 @@ const TableEditor = ({
             <h4 className="text-sm font-medium">Map View</h4>
             <p className="text-xs text-muted-foreground">
               {
-                currentData.filter(item => {
-                  if (tableType === 'locations')
-                    return item.locationLat && item.locationLon
-                  if (tableType === 'jobs')
-                    return item.locationLat && item.locationLon
-                  if (tableType === 'vehicles')
-                    return item.startLat && item.startLon
-                  return false
-                }).length
+                currentData.filter(
+                  item => getCoordinates(item, tableType, locations) !== null
+                ).length
               }{' '}
               items with coordinates
             </p>
           </div>
-          <SimpleMapView data={currentData} tableType={tableType} />
+          <SimpleMapView
+            data={currentData}
+            tableType={tableType}
+            locations={locations}
+          />
         </div>
       ) : (
         <div className="border rounded-lg">
@@ -1259,35 +1530,122 @@ const TableEditor = ({
                       >
                         {editingCell?.row === rowIndex &&
                         editingCell?.col === column.key ? (
-                          <div className="flex items-center gap-2">
-                            <Input
-                              value={editValue}
-                              onChange={e => setEditValue(e.target.value)}
-                              onKeyDown={e => {
-                                if (e.key === 'Enter') handleCellSave()
-                                if (e.key === 'Escape') handleCellCancel()
-                              }}
-                              autoFocus
-                              className="h-8"
-                              placeholder={`Enter ${column.label.toLowerCase()}`}
-                            />
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={handleCellSave}
-                              className="h-8 w-8 p-0"
-                            >
-                              <Check className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={handleCellCancel}
-                              className="h-8 w-8 p-0"
-                            >
-                              <X className="w-4 h-4" />
-                            </Button>
-                          </div>
+                          column.type === 'location' ? (
+                            <div className="flex items-center gap-2">
+                              <Select
+                                value={item[column.key] || ''}
+                                onValueChange={async locationId => {
+                                  if (locationId === '__create_new__') {
+                                    // Quick location creation with minimal data
+                                    try {
+                                      const quickLocation =
+                                        await createLocation({
+                                          projectId,
+                                          scenarioId,
+                                          datasetId,
+                                          name: `Location ${Date.now()}`,
+                                          locationType: 'customer',
+                                        })
+
+                                      const updateData: any = {
+                                        id: item._id,
+                                        [column.key]: quickLocation,
+                                      }
+                                      await handleLocationUpdate(
+                                        updateData,
+                                        tableType
+                                      )
+                                      toast.success(
+                                        'Location created and assigned'
+                                      )
+                                    } catch (error) {
+                                      logError(error, 'Quick location creation')
+                                      toast.error('Failed to create location')
+                                    }
+                                    setEditingCell(null)
+                                    return
+                                  }
+
+                                  const updateData: any = {
+                                    id: item._id,
+                                    [column.key]: locationId || null,
+                                  }
+                                  handleLocationUpdate(updateData, tableType)
+                                  setEditingCell(null)
+                                }}
+                              >
+                                <SelectTrigger className="h-8 min-w-[200px]">
+                                  <SelectValue placeholder="Select location..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="">No location</SelectItem>
+                                  {(locations || []).map(location => (
+                                    <SelectItem
+                                      key={location._id}
+                                      value={location._id}
+                                    >
+                                      <div className="flex items-center gap-2">
+                                        <MapPin className="w-4 h-4 text-gray-400" />
+                                        <span>{location.name}</span>
+                                        {location.locationType && (
+                                          <Badge
+                                            variant="outline"
+                                            className="text-xs"
+                                          >
+                                            {location.locationType}
+                                          </Badge>
+                                        )}
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                                  <SelectItem value="__create_new__">
+                                    <div className="flex items-center gap-2 text-blue-600">
+                                      <Plus className="w-4 h-4" />
+                                      <span>Create New Location</span>
+                                    </div>
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={handleCellCancel}
+                                className="h-8 w-8 p-0"
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <Input
+                                value={editValue}
+                                onChange={e => setEditValue(e.target.value)}
+                                onKeyDown={e => {
+                                  if (e.key === 'Enter') handleCellSave()
+                                  if (e.key === 'Escape') handleCellCancel()
+                                }}
+                                autoFocus
+                                className="h-8"
+                                placeholder={`Enter ${column.label.toLowerCase()}`}
+                              />
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={handleCellSave}
+                                className="h-8 w-8 p-0"
+                              >
+                                <Check className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={handleCellCancel}
+                                className="h-8 w-8 p-0"
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          )
                         ) : (
                           <div
                             onClick={() =>
@@ -1299,7 +1657,7 @@ const TableEditor = ({
                             }
                             className="min-h-[32px] flex items-center cursor-pointer hover:bg-muted/50 rounded px-2 -mx-2"
                           >
-                            {renderCellValue(item[column.key], column)}
+                            {renderCellValue(item[column.key], column, item)}
                           </div>
                         )}
                       </TableCell>
@@ -1357,6 +1715,8 @@ const TableEditor = ({
         tableType={tableType}
         existingData={currentData}
         onImport={handleImport}
+        existingLocations={locations || []}
+        onCreateLocation={handleCreateLocation}
       />
 
       {/* CSV Export Modal */}
@@ -1367,6 +1727,7 @@ const TableEditor = ({
         data={currentData}
         selectedRows={getSelectedRows()}
         filteredData={currentData}
+        existingLocations={locations || []}
       />
 
       {/* Bulk Edit Modal */}

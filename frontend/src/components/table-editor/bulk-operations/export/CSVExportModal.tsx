@@ -29,6 +29,7 @@ interface CSVExportModalProps {
   data?: any[]
   selectedRows?: any[]
   filteredData?: any[]
+  existingLocations?: any[]
   className?: string
 }
 
@@ -39,6 +40,7 @@ export function CSVExportModal({
   data = [],
   selectedRows = [],
   filteredData = [],
+  existingLocations = [],
   className
 }: CSVExportModalProps) {
   const [currentView, setCurrentView] = useState<'options' | 'progress' | 'complete'>('options')
@@ -48,7 +50,14 @@ export function CSVExportModal({
     includeSystemFields: false,
     includeConvexIds: false,
     selectedColumns: [],
-    compression: false
+    compression: false,
+    // Location master options
+    includeLocationIds: false,
+    includeLocationNames: true,
+    includeCoordinates: false,
+    includeAddresses: false,
+    resolveLocationReferences: true,
+    locationReferenceFormat: 'name'
   })
 
   const { 
@@ -63,6 +72,12 @@ export function CSVExportModal({
 
   // Get available columns from data with safe access
   const availableColumns = data && data.length > 0 ? Object.keys(data[0]) : []
+  
+  // Check if data has location references
+  const hasLocationReferences = availableColumns.some(col => 
+    col.toLowerCase().includes('locationid') || 
+    col.toLowerCase().includes('location_id')
+  )
 
   // Reset state when modal opens/closes
   useEffect(() => {
@@ -149,6 +164,8 @@ export function CSVExportModal({
             filteredRowsCount={filteredData?.length || 0}
             onStartExport={handleStartExport}
             isExporting={isExporting}
+            hasLocationReferences={hasLocationReferences}
+            tableType={tableType}
           />
         )
 

@@ -8,6 +8,7 @@ import ProjectDetailPage from './pages/ProjectDetailPage'
 import ScenarioDetailPage from './pages/ScenarioDetailPage'
 import DatasetDetailPage from './pages/DatasetDetailPage'
 import TableEditorPage from './pages/TableEditorPage'
+import MasterLocationsPage from './pages/MasterLocationsPage'
 import LoginPage from './pages/auth/LoginPage'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import UATErrorBoundary from './components/UATErrorBoundary'
@@ -63,6 +64,16 @@ export default function App() {
                   <Route
                     path="projects/:projectId/scenarios/:scenarioId/datasets/:datasetId/:tableType"
                     element={<TableEditorPage />}
+                  />
+
+                  {/* Master Locations routes */}
+                  <Route
+                    path="projects/:projectId/locations"
+                    element={<MasterLocationsPage />}
+                  />
+                  <Route
+                    path="projects/:projectId/scenarios/:scenarioId/datasets/:datasetId/locations"
+                    element={<MasterLocationsPage />}
                   />
 
                   {/* Legacy routes for backwards compatibility */}

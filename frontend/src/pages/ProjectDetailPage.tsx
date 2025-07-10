@@ -15,6 +15,7 @@ import {
   Database,
   Calendar,
   Users,
+  MapPin,
 } from 'lucide-react'
 import {
   useProject,
@@ -264,6 +265,14 @@ const ProjectDetailPage = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate(`/projects/${projectId}/locations`)}
+          >
+            <MapPin className="w-4 h-4 mr-2" />
+            Master Locations
+          </Button>
           <Button variant="outline" size="sm" disabled>
             <Settings className="w-4 h-4 mr-2" />
             Settings

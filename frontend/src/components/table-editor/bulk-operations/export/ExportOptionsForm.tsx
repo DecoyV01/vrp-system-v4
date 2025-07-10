@@ -28,19 +28,23 @@ import {
   Filter,
   Database,
   FileSpreadsheet,
-  Braces
+  Braces,
+  MapPin
 } from 'lucide-react'
 import type { BulkExportOptions } from '../types/bulk-export.types'
+import type { LocationAwareExportOptions } from '../types/shared.types'
 
 interface ExportOptionsFormProps {
-  options: BulkExportOptions
-  onOptionsChange: (options: BulkExportOptions) => void
+  options: BulkExportOptions & Partial<LocationAwareExportOptions>
+  onOptionsChange: (options: BulkExportOptions & Partial<LocationAwareExportOptions>) => void
   availableColumns: string[]
   selectedRowsCount: number
   totalRowsCount: number
   filteredRowsCount: number
   onStartExport: () => void
   isExporting: boolean
+  hasLocationReferences?: boolean
+  tableType?: string
   className?: string
 }
 
@@ -53,9 +57,22 @@ export function ExportOptionsForm({
   filteredRowsCount,
   onStartExport,
   isExporting,
+  hasLocationReferences = false,
+  tableType,
   className
 }: ExportOptionsFormProps) {
   const [showAdvanced, setShowAdvanced] = useState(false)
+  
+  // Check if table has location-related fields
+  const hasLocationFields = availableColumns.some(col => 
+    col.toLowerCase().includes('location') || 
+    col.toLowerCase().includes('lat') || 
+    col.toLowerCase().includes('lon') ||
+    col.toLowerCase().includes('address')
+  )
+
+  const isVehicleOrJobTable = tableType === 'vehicles' || tableType === 'jobs'
+  const shouldShowLocationOptions = hasLocationReferences || hasLocationFields || isVehicleOrJobTable
 
   const handleScopeChange = (scope: 'all' | 'filtered' | 'selected') => {
     onOptionsChange({ ...options, scope })
@@ -391,6 +408,131 @@ export function ExportOptionsForm({
         )}
       </Card>
 
+      {/* Location Master Options */}
+      {shouldShowLocationOptions && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <MapPin className="h-5 w-5" />
+              <CardTitle>Location Data Options</CardTitle>
+            </div>
+            <CardDescription>
+              Configure how location references are exported
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {/* Location Reference Resolution */}
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="resolve-location-refs">Resolve Location References</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Replace location IDs with readable location data
+                  </p>
+                </div>
+                <Switch
+                  id="resolve-location-refs"
+                  checked={options.resolveLocationReferences || false}
+                  onCheckedChange={(checked) => 
+                    onOptionsChange({ ...options, resolveLocationReferences: checked })
+                  }
+                />
+              </div>
+
+              {/* Location Data Inclusion Options */}
+              {options.resolveLocationReferences && (
+                <div className="space-y-4 pl-4 border-l-2 border-muted">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="includeLocationIds"
+                        checked={options.includeLocationIds || false}
+                        onCheckedChange={(checked) => 
+                          onOptionsChange({ ...options, includeLocationIds: checked })
+                        }
+                      />
+                      <Label htmlFor="includeLocationIds" className="text-sm">
+                        Include Location IDs
+                      </Label>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="includeLocationNames"
+                        checked={options.includeLocationNames !== false} // default true
+                        onCheckedChange={(checked) => 
+                          onOptionsChange({ ...options, includeLocationNames: checked })
+                        }
+                      />
+                      <Label htmlFor="includeLocationNames" className="text-sm">
+                        Include Location Names
+                      </Label>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="includeCoordinates"
+                        checked={options.includeCoordinates || false}
+                        onCheckedChange={(checked) => 
+                          onOptionsChange({ ...options, includeCoordinates: checked })
+                        }
+                      />
+                      <Label htmlFor="includeCoordinates" className="text-sm">
+                        Include Coordinates
+                      </Label>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="includeAddresses"
+                        checked={options.includeAddresses || false}
+                        onCheckedChange={(checked) => 
+                          onOptionsChange({ ...options, includeAddresses: checked })
+                        }
+                      />
+                      <Label htmlFor="includeAddresses" className="text-sm">
+                        Include Addresses
+                      </Label>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="locationFormat">Primary Location Reference Format</Label>
+                    <Select 
+                      value={options.locationReferenceFormat || 'name'} 
+                      onValueChange={(value) => onOptionsChange({ ...options, locationReferenceFormat: value as any })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="id">Location ID</SelectItem>
+                        <SelectItem value="name">Location Name</SelectItem>
+                        <SelectItem value="address">Address</SelectItem>
+                        <SelectItem value="coordinates">Coordinates</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      Choose the primary format for location references in exported data
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Helper Information */}
+              <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded">
+                <strong>Location Data Export:</strong>
+                {options.resolveLocationReferences ? (
+                  ' Location IDs will be replaced with readable location data based on your selections above.'
+                ) : (
+                  ' Location references will be exported as-is (typically as location IDs). Enable resolution above to include readable location data.'
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Export Summary */}
       <Card>
         <CardHeader>
@@ -413,6 +555,7 @@ export function ExportOptionsForm({
               <span className="text-muted-foreground">Columns:</span>
               <span className="ml-2 font-semibold">
                 {options.selectedColumns.length === 0 ? availableColumns.length : options.selectedColumns.length}
+                {shouldShowLocationOptions && options.resolveLocationReferences && ' + location data'}
               </span>
             </div>
             <div>

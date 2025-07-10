@@ -318,6 +318,43 @@ export const useBulkImportLocations = () => {
 }
 
 // =============================================================================
+// LOCATION CLUSTERS HOOKS
+// =============================================================================
+
+export const useLocationClusters = (datasetId: Id<'datasets'> | undefined) => {
+  return useQuery(
+    api.locationClusters.listByDataset,
+    datasetId ? { datasetId } : 'skip'
+  )
+}
+
+export const useLocationClustersByProject = (projectId: Id<'projects'> | undefined) => {
+  return useQuery(
+    api.locationClusters.listByProject,
+    projectId ? { projectId } : 'skip'
+  )
+}
+
+export const useLocationCluster = (clusterId: Id<'locationClusters'> | undefined) => {
+  return useQuery(
+    api.locationClusters.getById,
+    clusterId ? { id: clusterId } : 'skip'
+  )
+}
+
+export const useCreateLocationCluster = () => {
+  return useMutation(api.locationClusters.create)
+}
+
+export const useUpdateLocationCluster = () => {
+  return useMutation(api.locationClusters.update)
+}
+
+export const useDeleteLocationCluster = () => {
+  return useMutation(api.locationClusters.remove)
+}
+
+// =============================================================================
 // ROUTE HOOKS
 // =============================================================================
 
