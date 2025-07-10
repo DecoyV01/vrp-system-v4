@@ -48,10 +48,17 @@ const TreeNodeComponent = ({
   node,
   level = 0,
   bulkSelection,
+  onPrepareDelete,
 }: {
   node: TreeNode
   level?: number
   bulkSelection?: ReturnType<typeof useBulkTreeSelection>
+  onPrepareDelete?: (
+    entityType: string,
+    entityId: string,
+    parentProjectId?: string,
+    parentScenarioId?: string
+  ) => void
 }) => {
   const navigate = useNavigate()
   const { toggleNode, setSelectedNode, selectedNode } = useHierarchy()
@@ -235,12 +242,12 @@ const TreeNodeComponent = ({
         )
 
         // Store context for post-delete navigation
-        setDeletedNodeContext({
-          entityType: node.type,
-          entityId: node.realId,
-          parentProjectId: node.metadata?.projectId,
-          parentScenarioId: node.metadata?.scenarioId,
-        })
+        onPrepareDelete?.(
+          node.type,
+          node.realId,
+          node.metadata?.projectId,
+          node.metadata?.scenarioId
+        )
 
         openDeleteModal(
           node.type as 'project' | 'scenario' | 'dataset',
@@ -254,7 +261,7 @@ const TreeNodeComponent = ({
         toast.error('Failed to analyze delete impact. Please try again.')
       }
     },
-    [node, openDeleteModal, getCascadeInfo]
+    [node, openDeleteModal, getCascadeInfo, onPrepareDelete]
   )
 
   // Keyboard shortcut handler
@@ -395,6 +402,7 @@ const TreeNodeComponent = ({
               node={child}
               level={level + 1}
               bulkSelection={bulkSelection}
+              onPrepareDelete={onPrepareDelete}
             />
           ))}
         </div>
@@ -434,6 +442,30 @@ const SecondarySidebar = () => {
       setDeletedNodeContext(null)
     }
   }, [modalState.isOpen, deletedNodeContext])
+
+  // Handle delete preparation - store context for post-delete navigation
+  const handlePrepareDelete = useCallback(
+    (
+      entityType: string,
+      entityId: string,
+      parentProjectId?: string,
+      parentScenarioId?: string
+    ) => {
+      console.log('Preparing delete context:', {
+        entityType,
+        entityId,
+        parentProjectId,
+        parentScenarioId,
+      })
+      setDeletedNodeContext({
+        entityType,
+        entityId,
+        parentProjectId,
+        parentScenarioId,
+      })
+    },
+    []
+  )
 
   // Bulk selection functionality
   const bulkSelection = useBulkTreeSelection({
@@ -1012,6 +1044,7 @@ const SecondarySidebar = () => {
               key={node.id}
               node={node}
               bulkSelection={bulkSelection}
+              onPrepareDelete={handlePrepareDelete}
             />
           ))
         )}
