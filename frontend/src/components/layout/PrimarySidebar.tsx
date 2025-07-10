@@ -83,7 +83,7 @@ const PrimarySidebar = () => {
   if (user === undefined) {
     return (
       <div
-        className={`bg-background border-r border-border flex flex-col transition-all duration-150 ease-out ${
+        className={`bg-white border-r border-border flex flex-col transition-all duration-150 ease-out ${
           primary.collapsed ? 'w-16 items-center' : 'w-60 items-start'
         } py-4`}
         data-slot="PrimarySidebar"
@@ -103,7 +103,7 @@ const PrimarySidebar = () => {
   if (user === null) {
     return (
       <div
-        className={`bg-background border-r border-border flex flex-col transition-all duration-150 ease-out ${
+        className={`bg-white border-r border-border flex flex-col transition-all duration-150 ease-out ${
           primary.collapsed ? 'w-16 items-center' : 'w-60 items-start'
         } py-4`}
         data-slot="PrimarySidebar"
@@ -132,7 +132,7 @@ const PrimarySidebar = () => {
 
   return (
     <div
-      className={`bg-background border-r border-border flex flex-col transition-all duration-150 ease-out ${
+      className={`bg-white border-r border-border flex flex-col transition-all duration-150 ease-out ${
         primary.collapsed ? 'w-16 items-center' : 'w-60 items-start'
       } py-4`}
       data-slot="PrimarySidebar"

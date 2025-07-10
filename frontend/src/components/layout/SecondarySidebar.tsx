@@ -984,7 +984,7 @@ const SecondarySidebar = () => {
         <Button
           variant="ghost"
           size="sm"
-          className="absolute top-4 left-2 z-10 w-8 h-8 p-0 bg-background border border-border shadow-sm hover:bg-muted"
+          className="absolute top-4 left-2 z-10 w-8 h-8 p-0 bg-white border border-border shadow-sm hover:bg-muted"
           onClick={toggleSecondary}
           title="Show projects sidebar"
           data-slot="SidebarToggle"
@@ -998,7 +998,7 @@ const SecondarySidebar = () => {
   if (treeData === undefined) {
     return (
       <div
-        className="w-64 bg-background border-r border-border flex flex-col transition-all duration-150 ease-out"
+        className="w-64 bg-white border-r border-border flex flex-col transition-all duration-150 ease-out"
         data-slot="SecondarySidebar"
       >
         <div className="p-4 border-b border-border flex items-center justify-between">
@@ -1024,7 +1024,7 @@ const SecondarySidebar = () => {
 
   return (
     <div
-      className="w-64 bg-background border-r border-border flex flex-col transition-all duration-150 ease-out"
+      className="w-64 bg-white border-r border-border flex flex-col transition-all duration-150 ease-out"
       data-slot="SecondarySidebar"
     >
       {/* Header */}
