@@ -22,6 +22,7 @@ import {
   Check,
   Play,
   Zap,
+  Map,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
@@ -50,6 +51,141 @@ import {
   useDeleteLocation,
   useOptimizationWorkflow,
 } from '@/hooks/useVRPData'
+
+// Simple map component for inline display
+const SimpleMapView = ({
+  data,
+  tableType,
+}: {
+  data: any[]
+  tableType: string
+}) => {
+  const [isMapLoaded, setIsMapLoaded] = useState(false)
+  const mapContainerRef = useRef<HTMLDivElement>(null)
+  const mapRef = useRef<any>(null)
+
+  useEffect(() => {
+    if (!mapContainerRef.current || mapRef.current) return
+
+    const initMap = async () => {
+      try {
+        const mapboxgl = await import('mapbox-gl')
+        await import('mapbox-gl/dist/mapbox-gl.css')
+
+        const apiKey = import.meta.env.VITE_MAPBOX_TOKEN
+        if (!apiKey) {
+          console.warn('VITE_MAPBOX_TOKEN not set - map disabled')
+          return
+        }
+
+        mapboxgl.accessToken = apiKey
+        mapRef.current = new mapboxgl.Map({
+          container: mapContainerRef.current!,
+          style: 'mapbox://styles/mapbox/streets-v12',
+          center: [-95.7129, 37.0902],
+          zoom: 4,
+        })
+
+        setIsMapLoaded(true)
+      } catch (error) {
+        console.error('Failed to load map:', error)
+      }
+    }
+
+    initMap()
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove()
+        mapRef.current = null
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!mapRef.current || !isMapLoaded) return
+
+    // Clear existing markers
+    const markers = mapRef.current._markers || []
+    markers.forEach((marker: any) => marker.remove())
+    mapRef.current._markers = []
+
+    // Get coordinates based on table type
+    const getCoordinates = (item: any) => {
+      if (tableType === 'locations') {
+        return item.locationLat && item.locationLon
+          ? [item.locationLon, item.locationLat]
+          : null
+      } else if (tableType === 'jobs') {
+        return item.locationLat && item.locationLon
+          ? [item.locationLon, item.locationLat]
+          : null
+      } else if (tableType === 'vehicles') {
+        return item.startLat && item.startLon
+          ? [item.startLon, item.startLat]
+          : null
+      }
+      return null
+    }
+
+    const validItems = data.filter(item => getCoordinates(item))
+    if (validItems.length === 0) return
+
+    // Add markers
+    const newMarkers: any[] = []
+    validItems.forEach(item => {
+      const coords = getCoordinates(item)
+      if (!coords) return
+
+      const el = document.createElement('div')
+      el.className =
+        'w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow-md cursor-pointer'
+
+      const mapboxgl = require('mapbox-gl')
+      const marker = new mapboxgl.Marker(el)
+        .setLngLat(coords)
+        .setPopup(
+          new mapboxgl.Popup({ offset: 15 }).setHTML(`
+            <div class="p-2 text-sm">
+              <strong>${item.name || item.description || 'Location'}</strong>
+              ${item.locationType ? `<br><span class="text-gray-500">${item.locationType}</span>` : ''}
+            </div>
+          `)
+        )
+        .addTo(mapRef.current)
+
+      newMarkers.push(marker)
+    })
+
+    mapRef.current._markers = newMarkers
+
+    // Fit map bounds
+    if (validItems.length > 0) {
+      const bounds = new (require('mapbox-gl').LngLatBounds)()
+      validItems.forEach(item => {
+        const coords = getCoordinates(item)
+        if (coords) bounds.extend(coords)
+      })
+      mapRef.current.fitBounds(bounds, { padding: 50, maxZoom: 15 })
+    }
+  }, [data, tableType, isMapLoaded])
+
+  if (!import.meta.env.VITE_MAPBOX_TOKEN) {
+    return (
+      <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+        <p className="text-gray-500">
+          Map requires VITE_MAPBOX_TOKEN environment variable
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="h-64 rounded-lg overflow-hidden border">
+      <div ref={mapContainerRef} className="w-full h-full" />
+    </div>
+  )
+}
 
 interface TableEditorProps {
   datasetId: Id<'datasets'>
@@ -327,6 +463,9 @@ const TableEditor = ({
   const [showImportModal, setShowImportModal] = useState(false)
   const [showExportModal, setShowExportModal] = useState(false)
   const [showBulkEditModal, setShowBulkEditModal] = useState(false)
+
+  // Map view state
+  const [showMapView, setShowMapView] = useState(false)
 
   // Bulk update state
   const [isBulkUpdating, setIsBulkUpdating] = useState(false)
@@ -864,6 +1003,21 @@ const TableEditor = ({
             )}
           </Button>
 
+          {/* Map View Toggle - Only show for location-related tables */}
+          {(tableType === 'locations' ||
+            tableType === 'jobs' ||
+            tableType === 'vehicles') &&
+            currentData.length > 0 && (
+              <Button
+                onClick={() => setShowMapView(!showMapView)}
+                size="sm"
+                variant={showMapView ? 'default' : 'outline'}
+              >
+                <Map className="w-4 h-4 mr-2" />
+                {showMapView ? 'Table View' : 'Map View'}
+              </Button>
+            )}
+
           {/* Optimization Button - Only show if we have data and scenario */}
           {scenarioId && currentData.length > 0 && (
             <>
@@ -967,141 +1121,208 @@ const TableEditor = ({
         </div>
       </div>
 
-      <div className="border rounded-lg">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-12">
-                <Checkbox
-                  ref={checkboxRef => {
-                    if (checkboxRef && selectionStatus.isIndeterminate) {
-                      checkboxRef.indeterminate = true
-                    }
-                  }}
-                  checked={selectionStatus.isAllSelected}
-                  onCheckedChange={checked => {
-                    if (checked) {
-                      selectAll()
-                    } else {
-                      clearSelection()
-                    }
-                  }}
-                  aria-label="Select all rows"
-                />
-              </TableHead>
-              {schema.columns.map(column => (
-                <TableHead key={column.key} className="font-semibold">
-                  <div className="flex items-center gap-2">
-                    {column.label}
-                    {column.required && (
-                      <Badge variant="destructive" className="text-xs">
-                        Required
-                      </Badge>
-                    )}
-                    <Badge variant="outline" className="text-xs">
-                      {column.type}
-                    </Badge>
-                  </div>
-                </TableHead>
-              ))}
-              <TableHead className="w-20">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {currentData.length === 0 ? (
+      {/* Map View or Table View */}
+      {showMapView ? (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-medium">Map View</h4>
+            <p className="text-xs text-muted-foreground">
+              {
+                currentData.filter(item => {
+                  if (tableType === 'locations')
+                    return item.locationLat && item.locationLon
+                  if (tableType === 'jobs')
+                    return item.locationLat && item.locationLon
+                  if (tableType === 'vehicles')
+                    return item.startLat && item.startLon
+                  return false
+                }).length
+              }{' '}
+              items with coordinates
+            </p>
+          </div>
+          <SimpleMapView data={currentData} tableType={tableType} />
+        </div>
+      ) : (
+        <div className="border rounded-lg">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell
-                  colSpan={schema.columns.length + 2}
-                  className="text-center py-8 text-muted-foreground"
-                >
-                  No {tableType} yet. Click "Add Row" to get started.
-                </TableCell>
-              </TableRow>
-            ) : (
-              currentData.map((item: any, rowIndex: number) => (
-                <TableRow
-                  key={item._id || rowIndex}
-                  className={isRowSelected(item._id) ? 'bg-muted/50' : ''}
-                >
-                  <TableCell>
-                    <Checkbox
-                      checked={isRowSelected(item._id)}
-                      onCheckedChange={checked =>
-                        toggleRowSelection(item._id, checked as boolean)
+                <TableHead className="w-12">
+                  <Checkbox
+                    ref={checkboxRef => {
+                      if (checkboxRef && selectionStatus.isIndeterminate) {
+                        checkboxRef.indeterminate = true
                       }
-                      aria-label={`Select row ${rowIndex + 1}`}
-                    />
-                  </TableCell>
-                  {schema.columns.map(column => (
-                    <TableCell
-                      key={column.key}
-                      className="relative min-w-[120px]"
-                    >
-                      {editingCell?.row === rowIndex &&
-                      editingCell?.col === column.key ? (
-                        <div className="flex items-center gap-2">
-                          <Input
-                            value={editValue}
-                            onChange={e => setEditValue(e.target.value)}
-                            onKeyDown={e => {
-                              if (e.key === 'Enter') handleCellSave()
-                              if (e.key === 'Escape') handleCellCancel()
-                            }}
-                            autoFocus
-                            className="h-8"
-                            placeholder={`Enter ${column.label.toLowerCase()}`}
-                          />
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={handleCellSave}
-                            className="h-8 w-8 p-0"
-                          >
-                            <Check className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={handleCellCancel}
-                            className="h-8 w-8 p-0"
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ) : (
-                        <div
-                          onClick={() =>
-                            handleCellClick(
-                              rowIndex,
-                              column.key,
-                              item[column.key]
-                            )
-                          }
-                          className="min-h-[32px] flex items-center cursor-pointer hover:bg-muted/50 rounded px-2 -mx-2"
-                        >
-                          {renderCellValue(item[column.key], column)}
-                        </div>
+                    }}
+                    checked={selectionStatus.isAllSelected}
+                    onCheckedChange={(checked, event) => {
+                      if (event) {
+                        event.stopPropagation()
+                      }
+                      if (checked) {
+                        selectAll()
+                      } else {
+                        clearSelection()
+                      }
+                    }}
+                    onClick={e => e.stopPropagation()}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        if (selectionStatus.isAllSelected) {
+                          clearSelection()
+                        } else {
+                          selectAll()
+                        }
+                      }
+                    }}
+                    aria-label={`Select all ${currentData.length} rows`}
+                    aria-describedby={
+                      selectionStatus.hasSelection
+                        ? 'bulk-selection-status'
+                        : undefined
+                    }
+                    className="focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    title={
+                      selectionStatus.isAllSelected
+                        ? 'Deselect all rows'
+                        : 'Select all rows'
+                    }
+                  />
+                </TableHead>
+                {schema.columns.map(column => (
+                  <TableHead key={column.key} className="font-semibold">
+                    <div className="flex items-center gap-2">
+                      {column.label}
+                      {column.required && (
+                        <Badge variant="destructive" className="text-xs">
+                          Required
+                        </Badge>
                       )}
-                    </TableCell>
-                  ))}
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => deleteRow(rowIndex)}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                      <Badge variant="outline" className="text-xs">
+                        {column.type}
+                      </Badge>
+                    </div>
+                  </TableHead>
+                ))}
+                <TableHead className="w-20">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {currentData.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={schema.columns.length + 2}
+                    className="text-center py-8 text-muted-foreground"
+                  >
+                    No {tableType} yet. Click "Add Row" to get started.
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              ) : (
+                currentData.map((item: any, rowIndex: number) => (
+                  <TableRow
+                    key={item._id || rowIndex}
+                    className={isRowSelected(item._id) ? 'bg-muted/50' : ''}
+                  >
+                    <TableCell>
+                      <Checkbox
+                        checked={isRowSelected(item._id)}
+                        onCheckedChange={(checked, event) =>
+                          toggleRowSelection(
+                            item._id,
+                            checked as boolean,
+                            event
+                          )
+                        }
+                        onClick={e => e.stopPropagation()}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            toggleRowSelection(
+                              item._id,
+                              !isRowSelected(item._id),
+                              e
+                            )
+                          }
+                        }}
+                        aria-label={`Select row ${rowIndex + 1}`}
+                        className="focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      />
+                    </TableCell>
+                    {schema.columns.map(column => (
+                      <TableCell
+                        key={column.key}
+                        className="relative min-w-[120px]"
+                      >
+                        {editingCell?.row === rowIndex &&
+                        editingCell?.col === column.key ? (
+                          <div className="flex items-center gap-2">
+                            <Input
+                              value={editValue}
+                              onChange={e => setEditValue(e.target.value)}
+                              onKeyDown={e => {
+                                if (e.key === 'Enter') handleCellSave()
+                                if (e.key === 'Escape') handleCellCancel()
+                              }}
+                              autoFocus
+                              className="h-8"
+                              placeholder={`Enter ${column.label.toLowerCase()}`}
+                            />
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={handleCellSave}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Check className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={handleCellCancel}
+                              className="h-8 w-8 p-0"
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div
+                            onClick={() =>
+                              handleCellClick(
+                                rowIndex,
+                                column.key,
+                                item[column.key]
+                              )
+                            }
+                            className="min-h-[32px] flex items-center cursor-pointer hover:bg-muted/50 rounded px-2 -mx-2"
+                          >
+                            {renderCellValue(item[column.key], column)}
+                          </div>
+                        )}
+                      </TableCell>
+                    ))}
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteRow(rowIndex)}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
 
-      {currentData.length === 0 && (
+      {currentData.length === 0 && !showMapView && (
         <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Edit2 className="w-8 h-8 text-gray-400" />

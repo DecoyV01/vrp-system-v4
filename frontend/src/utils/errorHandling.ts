@@ -191,6 +191,12 @@ export const ErrorContexts = {
     BULK_EDIT: 'bulk edit',
     BULK_DELETE: 'bulk delete',
   },
+  GEOCODING: {
+    FORWARD: 'geocode address',
+    REVERSE: 'reverse geocode',
+    VALIDATE: 'validate coordinates',
+    BATCH: 'batch geocode',
+  },
 } as const
 
 /**
@@ -288,6 +294,211 @@ export const AuthErrorHandling = {
     }),
 }
 
+// =============================================================================
+// GEOCODING TYPES AND INTERFACES
+// =============================================================================
+
+export interface GeocodingResult {
+  coordinates: [number, number] // [longitude, latitude]
+  address: string
+  confidence: 'exact' | 'interpolated' | 'approximate'
+  components: {
+    street?: string
+    city?: string
+    state?: string
+    country?: string
+    postalCode?: string
+  }
+}
+
+export interface AddressResult {
+  address: string
+  components: GeocodingResult['components']
+}
+
+// =============================================================================
+// GEOCODING SERVICE
+// =============================================================================
+
+/**
+ * Mapbox Geocoding Service integrated with error handling
+ */
+export class MapboxGeocodingService {
+  private apiKey: string
+  private cache = new Map<string, { result: any; timestamp: number }>()
+  private baseUrl = 'https://api.mapbox.com/geocoding/v5/mapbox.places'
+  private cacheMaxAge = 24 * 60 * 60 * 1000 // 24 hours
+
+  constructor(apiKey: string) {
+    if (!apiKey) {
+      throw new Error('Mapbox API key is required')
+    }
+    this.apiKey = apiKey
+  }
+
+  async geocodeAddress(address: string): Promise<GeocodingResult> {
+    if (!address?.trim()) {
+      throw new Error('Address is required for geocoding')
+    }
+
+    const cacheKey = `forward:${address.toLowerCase().trim()}`
+    const cached = this.getCachedResult(cacheKey)
+    if (cached) return cached
+
+    try {
+      const encodedAddress = encodeURIComponent(address.trim())
+      const url = `${this.baseUrl}/${encodedAddress}.json?access_token=${this.apiKey}&limit=1`
+
+      const response = await fetch(url)
+      if (!response.ok) {
+        throw new Error(`Mapbox API error: ${response.status}`)
+      }
+
+      const data = await response.json()
+      if (!data.features || data.features.length === 0) {
+        throw new Error('No geocoding results found')
+      }
+
+      const feature = data.features[0]
+      const [lon, lat] = feature.center
+
+      const result: GeocodingResult = {
+        coordinates: [lon, lat],
+        address: feature.place_name || address,
+        confidence: this.mapConfidence(feature.relevance || 0),
+        components: this.extractComponents(feature),
+      }
+
+      this.setCachedResult(cacheKey, result)
+      return result
+    } catch (error) {
+      logError(error, ErrorContexts.GEOCODING.FORWARD)
+      throw error
+    }
+  }
+
+  async reverseGeocode(lat: number, lon: number): Promise<AddressResult> {
+    if (!this.isValidCoordinate(lat, lon)) {
+      throw new Error('Invalid coordinates provided')
+    }
+
+    const cacheKey = `reverse:${lat.toFixed(5)},${lon.toFixed(5)}`
+    const cached = this.getCachedResult(cacheKey)
+    if (cached) return cached
+
+    try {
+      const url = `${this.baseUrl}/${lon},${lat}.json?access_token=${this.apiKey}&limit=1`
+
+      const response = await fetch(url)
+      if (!response.ok) {
+        throw new Error(`Mapbox API error: ${response.status}`)
+      }
+
+      const data = await response.json()
+      if (!data.features || data.features.length === 0) {
+        throw new Error('No address found for coordinates')
+      }
+
+      const feature = data.features[0]
+      const result: AddressResult = {
+        address: feature.place_name || `${lat}, ${lon}`,
+        components: this.extractComponents(feature),
+      }
+
+      this.setCachedResult(cacheKey, result)
+      return result
+    } catch (error) {
+      logError(error, ErrorContexts.GEOCODING.REVERSE)
+      throw error
+    }
+  }
+
+  validateCoordinates(
+    lat: number,
+    lon: number
+  ): { isValid: boolean; errorMessage?: string } {
+    if (!this.isValidCoordinate(lat, lon)) {
+      return {
+        isValid: false,
+        errorMessage:
+          'Coordinates must be valid: latitude (-90 to 90), longitude (-180 to 180)',
+      }
+    }
+    return { isValid: true }
+  }
+
+  private getCachedResult(key: string): any | null {
+    const cached = this.cache.get(key)
+    if (!cached) return null
+
+    if (Date.now() - cached.timestamp > this.cacheMaxAge) {
+      this.cache.delete(key)
+      return null
+    }
+
+    return cached.result
+  }
+
+  private setCachedResult(key: string, result: any): void {
+    this.cache.set(key, { result, timestamp: Date.now() })
+  }
+
+  private isValidCoordinate(lat: number, lon: number): boolean {
+    return (
+      typeof lat === 'number' &&
+      typeof lon === 'number' &&
+      !isNaN(lat) &&
+      !isNaN(lon) &&
+      lat >= -90 &&
+      lat <= 90 &&
+      lon >= -180 &&
+      lon <= 180
+    )
+  }
+
+  private mapConfidence(relevance: number): GeocodingResult['confidence'] {
+    if (relevance >= 0.9) return 'exact'
+    if (relevance >= 0.7) return 'interpolated'
+    return 'approximate'
+  }
+
+  private extractComponents(feature: any): GeocodingResult['components'] {
+    const components: GeocodingResult['components'] = {}
+
+    if (feature.context) {
+      for (const context of feature.context) {
+        const id = context.id || ''
+        if (id.startsWith('postcode.')) components.postalCode = context.text
+        else if (id.startsWith('place.')) components.city = context.text
+        else if (id.startsWith('region.')) components.state = context.text
+        else if (id.startsWith('country.')) components.country = context.text
+      }
+    }
+
+    if (feature.address && feature.text) {
+      components.street = `${feature.address} ${feature.text}`
+    } else if (feature.text) {
+      components.street = feature.text
+    }
+
+    return components
+  }
+}
+
+// Singleton geocoding service instance
+let geocodingService: MapboxGeocodingService | null = null
+
+export const getGeocodingService = (): MapboxGeocodingService => {
+  if (!geocodingService) {
+    const apiKey = import.meta.env.VITE_MAPBOX_TOKEN
+    if (!apiKey) {
+      throw new Error('VITE_MAPBOX_TOKEN environment variable is not set')
+    }
+    geocodingService = new MapboxGeocodingService(apiKey)
+  }
+  return geocodingService
+}
+
 /**
  * Common error handling patterns for VRP operations
  */
@@ -336,5 +547,74 @@ export const VRPErrorHandling = {
         context: ErrorContexts.TABLE.BULK_DELETE,
         fallbackMessage: 'Failed to bulk delete. Please try again.',
       }),
+  },
+
+  geocoding: {
+    forward: (error: unknown) =>
+      parseErrorMessage(error, {
+        context: ErrorContexts.GEOCODING.FORWARD,
+        fallbackMessage:
+          'Failed to find coordinates for address. Please check the address and try again.',
+      }),
+    reverse: (error: unknown) =>
+      parseErrorMessage(error, {
+        context: ErrorContexts.GEOCODING.REVERSE,
+        fallbackMessage:
+          'Failed to find address for coordinates. Please try again.',
+      }),
+    validate: (error: unknown) =>
+      parseErrorMessage(error, {
+        context: ErrorContexts.GEOCODING.VALIDATE,
+        fallbackMessage:
+          'Invalid coordinates provided. Please check latitude and longitude values.',
+      }),
+    batch: (error: unknown) =>
+      parseErrorMessage(error, {
+        context: ErrorContexts.GEOCODING.BATCH,
+        fallbackMessage: 'Failed to process batch geocoding. Please try again.',
+      }),
+  },
+}
+
+// =============================================================================
+// LOCATION PICKER UTILITY
+// =============================================================================
+
+/**
+ * Simple location picker for map interactions
+ */
+export const LocationPickerUtils = {
+  /**
+   * Create a simple map click handler for location selection
+   */
+  createLocationHandler: (
+    onLocationSelect: (coords: [number, number], address?: string) => void
+  ) => {
+    return async (event: any) => {
+      const { lng, lat } = event.lngLat || event
+
+      try {
+        const geocodingService = getGeocodingService()
+        const result = await geocodingService.reverseGeocode(lat, lng)
+        onLocationSelect([lng, lat], result.address)
+      } catch (error) {
+        console.warn('Reverse geocoding failed:', error)
+        onLocationSelect([lng, lat], `${lat.toFixed(6)}, ${lng.toFixed(6)}`)
+      }
+    }
+  },
+
+  /**
+   * Validate coordinates for location creation
+   */
+  validateCoordinates: (lat: number, lng: number): boolean => {
+    return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180
+  },
+
+  /**
+   * Format coordinates for display
+   */
+  formatCoordinates: (lat: number, lng: number): string => {
+    return `${lat.toFixed(6)}, ${lng.toFixed(6)}`
   },
 }

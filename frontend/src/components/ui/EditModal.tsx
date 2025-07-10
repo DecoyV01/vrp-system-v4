@@ -102,6 +102,10 @@ export const EditModal = ({
       e.preventDefault()
       handleSave()
     }
+    if (e.key === 'Escape') {
+      e.preventDefault()
+      onClose()
+    }
   }
 
   if (!data) return null
@@ -143,9 +147,17 @@ export const EditModal = ({
               disabled={isLoading}
               className={validationErrors.name ? 'border-destructive' : ''}
               autoFocus
+              maxLength={100}
+              aria-describedby={
+                validationErrors.name ? 'name-error' : undefined
+              }
             />
             {validationErrors.name && (
-              <p className="text-sm text-destructive">
+              <p
+                id="name-error"
+                className="text-sm text-destructive"
+                role="alert"
+              >
                 {validationErrors.name}
               </p>
             )}
@@ -167,9 +179,17 @@ export const EditModal = ({
                 validationErrors.description ? 'border-destructive' : ''
               }
               rows={3}
+              maxLength={1000}
+              aria-describedby={
+                validationErrors.description ? 'description-error' : undefined
+              }
             />
             {validationErrors.description && (
-              <p className="text-sm text-destructive">
+              <p
+                id="description-error"
+                className="text-sm text-destructive"
+                role="alert"
+              >
                 {validationErrors.description}
               </p>
             )}

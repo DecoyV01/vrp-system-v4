@@ -8,10 +8,19 @@ import { toast } from 'sonner'
 
 export interface ToastOptions {
   duration?: number
+  dismissible?: boolean
+  position?:
+    | 'top-left'
+    | 'top-right'
+    | 'bottom-left'
+    | 'bottom-right'
+    | 'top-center'
+    | 'bottom-center'
   action?: {
     label: string
     onClick: () => void
   }
+  onDismiss?: () => void
 }
 
 export interface BulkOperationResult {
@@ -26,7 +35,7 @@ export const toastMessages = {
   success: {
     // Entity CRUD operations
     created: (entityType: string, entityName?: string) => {
-      const message = entityName 
+      const message = entityName
         ? `${entityType} "${entityName}" created successfully`
         : `${entityType} created successfully`
       toast.success(message)
@@ -47,9 +56,10 @@ export const toastMessages = {
     },
 
     cloned: (entityType: string, originalName?: string, newName?: string) => {
-      const message = originalName && newName
-        ? `${entityType} "${originalName}" cloned as "${newName}"`
-        : `${entityType} cloned successfully`
+      const message =
+        originalName && newName
+          ? `${entityType} "${originalName}" cloned as "${newName}"`
+          : `${entityType} cloned successfully`
       toast.success(message)
     },
 
@@ -68,13 +78,23 @@ export const toastMessages = {
     },
 
     // Bulk operations
-    bulkOperation: (result: BulkOperationResult, operation: string, entityType: string) => {
+    bulkOperation: (
+      result: BulkOperationResult,
+      operation: string,
+      entityType: string
+    ) => {
       if (result.failed === 0) {
-        toast.success(`Successfully ${operation} ${result.success} ${entityType}${result.success !== 1 ? 's' : ''}`)
+        toast.success(
+          `Successfully ${operation} ${result.success} ${entityType}${result.success !== 1 ? 's' : ''}`
+        )
       } else if (result.success === 0) {
-        toast.error(`Failed to ${operation} all ${result.total} ${entityType}${result.total !== 1 ? 's' : ''}`)
+        toast.error(
+          `Failed to ${operation} all ${result.total} ${entityType}${result.total !== 1 ? 's' : ''}`
+        )
       } else {
-        toast.success(`${operation} completed: ${result.success} successful, ${result.failed} failed`)
+        toast.success(
+          `${operation} completed: ${result.success} successful, ${result.failed} failed`
+        )
       }
     },
 
@@ -103,8 +123,15 @@ export const toastMessages = {
 
     // Generic success
     generic: (message: string, options?: ToastOptions) => {
-      toast.success(message, options)
-    }
+      toast.success(message, {
+        duration: options?.duration || 4000,
+        dismissible: options?.dismissible !== false,
+        position: options?.position || 'top-right',
+        action: options?.action,
+        onDismiss: options?.onDismiss,
+        ...options,
+      })
+    },
   },
 
   // Error messages
@@ -180,8 +207,15 @@ export const toastMessages = {
 
     // Generic error
     generic: (message: string, options?: ToastOptions) => {
-      toast.error(message, options)
-    }
+      toast.error(message, {
+        duration: options?.duration || 6000, // Longer duration for errors
+        dismissible: options?.dismissible !== false,
+        position: options?.position || 'top-right',
+        action: options?.action,
+        onDismiss: options?.onDismiss,
+        ...options,
+      })
+    },
   },
 
   // Warning messages
@@ -197,18 +231,33 @@ export const toastMessages = {
     },
 
     largeDataset: (count: number, entityType: string) => {
-      toast.warning(`Large dataset detected: ${count} ${entityType}s. Performance may be affected.`)
+      toast.warning(
+        `Large dataset detected: ${count} ${entityType}s. Performance may be affected.`
+      )
     },
 
     // Operation warnings
-    cascadeEffect: (entityType: string, affectedCount: number, affectedType: string) => {
-      toast.warning(`Deleting this ${entityType} will also affect ${affectedCount} ${affectedType}${affectedCount !== 1 ? 's' : ''}`)
+    cascadeEffect: (
+      entityType: string,
+      affectedCount: number,
+      affectedType: string
+    ) => {
+      toast.warning(
+        `Deleting this ${entityType} will also affect ${affectedCount} ${affectedType}${affectedCount !== 1 ? 's' : ''}`
+      )
     },
 
     // Generic warning
     generic: (message: string, options?: ToastOptions) => {
-      toast.warning(message, options)
-    }
+      toast.warning(message, {
+        duration: options?.duration || 5000,
+        dismissible: options?.dismissible !== false,
+        position: options?.position || 'top-right',
+        action: options?.action,
+        onDismiss: options?.onDismiss,
+        ...options,
+      })
+    },
   },
 
   // Info messages
@@ -233,8 +282,15 @@ export const toastMessages = {
 
     // Generic info
     generic: (message: string, options?: ToastOptions) => {
-      toast.info(message, options)
-    }
+      toast.info(message, {
+        duration: options?.duration || 3000,
+        dismissible: options?.dismissible !== false,
+        position: options?.position || 'top-right',
+        action: options?.action,
+        onDismiss: options?.onDismiss,
+        ...options,
+      })
+    },
   },
 
   // Loading states
@@ -243,21 +299,40 @@ export const toastMessages = {
       const message = entityType
         ? `${operation} ${entityType}...`
         : `${operation}...`
-      return toast.loading(message)
+      return toast.loading(message, {
+        duration: Infinity, // Progress toasts should not auto-dismiss
+        dismissible: true,
+        position: 'bottom-right', // Less intrusive position for progress
+      })
     },
 
     update: (toastId: string | number, message: string) => {
-      toast.loading(message, { id: toastId })
+      toast.loading(message, {
+        id: toastId,
+        duration: Infinity,
+        dismissible: true,
+        position: 'bottom-right',
+      })
     },
 
     success: (toastId: string | number, message: string) => {
-      toast.success(message, { id: toastId })
+      toast.success(message, {
+        id: toastId,
+        duration: 4000,
+        dismissible: true,
+        position: 'bottom-right',
+      })
     },
 
     error: (toastId: string | number, message: string) => {
-      toast.error(message, { id: toastId })
-    }
-  }
+      toast.error(message, {
+        id: toastId,
+        duration: 6000,
+        dismissible: true,
+        position: 'bottom-right',
+      })
+    },
+  },
 }
 
 // Helper functions for common patterns
@@ -307,7 +382,7 @@ export const showBulkOperationResult = (
   result: BulkOperationResult
 ) => {
   toastMessages.success.bulkOperation(result, operation, entityType)
-  
+
   // Show detailed errors if any
   if (result.failed > 0 && result.errors?.length) {
     result.errors.forEach(error => {

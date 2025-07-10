@@ -91,12 +91,7 @@ export interface UseModalStateReturn {
 export const useModalState = (
   options: UseModalStateOptions = {}
 ): UseModalStateReturn => {
-  const {
-    onSuccess,
-    onError,
-    closeOnEscape = true,
-    closeOnOverlayClick = true,
-  } = options
+  const { onSuccess, onError, closeOnEscape = true } = options
 
   // Core modal state
   const [modalState, setModalState] = useState<ModalState>({
