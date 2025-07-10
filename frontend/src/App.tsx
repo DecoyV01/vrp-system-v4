@@ -12,6 +12,7 @@ import LoginPage from './pages/auth/LoginPage'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import UATErrorBoundary from './components/UATErrorBoundary'
 import { ConfirmationDialogProvider } from './components/ui/ConfirmationDialogProvider'
+import { ModalProvider } from './contexts/ModalContext'
 import './App.css'
 
 export default function App() {
@@ -20,80 +21,82 @@ export default function App() {
   return (
     <UATErrorBoundary>
       <ConfirmationDialogProvider>
-        <BrowserRouter>
-          <div className="min-h-screen bg-background">
-            <Routes>
-              {/* Public routes */}
-              <Route
-                path="/auth/login"
-                element={user ? <Navigate to="/" replace /> : <LoginPage />}
-              />
-              <Route
-                path="/auth/register"
-                element={user ? <Navigate to="/" replace /> : <LoginPage />}
-              />
-
-              {/* Protected routes */}
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <MainLayout />
-                  </ProtectedRoute>
-                }
-              >
-                <Route index element={<ProjectsPage />} />
-                <Route path="projects" element={<ProjectsPage />} />
-
-                {/* Deep linking routes for VRP hierarchy */}
+        <ModalProvider>
+          <BrowserRouter>
+            <div className="min-h-screen bg-background">
+              <Routes>
+                {/* Public routes */}
                 <Route
-                  path="projects/:projectId"
-                  element={<ProjectDetailPage />}
+                  path="/auth/login"
+                  element={user ? <Navigate to="/" replace /> : <LoginPage />}
                 />
                 <Route
-                  path="projects/:projectId/scenarios/:scenarioId"
-                  element={<ScenarioDetailPage />}
-                />
-                <Route
-                  path="projects/:projectId/scenarios/:scenarioId/datasets/:datasetId"
-                  element={<DatasetDetailPage />}
-                />
-                <Route
-                  path="projects/:projectId/scenarios/:scenarioId/datasets/:datasetId/:tableType"
-                  element={<TableEditorPage />}
+                  path="/auth/register"
+                  element={user ? <Navigate to="/" replace /> : <LoginPage />}
                 />
 
-                {/* Legacy routes for backwards compatibility */}
+                {/* Protected routes */}
                 <Route
-                  path="tables/:datasetId/:tableType"
-                  element={<TableEditorPage />}
-                />
-              </Route>
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route index element={<ProjectsPage />} />
+                  <Route path="projects" element={<ProjectsPage />} />
 
-              {/* Default redirect based on auth state */}
-              <Route
-                path="*"
-                element={
-                  user === undefined ? (
-                    <div className="flex justify-center items-center min-h-screen">
-                      <div className="flex flex-col items-center space-y-4">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                        <p className="text-sm text-muted-foreground">
-                          Loading application...
-                        </p>
+                  {/* Deep linking routes for VRP hierarchy */}
+                  <Route
+                    path="projects/:projectId"
+                    element={<ProjectDetailPage />}
+                  />
+                  <Route
+                    path="projects/:projectId/scenarios/:scenarioId"
+                    element={<ScenarioDetailPage />}
+                  />
+                  <Route
+                    path="projects/:projectId/scenarios/:scenarioId/datasets/:datasetId"
+                    element={<DatasetDetailPage />}
+                  />
+                  <Route
+                    path="projects/:projectId/scenarios/:scenarioId/datasets/:datasetId/:tableType"
+                    element={<TableEditorPage />}
+                  />
+
+                  {/* Legacy routes for backwards compatibility */}
+                  <Route
+                    path="tables/:datasetId/:tableType"
+                    element={<TableEditorPage />}
+                  />
+                </Route>
+
+                {/* Default redirect based on auth state */}
+                <Route
+                  path="*"
+                  element={
+                    user === undefined ? (
+                      <div className="flex justify-center items-center min-h-screen">
+                        <div className="flex flex-col items-center space-y-4">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                          <p className="text-sm text-muted-foreground">
+                            Loading application...
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ) : user ? (
-                    <Navigate to="/" replace />
-                  ) : (
-                    <Navigate to="/auth/login" replace />
-                  )
-                }
-              />
-            </Routes>
-            <Toaster position="top-right" />
-          </div>
-        </BrowserRouter>
+                    ) : user ? (
+                      <Navigate to="/" replace />
+                    ) : (
+                      <Navigate to="/auth/login" replace />
+                    )
+                  }
+                />
+              </Routes>
+              <Toaster position="top-right" />
+            </div>
+          </BrowserRouter>
+        </ModalProvider>
       </ConfirmationDialogProvider>
     </UATErrorBoundary>
   )

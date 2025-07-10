@@ -1,4 +1,4 @@
-import { useModalState } from '@/hooks/useModalState'
+import { useModal } from '@/contexts/ModalContext'
 import { useHierarchyOperations } from '@/hooks/useHierarchyOperations'
 import { useToastNotifications } from '@/hooks/useToastNotifications'
 import { useConfirmation } from './ConfirmationDialogProvider'
@@ -29,7 +29,7 @@ export const ModalManager = ({
   onDeleteSuccess,
   onCloneSuccess,
 }: ModalManagerProps) => {
-  const { modalState, closeModal, setLoading, setError } = useModalState()
+  const { modalState, closeModal, setLoading, setError } = useModal()
 
   // Fetch current entity data for editing
   const currentProject = useProject(
@@ -289,17 +289,4 @@ export const ModalManager = ({
       />
     </>
   )
-}
-
-// Export hook for components to access modal functionality
-export const useModalManager = () => {
-  const modalState = useModalState()
-
-  return {
-    ...modalState,
-    // Convenience methods for opening modals
-    openEditModal: modalState.openEditModal,
-    openDeleteModal: modalState.openDeleteModal,
-    openCloneModal: modalState.openCloneModal,
-  }
 }
