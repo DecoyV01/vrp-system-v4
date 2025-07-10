@@ -222,6 +222,14 @@ const TreeNodeComponent = ({
         `Analyzing delete impact for ${node.name}...`
       )
 
+      let toastDismissed = false
+      const dismissToast = () => {
+        if (!toastDismissed) {
+          toast.dismiss(loadingToast)
+          toastDismissed = true
+        }
+      }
+
       try {
         console.log('Getting cascade info for:', node.type, node.realId)
         const cascadeInfo = await getCascadeInfo(
@@ -230,7 +238,7 @@ const TreeNodeComponent = ({
         )
 
         // Dismiss loading toast
-        toast.dismiss(loadingToast)
+        dismissToast()
 
         console.log(
           'Opening delete modal for:',
@@ -257,7 +265,7 @@ const TreeNodeComponent = ({
         )
       } catch (error) {
         console.error('Failed to get cascade info:', error)
-        toast.dismiss(loadingToast)
+        dismissToast()
         toast.error('Failed to analyze delete impact. Please try again.')
       }
     },
