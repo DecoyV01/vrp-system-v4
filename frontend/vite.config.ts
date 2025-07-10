@@ -24,6 +24,7 @@ export default defineConfig({
     target: 'es2015',
     emptyOutDir: true,
     rollupOptions: {
+      external: ['mapbox-gl', 'mapbox-gl/dist/mapbox-gl.css'],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
@@ -39,7 +40,6 @@ export default defineConfig({
             'clsx',
             'tailwind-merge',
           ],
-          'theme-provider': ['@/components/theme/ThemeProvider'],
           icons: ['lucide-react'],
         },
       },
