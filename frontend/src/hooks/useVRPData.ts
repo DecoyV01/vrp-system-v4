@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useAction } from 'convex/react'
 import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 // =============================================================================
 // PROJECT HOOKS
@@ -356,6 +356,42 @@ export const useDeleteRoute = () => {
 
 export const useStoreOptimizationResults = () => {
   return useMutation(api.routes.storeOptimizationResults)
+}
+
+// =============================================================================
+// TABLE MANAGEMENT HOOKS
+// =============================================================================
+
+// Hook for managing table status and operations
+export const useTableManagement = (datasetId: Id<'datasets'> | undefined) => {
+  const [tableStatuses, setTableStatuses] = useState({
+    vehicles: true,
+    jobs: true,
+    locations: true,
+    routes: true,
+  })
+
+  const toggleTableStatus = async (
+    tableType: string,
+    currentStatus: boolean
+  ) => {
+    setTableStatuses(prev => ({ ...prev, [tableType]: !currentStatus }))
+  }
+
+  const createTable = async (tableType: string) => {
+    setTableStatuses(prev => ({ ...prev, [tableType]: true }))
+  }
+
+  const deleteTable = async (tableType: string) => {
+    setTableStatuses(prev => ({ ...prev, [tableType]: false }))
+  }
+
+  return {
+    tableStatuses,
+    toggleTableStatus,
+    createTable,
+    deleteTable,
+  }
 }
 
 // =============================================================================

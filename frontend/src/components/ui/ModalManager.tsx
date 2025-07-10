@@ -283,6 +283,9 @@ export const ModalManager = ({
                 name: modalState.data.name!,
                 type: modalState.data.type! as 'scenario' | 'dataset',
                 parentId: modalState.data.parentId,
+                // Enhanced data for selective cloning
+                availableDatasets: modalState.data.availableDatasets,
+                availableTables: modalState.data.availableTables,
               }
             : null
         }

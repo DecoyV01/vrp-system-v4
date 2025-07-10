@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -9,6 +10,14 @@ import {
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
+import { toast } from 'sonner'
+import {
   Settings,
   Truck,
   MapPin,
@@ -16,6 +25,11 @@ import {
   Route,
   Calendar,
   Archive,
+  Plus,
+  MoreVertical,
+  Trash2,
+  ToggleLeft,
+  ToggleRight,
 } from 'lucide-react'
 import {
   useProject,
@@ -26,6 +40,7 @@ import {
   useLocations,
   useRoutes,
   useDatasetStats,
+  useTableManagement,
 } from '@/hooks/useVRPData'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { formatDistanceToNow } from 'date-fns'
@@ -40,6 +55,9 @@ const TableCard = ({
   scenarioId,
   datasetId,
   tableType,
+  isActive = true,
+  onToggleStatus,
+  onDeleteTable,
 }: {
   title: string
   description: string
@@ -49,24 +67,71 @@ const TableCard = ({
   scenarioId: Id<'scenarios'>
   datasetId: Id<'datasets'>
   tableType: 'vehicles' | 'jobs' | 'locations' | 'routes'
+  isActive?: boolean
+  onToggleStatus?: (tableType: string, currentStatus: boolean) => void
+  onDeleteTable?: (tableType: string) => void
 }) => {
   const navigate = useNavigate()
 
-  const handleClick = () => {
-    navigate(
-      `/projects/${projectId}/scenarios/${scenarioId}/datasets/${datasetId}/${tableType}`
-    )
+  const handleCardClick = () => {
+    if (isActive) {
+      navigate(
+        `/projects/${projectId}/scenarios/${scenarioId}/datasets/${datasetId}/${tableType}`
+      )
+    }
+  }
+
+  const handleToggleStatus = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onToggleStatus?.(tableType, isActive)
+  }
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onDeleteTable?.(tableType)
   }
 
   return (
     <Card
-      className="hover:shadow-md transition-shadow cursor-pointer"
-      onClick={handleClick}
+      className={`hover:shadow-md transition-shadow ${isActive ? 'cursor-pointer' : 'opacity-60'}`}
+      onClick={handleCardClick}
     >
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg mb-1 flex items-center gap-2">
-          {icon}
-          {title}
+        <CardTitle className="text-lg mb-1 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {icon}
+            {title}
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleToggleStatus}>
+                {isActive ? (
+                  <>
+                    <ToggleLeft className="mr-2 h-4 w-4" />
+                    Deactivate Table
+                  </>
+                ) : (
+                  <>
+                    <ToggleRight className="mr-2 h-4 w-4" />
+                    Activate Table
+                  </>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={handleDelete}
+                className="text-destructive"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Table
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </CardTitle>
         <CardDescription className="text-sm">{description}</CardDescription>
       </CardHeader>
@@ -76,11 +141,19 @@ const TableCard = ({
           <span className="text-2xl font-bold text-gray-900">
             {count !== undefined ? count : '...'}
           </span>
-          <Badge variant="secondary">
-            {count !== undefined
-              ? `${count} item${count !== 1 ? 's' : ''}`
-              : 'Loading...'}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary">
+              {count !== undefined
+                ? `${count} item${count !== 1 ? 's' : ''}`
+                : 'Loading...'}
+            </Badge>
+            <Badge
+              variant={isActive ? 'default' : 'outline'}
+              className="text-xs"
+            >
+              {isActive ? 'Active' : 'Inactive'}
+            </Badge>
+          </div>
         </div>
       </CardContent>
     </Card>
@@ -102,6 +175,55 @@ const DatasetDetailPage = () => {
   const locations = useLocations(datasetId)
   const routes = useRoutes(datasetId)
   const stats = useDatasetStats(datasetId)
+
+  // Table management using custom hook
+  const { tableStatuses, toggleTableStatus, createTable, deleteTable } =
+    useTableManagement(datasetId)
+  const [showCreateTable, setShowCreateTable] = useState(false)
+
+  // Table management handlers
+  const handleToggleTableStatus = async (
+    tableType: string,
+    currentStatus: boolean
+  ) => {
+    try {
+      await toggleTableStatus(tableType, currentStatus)
+      toast.success(
+        `${tableType} table ${!currentStatus ? 'activated' : 'deactivated'}`
+      )
+    } catch (error) {
+      toast.error(`Failed to update ${tableType} table status`)
+      console.error('Table status toggle failed:', error)
+    }
+  }
+
+  const handleDeleteTable = async (tableType: string) => {
+    try {
+      const confirmed = confirm(
+        `Are you sure you want to delete the ${tableType} table? This will remove all data and cannot be undone.`
+      )
+      if (!confirmed) return
+
+      await deleteTable(tableType)
+      toast.success(`${tableType} table deleted successfully`)
+    } catch (error) {
+      toast.error(`Failed to delete ${tableType} table`)
+      console.error('Table deletion failed:', error)
+    }
+  }
+
+  const handleCreateTable = async (
+    tableType: 'vehicles' | 'jobs' | 'locations' | 'routes'
+  ) => {
+    try {
+      await createTable(tableType)
+      toast.success(`${tableType} table created successfully`)
+      setShowCreateTable(false)
+    } catch (error) {
+      toast.error(`Failed to create ${tableType} table`)
+      console.error('Table creation failed:', error)
+    }
+  }
 
   if (!projectId || !scenarioId || !datasetId) {
     return (
@@ -188,10 +310,22 @@ const DatasetDetailPage = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" disabled>
-            <Settings className="w-4 h-4 mr-2" />
-            Settings
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Settings className="w-4 h-4 mr-2" />
+                Manage Tables
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => setShowCreateTable(!showCreateTable)}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                {showCreateTable ? 'Hide' : 'Show'} Table Creation
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -217,6 +351,9 @@ const DatasetDetailPage = () => {
             scenarioId={scenarioId}
             datasetId={datasetId}
             tableType="vehicles"
+            isActive={tableStatuses.vehicles}
+            onToggleStatus={handleToggleTableStatus}
+            onDeleteTable={handleDeleteTable}
           />
 
           <TableCard
@@ -228,6 +365,9 @@ const DatasetDetailPage = () => {
             scenarioId={scenarioId}
             datasetId={datasetId}
             tableType="jobs"
+            isActive={tableStatuses.jobs}
+            onToggleStatus={handleToggleTableStatus}
+            onDeleteTable={handleDeleteTable}
           />
 
           <TableCard
@@ -239,6 +379,9 @@ const DatasetDetailPage = () => {
             scenarioId={scenarioId}
             datasetId={datasetId}
             tableType="locations"
+            isActive={tableStatuses.locations}
+            onToggleStatus={handleToggleTableStatus}
+            onDeleteTable={handleDeleteTable}
           />
 
           <TableCard
@@ -250,7 +393,38 @@ const DatasetDetailPage = () => {
             scenarioId={scenarioId}
             datasetId={datasetId}
             tableType="routes"
+            isActive={tableStatuses.routes}
+            onToggleStatus={handleToggleTableStatus}
+            onDeleteTable={handleDeleteTable}
           />
+
+          {/* Create Table Card - Only show when enabled */}
+          {showCreateTable && (
+            <Card className="border-dashed border-2 hover:shadow-md transition-shadow">
+              <CardContent className="pt-6 text-center">
+                <Plus className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Create New Table</h3>
+                <p className="text-muted-foreground text-sm mb-4">
+                  Add additional table types to this dataset
+                </p>
+                <div className="space-y-2">
+                  {(['vehicles', 'jobs', 'locations', 'routes'] as const).map(
+                    tableType => (
+                      <Button
+                        key={tableType}
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        onClick={() => handleCreateTable(tableType)}
+                      >
+                        Create {tableType} table
+                      </Button>
+                    )
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Dataset Summary */}
