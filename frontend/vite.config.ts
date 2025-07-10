@@ -21,10 +21,9 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
-    target: 'es2015',
+    target: 'es2020',
     emptyOutDir: true,
     rollupOptions: {
-      external: ['mapbox-gl', 'mapbox-gl/dist/mapbox-gl.css'],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
@@ -41,6 +40,7 @@ export default defineConfig({
             'tailwind-merge',
           ],
           icons: ['lucide-react'],
+          maps: ['mapbox-gl'],
         },
       },
     },
