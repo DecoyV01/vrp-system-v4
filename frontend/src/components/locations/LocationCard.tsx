@@ -1,15 +1,21 @@
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { 
-  MapPin, 
-  Edit2, 
-  Trash2, 
-  Eye, 
+import {
+  MapPin,
+  Edit2,
+  Trash2,
+  Eye,
   MoreHorizontal,
   TrendingUp,
   Clock,
-  MapIcon
+  MapIcon,
 } from 'lucide-react'
 import {
   DropdownMenu,
@@ -36,14 +42,14 @@ export const LocationCard = ({
   onEdit,
   onDelete,
   showUsageMetrics = false,
-  className = ""
+  className = '',
 }: LocationCardProps) => {
   const getQualityColor = (quality: string) => {
     switch (quality) {
       case 'exact':
         return 'bg-green-100 text-green-800 border-green-200'
       case 'interpolated':
-        return 'bg-blue-100 text-blue-800 border-blue-200'
+        return 'bg-secondary text-secondary-foreground border-border'
       case 'approximate':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200'
       case 'manual':
@@ -56,9 +62,9 @@ export const LocationCard = ({
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'depot':
-        return 'bg-purple-100 text-purple-800'
+        return 'bg-secondary text-secondary-foreground'
       case 'customer':
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-secondary text-secondary-foreground'
       case 'warehouse':
         return 'bg-orange-100 text-orange-800'
       case 'distribution_center':
@@ -73,16 +79,18 @@ export const LocationCard = ({
   }
 
   return (
-    <Card 
+    <Card
       className={`transition-all duration-200 hover:shadow-md cursor-pointer ${
-        isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
+        isSelected ? 'ring-2 ring-primary bg-primary/5' : 'hover:bg-gray-50'
       } ${className}`}
       onClick={onSelect}
     >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg mb-1 truncate">{location.name}</CardTitle>
+            <CardTitle className="text-lg mb-1 truncate">
+              {location.name}
+            </CardTitle>
             <CardDescription className="text-sm">
               {location.description || 'No description'}
             </CardDescription>
@@ -92,7 +100,7 @@ export const LocationCard = ({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation()
                   onEdit()
                 }}
@@ -105,7 +113,7 @@ export const LocationCard = ({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation()
                   onDelete()
                 }}
@@ -119,7 +127,7 @@ export const LocationCard = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={e => e.stopPropagation()}
                   className="h-8 w-8 p-0"
                 >
                   <MoreHorizontal className="w-4 h-4" />
@@ -135,17 +143,19 @@ export const LocationCard = ({
                   View on Map
                 </DropdownMenuItem>
                 {onEdit && (
-                  <DropdownMenuItem onClick={(e) => {
-                    e.stopPropagation()
-                    onEdit()
-                  }}>
+                  <DropdownMenuItem
+                    onClick={e => {
+                      e.stopPropagation()
+                      onEdit()
+                    }}
+                  >
                     <Edit2 className="w-4 h-4 mr-2" />
                     Edit
                   </DropdownMenuItem>
                 )}
                 {onDelete && (
-                  <DropdownMenuItem 
-                    onClick={(e) => {
+                  <DropdownMenuItem
+                    onClick={e => {
                       e.stopPropagation()
                       onDelete()
                     }}
@@ -170,10 +180,11 @@ export const LocationCard = ({
               {location.address || 'No address provided'}
             </span>
           </div>
-          
+
           {location.locationLat && location.locationLon && (
             <div className="text-xs text-gray-500 font-mono">
-              {location.locationLat.toFixed(6)}, {location.locationLon.toFixed(6)}
+              {location.locationLat.toFixed(6)},{' '}
+              {location.locationLon.toFixed(6)}
             </div>
           )}
         </div>
@@ -185,10 +196,10 @@ export const LocationCard = ({
               {location.locationType.replace('_', ' ')}
             </Badge>
           )}
-          
+
           {location.geocodeQuality && (
-            <Badge 
-              variant="outline" 
+            <Badge
+              variant="outline"
               className={`text-xs ${getQualityColor(location.geocodeQuality)}`}
             >
               {location.geocodeQuality}
@@ -208,14 +219,16 @@ export const LocationCard = ({
                 </div>
               </div>
             </div>
-            
+
             {location.lastUsedAt && (
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-gray-400" />
                 <div>
                   <div className="text-xs text-gray-500">Last Used</div>
                   <div className="text-sm font-medium">
-                    {formatDistanceToNow(new Date(location.lastUsedAt), { addSuffix: true })}
+                    {formatDistanceToNow(new Date(location.lastUsedAt), {
+                      addSuffix: true,
+                    })}
                   </div>
                 </div>
               </div>
@@ -226,7 +239,8 @@ export const LocationCard = ({
         {/* Operating Hours */}
         {location.operatingHours && (
           <div className="text-xs text-gray-600">
-            <span className="font-medium">Hours:</span> {location.operatingHours}
+            <span className="font-medium">Hours:</span>{' '}
+            {location.operatingHours}
           </div>
         )}
 
@@ -239,12 +253,19 @@ export const LocationCard = ({
 
         {/* Created/Updated */}
         <div className="text-xs text-gray-400 pt-1 border-t border-gray-50">
-          Created {formatDistanceToNow(new Date(location._creationTime), { addSuffix: true })}
-          {location.updatedAt && location.updatedAt !== location._creationTime && (
-            <span className="ml-2">
-              • Updated {formatDistanceToNow(new Date(location.updatedAt), { addSuffix: true })}
-            </span>
-          )}
+          Created{' '}
+          {formatDistanceToNow(new Date(location._creationTime), {
+            addSuffix: true,
+          })}
+          {location.updatedAt &&
+            location.updatedAt !== location._creationTime && (
+              <span className="ml-2">
+                • Updated{' '}
+                {formatDistanceToNow(new Date(location.updatedAt), {
+                  addSuffix: true,
+                })}
+              </span>
+            )}
         </div>
       </CardContent>
     </Card>

@@ -201,7 +201,7 @@ export function LoginPage() {
             {isRegisterMode ? 'Or ' : 'Or '}
             <Link
               to={isRegisterMode ? '/auth/login' : '/auth/login?mode=register'}
-              className="font-medium text-indigo-600 hover:text-indigo-500"
+              className="font-medium text-primary hover:text-primary/80"
             >
               {isRegisterMode
                 ? 'sign in to your existing account'

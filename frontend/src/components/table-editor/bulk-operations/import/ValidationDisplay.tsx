@@ -2,21 +2,30 @@ import { useMemo, useState } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  AlertTriangle, 
-  Info, 
-  CheckCircle2, 
-  ChevronDown, 
+import {
+  AlertTriangle,
+  Info,
+  CheckCircle2,
+  ChevronDown,
   ChevronUp,
   MapPin,
   FileText,
-  BarChart3
+  BarChart3,
 } from 'lucide-react'
-import type { ParseError, ParseWarning, DuplicateMatch, CSVParseResult } from '../types/shared.types'
+import type {
+  ParseError,
+  ParseWarning,
+  DuplicateMatch,
+  CSVParseResult,
+} from '../types/shared.types'
 
 interface ValidationDisplayProps {
   parseResult: CSVParseResult
@@ -43,9 +52,11 @@ interface ValidationSummary {
 export function ValidationDisplay({
   parseResult,
   duplicates = [],
-  className
+  className,
 }: ValidationDisplayProps) {
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['errors']))
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(
+    new Set(['errors'])
+  )
 
   // Group validation issues by type and category
   const groupedValidation = useMemo((): GroupedValidationItem[] => {
@@ -66,7 +77,7 @@ export function ValidationDisplay({
         type: 'error',
         count: errors.length,
         items: errors,
-        description: messageType
+        description: messageType,
       })
     })
 
@@ -85,7 +96,7 @@ export function ValidationDisplay({
         type: 'warning',
         count: warnings.length,
         items: warnings,
-        description: messageType
+        description: messageType,
       })
     })
 
@@ -104,7 +115,7 @@ export function ValidationDisplay({
         type: 'duplicate',
         count: duplicateItems.length,
         items: duplicateItems,
-        description: `${matchType} matches`
+        description: `${matchType} matches`,
       })
     })
 
@@ -117,9 +128,10 @@ export function ValidationDisplay({
     const warningCount = parseResult.warnings.length
     const duplicateCount = duplicates.length
     const totalIssues = errorCount + warningCount + duplicateCount
-    
+
     // Errors are blockers, high-confidence duplicates might be blockers too
-    const blockerCount = errorCount + duplicates.filter(d => d.confidence > 0.95).length
+    const blockerCount =
+      errorCount + duplicates.filter(d => d.confidence > 0.95).length
     const canProceed = blockerCount === 0
 
     return {
@@ -128,7 +140,7 @@ export function ValidationDisplay({
       warningCount,
       duplicateCount,
       canProceed,
-      blockerCount
+      blockerCount,
     }
   }, [parseResult.errors, parseResult.warnings, duplicates])
 
@@ -172,7 +184,9 @@ export function ValidationDisplay({
       return `Row ${item.importRowIndex + 1}`
     } else if ('row' in item) {
       // Parse error or warning
-      return item.column ? `Row ${item.row}, Column ${item.column}` : `Row ${item.row}`
+      return item.column
+        ? `Row ${item.row}, Column ${item.column}`
+        : `Row ${item.row}`
     }
     return 'Unknown location'
   }
@@ -185,7 +199,8 @@ export function ValidationDisplay({
             <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">No Issues Found</h3>
             <p className="text-muted-foreground">
-              Your CSV file passed all validation checks and is ready for import.
+              Your CSV file passed all validation checks and is ready for
+              import.
             </p>
           </div>
         </CardContent>
@@ -202,7 +217,8 @@ export function ValidationDisplay({
             <div>
               <CardTitle className="text-lg">Validation Results</CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
-                Found {summary.totalIssues} issue{summary.totalIssues !== 1 ? 's' : ''} that need attention
+                Found {summary.totalIssues} issue
+                {summary.totalIssues !== 1 ? 's' : ''} that need attention
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -214,7 +230,8 @@ export function ValidationDisplay({
               ) : (
                 <Badge variant="destructive" className="gap-1">
                   <AlertTriangle className="h-3 w-3" />
-                  {summary.blockerCount} Blocker{summary.blockerCount !== 1 ? 's' : ''}
+                  {summary.blockerCount} Blocker
+                  {summary.blockerCount !== 1 ? 's' : ''}
                 </Badge>
               )}
             </div>
@@ -223,19 +240,27 @@ export function ValidationDisplay({
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-destructive">{summary.errorCount}</div>
+              <div className="text-2xl font-bold text-destructive">
+                {summary.errorCount}
+              </div>
               <div className="text-sm text-muted-foreground">Errors</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-orange-500">{summary.warningCount}</div>
+              <div className="text-2xl font-bold text-orange-500">
+                {summary.warningCount}
+              </div>
               <div className="text-sm text-muted-foreground">Warnings</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-500">{summary.duplicateCount}</div>
+              <div className="text-2xl font-bold text-foreground">
+                {summary.duplicateCount}
+              </div>
               <div className="text-sm text-muted-foreground">Duplicates</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold">{parseResult.data.length - summary.errorCount}</div>
+              <div className="text-2xl font-bold">
+                {parseResult.data.length - summary.errorCount}
+              </div>
               <div className="text-sm text-muted-foreground">Valid Rows</div>
             </div>
           </div>
@@ -270,7 +295,8 @@ export function ValidationDisplay({
                         <div>
                           <h4 className="font-semibold">{group.description}</h4>
                           <p className="text-sm text-muted-foreground">
-                            {group.count} occurrence{group.count !== 1 ? 's' : ''}
+                            {group.count} occurrence
+                            {group.count !== 1 ? 's' : ''}
                           </p>
                         </div>
                       </div>
@@ -292,31 +318,42 @@ export function ValidationDisplay({
                     <ScrollArea className="h-48">
                       <div className="space-y-2">
                         {group.items.map((item, itemIndex) => (
-                          <div key={itemIndex} className="flex items-start gap-3 p-3 rounded-lg bg-muted/30">
+                          <div
+                            key={itemIndex}
+                            className="flex items-start gap-3 p-3 rounded-lg bg-muted/30"
+                          >
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
                                 <Badge variant="outline" className="text-xs">
                                   {formatLocation(item)}
                                 </Badge>
                                 {'confidence' in item && (
-                                  <Badge variant="secondary" className="text-xs">
-                                    {Math.round(item.confidence * 100)}% confidence
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-xs"
+                                  >
+                                    {Math.round(item.confidence * 100)}%
+                                    confidence
                                   </Badge>
                                 )}
                               </div>
                               <p className="text-sm">
-                                {'message' in item ? item.message : `${item.matchType} duplicate detected`}
+                                {'message' in item
+                                  ? item.message
+                                  : `${item.matchType} duplicate detected`}
                               </p>
                               {'suggestion' in item && item.suggestion && (
                                 <p className="text-xs text-muted-foreground mt-1">
                                   💡 {item.suggestion}
                                 </p>
                               )}
-                              {'conflictingFields' in item && item.conflictingFields.length > 0 && (
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Conflicting fields: {item.conflictingFields.join(', ')}
-                                </p>
-                              )}
+                              {'conflictingFields' in item &&
+                                item.conflictingFields.length > 0 && (
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    Conflicting fields:{' '}
+                                    {item.conflictingFields.join(', ')}
+                                  </p>
+                                )}
                             </div>
                           </div>
                         ))}
@@ -345,59 +382,80 @@ export function ValidationDisplay({
                     new Set([
                       ...parseResult.errors.map(e => e.row),
                       ...parseResult.warnings.map(w => w.row),
-                      ...duplicates.map(d => d.importRowIndex + 1)
+                      ...duplicates.map(d => d.importRowIndex + 1),
                     ])
-                  ).sort((a, b) => a - b).map(rowNumber => {
-                    const rowErrors = parseResult.errors.filter(e => e.row === rowNumber)
-                    const rowWarnings = parseResult.warnings.filter(w => w.row === rowNumber)
-                    const rowDuplicates = duplicates.filter(d => d.importRowIndex + 1 === rowNumber)
-                    
-                    return (
-                      <div key={rowNumber} className="p-3 rounded-lg border">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Badge variant="outline">Row {rowNumber}</Badge>
-                          {rowErrors.length > 0 && (
-                            <Badge variant="destructive" className="text-xs">
-                              {rowErrors.length} Error{rowErrors.length !== 1 ? 's' : ''}
-                            </Badge>
-                          )}
-                          {rowWarnings.length > 0 && (
-                            <Badge variant="secondary" className="text-xs">
-                              {rowWarnings.length} Warning{rowWarnings.length !== 1 ? 's' : ''}
-                            </Badge>
-                          )}
-                          {rowDuplicates.length > 0 && (
-                            <Badge variant="outline" className="text-xs">
-                              {rowDuplicates.length} Duplicate{rowDuplicates.length !== 1 ? 's' : ''}
-                            </Badge>
-                          )}
+                  )
+                    .sort((a, b) => a - b)
+                    .map(rowNumber => {
+                      const rowErrors = parseResult.errors.filter(
+                        e => e.row === rowNumber
+                      )
+                      const rowWarnings = parseResult.warnings.filter(
+                        w => w.row === rowNumber
+                      )
+                      const rowDuplicates = duplicates.filter(
+                        d => d.importRowIndex + 1 === rowNumber
+                      )
+
+                      return (
+                        <div key={rowNumber} className="p-3 rounded-lg border">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge variant="outline">Row {rowNumber}</Badge>
+                            {rowErrors.length > 0 && (
+                              <Badge variant="destructive" className="text-xs">
+                                {rowErrors.length} Error
+                                {rowErrors.length !== 1 ? 's' : ''}
+                              </Badge>
+                            )}
+                            {rowWarnings.length > 0 && (
+                              <Badge variant="secondary" className="text-xs">
+                                {rowWarnings.length} Warning
+                                {rowWarnings.length !== 1 ? 's' : ''}
+                              </Badge>
+                            )}
+                            {rowDuplicates.length > 0 && (
+                              <Badge variant="outline" className="text-xs">
+                                {rowDuplicates.length} Duplicate
+                                {rowDuplicates.length !== 1 ? 's' : ''}
+                              </Badge>
+                            )}
+                          </div>
+
+                          <div className="space-y-1 text-sm">
+                            {rowErrors.map((error, index) => (
+                              <div
+                                key={`error-${index}`}
+                                className="flex items-start gap-2"
+                              >
+                                <AlertTriangle className="h-3 w-3 text-destructive mt-0.5 flex-shrink-0" />
+                                <span>{error.message}</span>
+                              </div>
+                            ))}
+                            {rowWarnings.map((warning, index) => (
+                              <div
+                                key={`warning-${index}`}
+                                className="flex items-start gap-2"
+                              >
+                                <Info className="h-3 w-3 text-orange-500 mt-0.5 flex-shrink-0" />
+                                <span>{warning.message}</span>
+                              </div>
+                            ))}
+                            {rowDuplicates.map((duplicate, index) => (
+                              <div
+                                key={`duplicate-${index}`}
+                                className="flex items-start gap-2"
+                              >
+                                <MapPin className="h-3 w-3 text-foreground mt-0.5 flex-shrink-0" />
+                                <span>
+                                  {duplicate.matchType} duplicate (confidence:{' '}
+                                  {Math.round(duplicate.confidence * 100)}%)
+                                </span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                        
-                        <div className="space-y-1 text-sm">
-                          {rowErrors.map((error, index) => (
-                            <div key={`error-${index}`} className="flex items-start gap-2">
-                              <AlertTriangle className="h-3 w-3 text-destructive mt-0.5 flex-shrink-0" />
-                              <span>{error.message}</span>
-                            </div>
-                          ))}
-                          {rowWarnings.map((warning, index) => (
-                            <div key={`warning-${index}`} className="flex items-start gap-2">
-                              <Info className="h-3 w-3 text-orange-500 mt-0.5 flex-shrink-0" />
-                              <span>{warning.message}</span>
-                            </div>
-                          ))}
-                          {rowDuplicates.map((duplicate, index) => (
-                            <div key={`duplicate-${index}`} className="flex items-start gap-2">
-                              <MapPin className="h-3 w-3 text-blue-500 mt-0.5 flex-shrink-0" />
-                              <span>
-                                {duplicate.matchType} duplicate (confidence: {Math.round(duplicate.confidence * 100)}%)
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )
-                  })}
+                      )
+                    })}
                 </div>
               </ScrollArea>
             </CardContent>
@@ -418,20 +476,29 @@ export function ValidationDisplay({
             <div className="space-y-3">
               {summary.errorCount > 0 && (
                 <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
-                  <p className="text-sm font-medium">Resolve {summary.errorCount} error{summary.errorCount !== 1 ? 's' : ''}</p>
+                  <p className="text-sm font-medium">
+                    Resolve {summary.errorCount} error
+                    {summary.errorCount !== 1 ? 's' : ''}
+                  </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Errors must be fixed before import can proceed. Check data formats, required fields, and value ranges.
+                    Errors must be fixed before import can proceed. Check data
+                    formats, required fields, and value ranges.
                   </p>
                 </div>
               )}
-              
+
               {duplicates.filter(d => d.confidence > 0.95).length > 0 && (
-                <div className="p-3 rounded-lg bg-blue-50 border border-blue-200 dark:bg-blue-900/20 dark:border-blue-800/20">
+                <div className="p-3 rounded-lg bg-muted border border-border">
                   <p className="text-sm font-medium">
-                    Review {duplicates.filter(d => d.confidence > 0.95).length} high-confidence duplicate{duplicates.filter(d => d.confidence > 0.95).length !== 1 ? 's' : ''}
+                    Review {duplicates.filter(d => d.confidence > 0.95).length}{' '}
+                    high-confidence duplicate
+                    {duplicates.filter(d => d.confidence > 0.95).length !== 1
+                      ? 's'
+                      : ''}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    High-confidence duplicates should be reviewed to prevent data conflicts.
+                    High-confidence duplicates should be reviewed to prevent
+                    data conflicts.
                   </p>
                 </div>
               )}

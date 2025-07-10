@@ -12,14 +12,14 @@ import { Badge } from '@/components/ui/badge'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Separator } from '@/components/ui/separator'
 import { Progress } from '@/components/ui/progress'
-import { 
-  Upload, 
-  FileText, 
-  CheckCircle, 
-  AlertTriangle, 
+import {
+  Upload,
+  FileText,
+  CheckCircle,
+  AlertTriangle,
   X,
   Download,
-  MapPin
+  MapPin,
 } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
 import Papa from 'papaparse'
@@ -60,15 +60,26 @@ export const CSVImportModal = ({
   onClose,
   onImport,
   projectId,
-  datasetId
+  datasetId,
 }: CSVImportModalProps) => {
-  const [step, setStep] = useState<'upload' | 'preview' | 'processing' | 'complete'>('upload')
+  const [step, setStep] = useState<
+    'upload' | 'preview' | 'processing' | 'complete'
+  >('upload')
   const [csvData, setCsvData] = useState<any[]>([])
   const [parsedLocations, setParsedLocations] = useState<ParsedLocation[]>([])
-  const [importStats, setImportStats] = useState<ImportStats>({ total: 0, valid: 0, invalid: 0, duplicates: 0 })
+  const [importStats, setImportStats] = useState<ImportStats>({
+    total: 0,
+    valid: 0,
+    invalid: 0,
+    duplicates: 0,
+  })
   const [isProcessing, setIsProcessing] = useState(false)
   const [processProgress, setProcessProgress] = useState(0)
-  const [importResults, setImportResults] = useState<{ success: number; failed: number; errors: string[] } | null>(null)
+  const [importResults, setImportResults] = useState<{
+    success: number
+    failed: number
+    errors: string[]
+  } | null>(null)
 
   // Handle file drop/upload
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -81,7 +92,7 @@ export const CSVImportModal = ({
     }
 
     Papa.parse(file, {
-      complete: (results) => {
+      complete: results => {
         if (results.errors.length > 0) {
           toast.error('Failed to parse CSV file')
           console.error('CSV parse errors:', results.errors)
@@ -94,7 +105,8 @@ export const CSVImportModal = ({
       },
       header: true,
       skipEmptyLines: true,
-      transformHeader: (header) => header.trim().toLowerCase().replace(/\s+/g, '_')
+      transformHeader: header =>
+        header.trim().toLowerCase().replace(/\s+/g, '_'),
     })
   }, [])
 
@@ -102,15 +114,20 @@ export const CSVImportModal = ({
     onDrop,
     accept: {
       'text/csv': ['.csv'],
-      'application/vnd.ms-excel': ['.csv']
+      'application/vnd.ms-excel': ['.csv'],
     },
-    maxFiles: 1
+    maxFiles: 1,
   })
 
   // Parse and validate locations from CSV data
   const parseAndValidateLocations = (data: any[]) => {
     const locations: ParsedLocation[] = []
-    const stats: ImportStats = { total: data.length, valid: 0, invalid: 0, duplicates: 0 }
+    const stats: ImportStats = {
+      total: data.length,
+      valid: 0,
+      invalid: 0,
+      duplicates: 0,
+    }
 
     data.forEach((row, index) => {
       const location: ParsedLocation = {
@@ -121,7 +138,7 @@ export const CSVImportModal = ({
         operatingHours: row.operating_hours || row.hours || '',
         contactInfo: row.contact_info || row.contact || '',
         timezone: row.timezone || '',
-        errors: []
+        errors: [],
       }
 
       // Validate required fields
@@ -154,8 +171,18 @@ export const CSVImportModal = ({
       }
 
       // Validate location type
-      const validTypes = ['depot', 'customer', 'warehouse', 'distribution_center', 'pickup_point', 'delivery_point']
-      if (location.locationType && !validTypes.includes(location.locationType)) {
+      const validTypes = [
+        'depot',
+        'customer',
+        'warehouse',
+        'distribution_center',
+        'pickup_point',
+        'delivery_point',
+      ]
+      if (
+        location.locationType &&
+        !validTypes.includes(location.locationType)
+      ) {
         location.errors.push(`Invalid location type: ${location.locationType}`)
       }
 
@@ -193,8 +220,10 @@ export const CSVImportModal = ({
 
   // Handle import process
   const handleImport = async () => {
-    const validLocations = parsedLocations.filter(loc => loc.errors.length === 0)
-    
+    const validLocations = parsedLocations.filter(
+      loc => loc.errors.length === 0
+    )
+
     if (validLocations.length === 0) {
       toast.error('No valid locations to import')
       return
@@ -212,15 +241,17 @@ export const CSVImportModal = ({
       // Process locations in batches
       for (let i = 0; i < validLocations.length; i++) {
         const location = validLocations[i]
-        
+
         try {
           // Mock location creation (in real app, this would call the create mutation)
           await new Promise(resolve => setTimeout(resolve, 100)) // Simulate API call
-          
+
           successCount++
         } catch (error) {
           failedCount++
-          errors.push(`Failed to create ${location.name}: ${error instanceof Error ? error.message : 'Unknown error'}`)
+          errors.push(
+            `Failed to create ${location.name}: ${error instanceof Error ? error.message : 'Unknown error'}`
+          )
         }
 
         // Update progress
@@ -229,15 +260,18 @@ export const CSVImportModal = ({
 
       setImportResults({ success: successCount, failed: failedCount, errors })
       setStep('complete')
-      
+
       if (successCount > 0) {
-        toast.success(`Successfully imported ${successCount} location${successCount !== 1 ? 's' : ''}`)
-      }
-      
-      if (failedCount > 0) {
-        toast.error(`Failed to import ${failedCount} location${failedCount !== 1 ? 's' : ''}`)
+        toast.success(
+          `Successfully imported ${successCount} location${successCount !== 1 ? 's' : ''}`
+        )
       }
 
+      if (failedCount > 0) {
+        toast.error(
+          `Failed to import ${failedCount} location${failedCount !== 1 ? 's' : ''}`
+        )
+      }
     } catch (error) {
       console.error('Import process failed:', error)
       toast.error('Import process failed')
@@ -259,7 +293,7 @@ export const CSVImportModal = ({
         location_type: 'depot',
         operating_hours: 'Mon-Fri 8:00-18:00',
         contact_info: 'depot@example.com',
-        timezone: 'America/Los_Angeles'
+        timezone: 'America/Los_Angeles',
       },
       {
         name: 'Customer Location A',
@@ -270,8 +304,8 @@ export const CSVImportModal = ({
         location_type: 'customer',
         operating_hours: 'Mon-Fri 9:00-17:00',
         contact_info: '(555) 123-4567',
-        timezone: 'America/Los_Angeles'
-      }
+        timezone: 'America/Los_Angeles',
+      },
     ]
 
     const csv = Papa.unparse(template)
@@ -312,8 +346,9 @@ export const CSVImportModal = ({
             Import Locations from CSV
           </DialogTitle>
           <DialogDescription>
-            Upload a CSV file to bulk import locations. 
-            {step === 'upload' && 'Download the template for the correct format.'}
+            Upload a CSV file to bulk import locations.
+            {step === 'upload' &&
+              'Download the template for the correct format.'}
             {step === 'preview' && 'Review the parsed data before importing.'}
             {step === 'processing' && 'Processing your locations...'}
             {step === 'complete' && 'Import completed!'}
@@ -323,12 +358,13 @@ export const CSVImportModal = ({
         {step === 'upload' && (
           <div className="space-y-4">
             {/* Download template */}
-            <div className="p-4 bg-blue-50 rounded-lg">
+            <div className="p-4 bg-muted rounded-lg">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-medium text-sm">Need a template?</h4>
                   <p className="text-xs text-gray-600 mt-1">
-                    Download our CSV template with example data and correct column headers.
+                    Download our CSV template with example data and correct
+                    column headers.
                   </p>
                 </div>
                 <Button variant="outline" size="sm" onClick={downloadTemplate}>
@@ -342,13 +378,17 @@ export const CSVImportModal = ({
             <div
               {...getRootProps()}
               className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-                isDragActive ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
+                isDragActive
+                  ? 'border-primary bg-primary/5'
+                  : 'border-gray-300 hover:border-gray-400'
               }`}
             >
               <input {...getInputProps()} />
               <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               {isDragActive ? (
-                <p className="text-lg font-medium text-blue-600">Drop the CSV file here...</p>
+                <p className="text-lg font-medium text-primary">
+                  Drop the CSV file here...
+                </p>
               ) : (
                 <>
                   <p className="text-lg font-medium text-gray-900 mb-2">
@@ -363,16 +403,40 @@ export const CSVImportModal = ({
 
             {/* Expected columns */}
             <div className="p-4 bg-gray-50 rounded-lg">
-              <h4 className="font-medium text-sm mb-2">Expected CSV Columns:</h4>
+              <h4 className="font-medium text-sm mb-2">
+                Expected CSV Columns:
+              </h4>
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div><span className="font-medium">name*</span> - Location name (required)</div>
-                <div><span className="font-medium">address</span> - Street address</div>
-                <div><span className="font-medium">latitude</span> - Latitude coordinate</div>
-                <div><span className="font-medium">longitude</span> - Longitude coordinate</div>
-                <div><span className="font-medium">location_type</span> - Type (depot, customer, etc.)</div>
-                <div><span className="font-medium">description</span> - Description</div>
-                <div><span className="font-medium">operating_hours</span> - Operating hours</div>
-                <div><span className="font-medium">contact_info</span> - Contact information</div>
+                <div>
+                  <span className="font-medium">name*</span> - Location name
+                  (required)
+                </div>
+                <div>
+                  <span className="font-medium">address</span> - Street address
+                </div>
+                <div>
+                  <span className="font-medium">latitude</span> - Latitude
+                  coordinate
+                </div>
+                <div>
+                  <span className="font-medium">longitude</span> - Longitude
+                  coordinate
+                </div>
+                <div>
+                  <span className="font-medium">location_type</span> - Type
+                  (depot, customer, etc.)
+                </div>
+                <div>
+                  <span className="font-medium">description</span> - Description
+                </div>
+                <div>
+                  <span className="font-medium">operating_hours</span> -
+                  Operating hours
+                </div>
+                <div>
+                  <span className="font-medium">contact_info</span> - Contact
+                  information
+                </div>
               </div>
               <p className="text-xs text-gray-600 mt-2">* Required field</p>
             </div>
@@ -383,20 +447,28 @@ export const CSVImportModal = ({
           <div className="space-y-4">
             {/* Import statistics */}
             <div className="grid grid-cols-4 gap-4">
-              <div className="text-center p-3 bg-blue-50 rounded">
-                <div className="text-2xl font-bold text-blue-600">{importStats.total}</div>
+              <div className="text-center p-3 bg-muted rounded">
+                <div className="text-2xl font-bold text-foreground">
+                  {importStats.total}
+                </div>
                 <div className="text-xs text-gray-600">Total</div>
               </div>
               <div className="text-center p-3 bg-green-50 rounded">
-                <div className="text-2xl font-bold text-green-600">{importStats.valid}</div>
+                <div className="text-2xl font-bold text-green-600">
+                  {importStats.valid}
+                </div>
                 <div className="text-xs text-gray-600">Valid</div>
               </div>
               <div className="text-center p-3 bg-red-50 rounded">
-                <div className="text-2xl font-bold text-red-600">{importStats.invalid}</div>
+                <div className="text-2xl font-bold text-red-600">
+                  {importStats.invalid}
+                </div>
                 <div className="text-xs text-gray-600">Invalid</div>
               </div>
               <div className="text-center p-3 bg-yellow-50 rounded">
-                <div className="text-2xl font-bold text-yellow-600">{importStats.duplicates}</div>
+                <div className="text-2xl font-bold text-yellow-600">
+                  {importStats.duplicates}
+                </div>
                 <div className="text-xs text-gray-600">Duplicates</div>
               </div>
             </div>
@@ -424,7 +496,9 @@ export const CSVImportModal = ({
                           <AlertTriangle className="w-4 h-4 text-red-500" />
                         )}
                       </td>
-                      <td className="p-3 font-medium">{location.name || 'Missing name'}</td>
+                      <td className="p-3 font-medium">
+                        {location.name || 'Missing name'}
+                      </td>
                       <td className="p-3 text-gray-600 max-w-48 truncate">
                         {location.address || 'No address'}
                       </td>
@@ -436,14 +510,16 @@ export const CSVImportModal = ({
                       <td className="p-3 font-mono text-xs">
                         {location.locationLat && location.locationLon
                           ? `${location.locationLat.toFixed(4)}, ${location.locationLon.toFixed(4)}`
-                          : 'No coordinates'
-                        }
+                          : 'No coordinates'}
                       </td>
                       <td className="p-3">
                         {location.errors.length > 0 && (
                           <div className="space-y-1">
                             {location.errors.map((error, errorIndex) => (
-                              <div key={errorIndex} className="text-xs text-red-600">
+                              <div
+                                key={errorIndex}
+                                className="text-xs text-red-600"
+                              >
                                 {error}
                               </div>
                             ))}
@@ -464,10 +540,16 @@ export const CSVImportModal = ({
               <LoadingSpinner className="w-8 h-8 mx-auto mb-4" />
               <h3 className="text-lg font-medium mb-2">Importing Locations</h3>
               <p className="text-gray-600 mb-4">
-                Processing {importStats.valid} valid location{importStats.valid !== 1 ? 's' : ''}...
+                Processing {importStats.valid} valid location
+                {importStats.valid !== 1 ? 's' : ''}...
               </p>
-              <Progress value={processProgress} className="w-full max-w-md mx-auto" />
-              <p className="text-sm text-gray-500 mt-2">{processProgress}% complete</p>
+              <Progress
+                value={processProgress}
+                className="w-full max-w-md mx-auto"
+              />
+              <p className="text-sm text-gray-500 mt-2">
+                {processProgress}% complete
+              </p>
             </div>
           </div>
         )}
@@ -481,21 +563,31 @@ export const CSVImportModal = ({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">{importResults.success}</div>
-                <div className="text-sm text-gray-600">Successfully Imported</div>
+                <div className="text-2xl font-bold text-green-600">
+                  {importResults.success}
+                </div>
+                <div className="text-sm text-gray-600">
+                  Successfully Imported
+                </div>
               </div>
               <div className="text-center p-4 bg-red-50 rounded-lg">
-                <div className="text-2xl font-bold text-red-600">{importResults.failed}</div>
+                <div className="text-2xl font-bold text-red-600">
+                  {importResults.failed}
+                </div>
                 <div className="text-sm text-gray-600">Failed to Import</div>
               </div>
             </div>
 
             {importResults.errors.length > 0 && (
               <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                <h4 className="font-medium text-sm text-red-800 mb-2">Import Errors:</h4>
+                <h4 className="font-medium text-sm text-red-800 mb-2">
+                  Import Errors:
+                </h4>
                 <div className="space-y-1 max-h-32 overflow-y-auto">
                   {importResults.errors.map((error, index) => (
-                    <div key={index} className="text-xs text-red-700">{error}</div>
+                    <div key={index} className="text-xs text-red-700">
+                      {error}
+                    </div>
                   ))}
                 </div>
               </div>
@@ -504,35 +596,29 @@ export const CSVImportModal = ({
         )}
 
         <DialogFooter className="gap-2">
-          {step === 'upload' && (
-            <Button onClick={handleClose}>Cancel</Button>
-          )}
-          
+          {step === 'upload' && <Button onClick={handleClose}>Cancel</Button>}
+
           {step === 'preview' && (
             <>
               <Button variant="outline" onClick={() => setStep('upload')}>
                 Back
               </Button>
-              <Button 
-                onClick={handleImport}
-                disabled={importStats.valid === 0}
-              >
-                Import {importStats.valid} Location{importStats.valid !== 1 ? 's' : ''}
+              <Button onClick={handleImport} disabled={importStats.valid === 0}>
+                Import {importStats.valid} Location
+                {importStats.valid !== 1 ? 's' : ''}
               </Button>
             </>
           )}
-          
+
           {step === 'processing' && (
             <Button disabled>
               <LoadingSpinner className="w-4 h-4 mr-2" />
               Processing...
             </Button>
           )}
-          
+
           {step === 'complete' && (
-            <Button onClick={handleComplete}>
-              Done
-            </Button>
+            <Button onClick={handleComplete}>Done</Button>
           )}
         </DialogFooter>
       </DialogContent>

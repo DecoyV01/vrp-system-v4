@@ -3,21 +3,27 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { 
-  MapPin, 
-  Search, 
-  Filter, 
-  Plus, 
-  Grid3X3, 
-  Map as MapIcon, 
+import {
+  MapPin,
+  Search,
+  Filter,
+  Plus,
+  Grid3X3,
+  Map as MapIcon,
   List,
   MoreHorizontal,
   Edit2,
   Trash2,
-  Settings
+  Settings,
 } from 'lucide-react'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { toast } from 'sonner'
@@ -69,24 +75,25 @@ const MasterLocationsPage = () => {
     datasetId?: string
   }>()
   const navigate = useNavigate()
-  
+
   // Data hooks
   const project = useProject(projectId as Id<'projects'>)
   const dataset = useDataset(datasetId as Id<'datasets'>)
-  const locations = datasetId 
+  const locations = datasetId
     ? useLocations(datasetId as Id<'datasets'>)
     : useLocationsByProject(projectId as Id<'projects'>)
-  
+
   // Mutation hooks
   const createLocation = useCreateLocation()
   const updateLocation = useUpdateLocation()
   const deleteLocation = useDeleteLocation()
-  
+
   // Local state
   const [viewMode, setViewMode] = useState<'map' | 'grid' | 'list'>('map')
   const [searchQuery, setSearchQuery] = useState('')
   const [filters, setFilters] = useState<LocationFilters>({})
-  const [selectedLocationId, setSelectedLocationId] = useState<Id<'locations'> | null>(null)
+  const [selectedLocationId, setSelectedLocationId] =
+    useState<Id<'locations'> | null>(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [editingLocation, setEditingLocation] = useState<any>(null)
   const [deletingLocation, setDeletingLocation] = useState<any>(null)
@@ -96,47 +103,50 @@ const MasterLocationsPage = () => {
   const [mapViewport, setMapViewport] = useState<MapViewport>({
     latitude: 37.7749,
     longitude: -122.4194,
-    zoom: 10
+    zoom: 10,
   })
 
   // Filtered locations based on search and filters
   const filteredLocations = useMemo(() => {
     if (!locations) return []
-    
+
     let filtered = [...locations]
-    
+
     // Search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
-      filtered = filtered.filter(location => 
-        location.name?.toLowerCase().includes(query) ||
-        location.address?.toLowerCase().includes(query) ||
-        location.description?.toLowerCase().includes(query) ||
-        location.locationType?.toLowerCase().includes(query)
+      filtered = filtered.filter(
+        location =>
+          location.name?.toLowerCase().includes(query) ||
+          location.address?.toLowerCase().includes(query) ||
+          location.description?.toLowerCase().includes(query) ||
+          location.locationType?.toLowerCase().includes(query)
       )
     }
-    
+
     // Location type filter
     if (filters.locationType && filters.locationType.length > 0) {
       filtered = filtered.filter(location =>
         filters.locationType!.includes(location.locationType || 'unknown')
       )
     }
-    
+
     // Geocode quality filter
     if (filters.geocodeQuality && filters.geocodeQuality.length > 0) {
       filtered = filtered.filter(location =>
         filters.geocodeQuality!.includes(location.geocodeQuality || 'unknown')
       )
     }
-    
+
     // Usage filter
     if (filters.hasUsage !== undefined) {
       filtered = filtered.filter(location =>
-        filters.hasUsage ? (location.usageCount || 0) > 0 : (location.usageCount || 0) === 0
+        filters.hasUsage
+          ? (location.usageCount || 0) > 0
+          : (location.usageCount || 0) === 0
       )
     }
-    
+
     return filtered
   }, [locations, searchQuery, filters])
 
@@ -160,46 +170,54 @@ const MasterLocationsPage = () => {
   // Get selected locations
   const getSelectedLocations = useCallback(() => {
     const selectedIds = getSelectedIds()
-    return filteredLocations.filter(location => selectedIds.includes(location._id))
+    return filteredLocations.filter(location =>
+      selectedIds.includes(location._id)
+    )
   }, [filteredLocations, getSelectedIds])
 
   // Create location handler
-  const handleCreateLocation = useCallback(async (locationData: any) => {
-    try {
-      await createLocation({
-        projectId: projectId as Id<'projects'>,
-        datasetId: datasetId as Id<'datasets'>,
-        ...locationData,
-      })
-      toast.success('Location created successfully')
-      setShowCreateModal(false)
-    } catch (error) {
-      console.error('Failed to create location:', error)
-      toast.error('Failed to create location')
-    }
-  }, [createLocation, projectId, datasetId])
+  const handleCreateLocation = useCallback(
+    async (locationData: any) => {
+      try {
+        await createLocation({
+          projectId: projectId as Id<'projects'>,
+          datasetId: datasetId as Id<'datasets'>,
+          ...locationData,
+        })
+        toast.success('Location created successfully')
+        setShowCreateModal(false)
+      } catch (error) {
+        console.error('Failed to create location:', error)
+        toast.error('Failed to create location')
+      }
+    },
+    [createLocation, projectId, datasetId]
+  )
 
   // Update location handler
-  const handleUpdateLocation = useCallback(async (locationData: any) => {
-    if (!editingLocation) return
-    
-    try {
-      await updateLocation({
-        id: editingLocation._id,
-        ...locationData,
-      })
-      toast.success('Location updated successfully')
-      setEditingLocation(null)
-    } catch (error) {
-      console.error('Failed to update location:', error)
-      toast.error('Failed to update location')
-    }
-  }, [updateLocation, editingLocation])
+  const handleUpdateLocation = useCallback(
+    async (locationData: any) => {
+      if (!editingLocation) return
+
+      try {
+        await updateLocation({
+          id: editingLocation._id,
+          ...locationData,
+        })
+        toast.success('Location updated successfully')
+        setEditingLocation(null)
+      } catch (error) {
+        console.error('Failed to update location:', error)
+        toast.error('Failed to update location')
+      }
+    },
+    [updateLocation, editingLocation]
+  )
 
   // Delete location handler
   const handleDeleteLocation = useCallback(async () => {
     if (!deletingLocation) return
-    
+
     try {
       await deleteLocation({ id: deletingLocation._id })
       toast.success('Location deleted successfully')
@@ -221,14 +239,16 @@ const MasterLocationsPage = () => {
     if (selectedLocations.length === 0) return
 
     const confirmMessage = `Are you sure you want to delete ${selectedLocations.length} location${selectedLocations.length !== 1 ? 's' : ''}? This action cannot be undone.`
-    
+
     if (!confirm(confirmMessage)) return
 
     try {
       for (const location of selectedLocations) {
         await deleteLocation({ id: location._id })
       }
-      toast.success(`Deleted ${selectedLocations.length} location${selectedLocations.length !== 1 ? 's' : ''} successfully`)
+      toast.success(
+        `Deleted ${selectedLocations.length} location${selectedLocations.length !== 1 ? 's' : ''} successfully`
+      )
       clearSelection()
     } catch (error) {
       console.error('Bulk delete failed:', error)
@@ -281,13 +301,17 @@ const MasterLocationsPage = () => {
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Master Locations</h1>
           <p className="text-sm text-gray-600">
-            Manage and visualize all locations ({filteredLocations.length} of {locations.length} locations)
+            Manage and visualize all locations ({filteredLocations.length} of{' '}
+            {locations.length} locations)
           </p>
         </div>
-        
+
         <div className="flex items-center gap-2">
           {/* View Toggle */}
-          <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as any)}>
+          <Tabs
+            value={viewMode}
+            onValueChange={value => setViewMode(value as any)}
+          >
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="map">
                 <MapIcon className="w-4 h-4 mr-1" />
@@ -316,7 +340,11 @@ const MasterLocationsPage = () => {
                 <Edit2 className="w-4 h-4 mr-2" />
                 Bulk Edit
               </Button>
-              <Button variant="destructive" size="sm" onClick={handleBulkDelete}>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleBulkDelete}
+              >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Delete Selected
               </Button>
@@ -388,14 +416,16 @@ const MasterLocationsPage = () => {
               showClusters={true}
               interactive={true}
             />
-            
+
             {/* Selected location details sidebar */}
             {selectedLocationId && (
               <div className="absolute top-4 right-4 w-80 bg-white border border-gray-200 rounded-lg shadow-lg p-4 max-h-96 overflow-y-auto">
                 {(() => {
-                  const selectedLocation = filteredLocations.find(l => l._id === selectedLocationId)
+                  const selectedLocation = filteredLocations.find(
+                    l => l._id === selectedLocationId
+                  )
                   if (!selectedLocation) return null
-                  
+
                   return (
                     <LocationCard
                       location={selectedLocation}
@@ -420,10 +450,9 @@ const MasterLocationsPage = () => {
                   No locations found
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  {locations.length === 0 
-                    ? "Get started by creating your first location"
-                    : "Try adjusting your search or filters"
-                  }
+                  {locations.length === 0
+                    ? 'Get started by creating your first location'
+                    : 'Try adjusting your search or filters'}
                 </p>
                 <Button onClick={() => setShowCreateModal(true)}>
                   <Plus className="w-4 h-4 mr-2" />
@@ -436,7 +465,7 @@ const MasterLocationsPage = () => {
                 <div className="flex items-center gap-2 mb-4 p-2 bg-gray-50 rounded">
                   <Checkbox
                     checked={selectionStatus.isAllSelected}
-                    onCheckedChange={(checked) => {
+                    onCheckedChange={checked => {
                       if (checked) {
                         selectAll()
                       } else {
@@ -451,11 +480,13 @@ const MasterLocationsPage = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {filteredLocations.map((location) => (
+                  {filteredLocations.map(location => (
                     <div key={location._id} className="relative">
                       <Checkbox
                         checked={isRowSelected(location._id)}
-                        onCheckedChange={(checked) => toggleRowSelection(location._id, checked as boolean)}
+                        onCheckedChange={checked =>
+                          toggleRowSelection(location._id, checked as boolean)
+                        }
                         className="absolute top-2 left-2 z-10"
                         aria-label={`Select ${location.name}`}
                       />
@@ -484,10 +515,9 @@ const MasterLocationsPage = () => {
                   No locations found
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  {locations.length === 0 
-                    ? "Get started by creating your first location"
-                    : "Try adjusting your search or filters"
-                  }
+                  {locations.length === 0
+                    ? 'Get started by creating your first location'
+                    : 'Try adjusting your search or filters'}
                 </p>
                 <Button onClick={() => setShowCreateModal(true)}>
                   <Plus className="w-4 h-4 mr-2" />
@@ -500,7 +530,7 @@ const MasterLocationsPage = () => {
                 <div className="flex items-center gap-2 p-3 bg-gray-50 rounded font-medium text-sm">
                   <Checkbox
                     checked={selectionStatus.isAllSelected}
-                    onCheckedChange={(checked) => {
+                    onCheckedChange={checked => {
                       if (checked) {
                         selectAll()
                       } else {
@@ -521,18 +551,22 @@ const MasterLocationsPage = () => {
                 </div>
 
                 {/* Rows */}
-                {filteredLocations.map((location) => (
+                {filteredLocations.map(location => (
                   <div
                     key={location._id}
                     className={`flex items-center gap-2 p-3 border rounded hover:bg-gray-50 cursor-pointer ${
-                      selectedLocationId === location._id ? 'bg-blue-50 border-blue-200' : 'border-gray-200'
+                      selectedLocationId === location._id
+                        ? 'bg-primary/5 border-primary/20'
+                        : 'border-border'
                     }`}
                     onClick={() => setSelectedLocationId(location._id)}
                   >
                     <Checkbox
                       checked={isRowSelected(location._id)}
-                      onCheckedChange={(checked) => toggleRowSelection(location._id, checked as boolean)}
-                      onClick={(e) => e.stopPropagation()}
+                      onCheckedChange={checked =>
+                        toggleRowSelection(location._id, checked as boolean)
+                      }
+                      onClick={e => e.stopPropagation()}
                       aria-label={`Select ${location.name}`}
                     />
                     <div className="flex-1 grid grid-cols-6 gap-4 text-sm">
@@ -540,15 +574,20 @@ const MasterLocationsPage = () => {
                       <Badge variant="outline" className="w-fit">
                         {location.locationType || 'Unknown'}
                       </Badge>
-                      <span className="text-gray-600 truncate">{location.address || 'No address'}</span>
+                      <span className="text-gray-600 truncate">
+                        {location.address || 'No address'}
+                      </span>
                       <span className="text-gray-600 font-mono text-xs">
                         {location.locationLat && location.locationLon
                           ? `${location.locationLat.toFixed(4)}, ${location.locationLon.toFixed(4)}`
-                          : 'No coordinates'
-                        }
+                          : 'No coordinates'}
                       </span>
-                      <Badge 
-                        variant={location.geocodeQuality === 'exact' ? 'default' : 'secondary'}
+                      <Badge
+                        variant={
+                          location.geocodeQuality === 'exact'
+                            ? 'default'
+                            : 'secondary'
+                        }
                         className="w-fit"
                       >
                         {location.geocodeQuality || 'Unknown'}
@@ -561,7 +600,7 @@ const MasterLocationsPage = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation()
                           setEditingLocation(location)
                         }}
@@ -572,7 +611,7 @@ const MasterLocationsPage = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation()
                           setDeletingLocation(location)
                         }}

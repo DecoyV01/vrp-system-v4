@@ -1,10 +1,21 @@
 import { useMemo } from 'react'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { AlertTriangle, Info, CheckCircle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import type { CSVParseResult, ColumnMapping, DuplicateMatch } from '../types/shared.types'
+import type {
+  CSVParseResult,
+  ColumnMapping,
+  DuplicateMatch,
+} from '../types/shared.types'
 
 interface PreviewTableProps {
   parseResult: CSVParseResult
@@ -24,7 +35,7 @@ export function PreviewTable({
   columnMappings = [],
   duplicates = [],
   maxRows = 50,
-  className
+  className,
 }: PreviewTableProps) {
   const { data, headers, errors, warnings } = parseResult
 
@@ -71,21 +82,21 @@ export function PreviewTable({
     if (errorMap.has(errorKey)) {
       return {
         type: 'error',
-        message: errorMap.get(errorKey)!.join('; ')
+        message: errorMap.get(errorKey)!.join('; '),
       }
     }
 
     if (warningMap.has(warningKey)) {
       return {
         type: 'warning',
-        message: warningMap.get(warningKey)!.join('; ')
+        message: warningMap.get(warningKey)!.join('; '),
       }
     }
 
     if (duplicateRowsSet.has(rowNumber)) {
       return {
         type: 'duplicate',
-        message: 'Potential duplicate row detected'
+        message: 'Potential duplicate row detected',
       }
     }
 
@@ -95,14 +106,14 @@ export function PreviewTable({
   // Get cell styling based on status
   const getCellClassName = (status: CellStatus): string => {
     const baseClass = 'relative'
-    
+
     switch (status.type) {
       case 'error':
         return `${baseClass} bg-destructive/10 border-destructive/20`
       case 'warning':
         return `${baseClass} bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800/20`
       case 'duplicate':
-        return `${baseClass} bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800/20`
+        return `${baseClass} bg-secondary border-border`
       default:
         return baseClass
     }
@@ -134,7 +145,8 @@ export function PreviewTable({
       <Alert>
         <Info className="h-4 w-4" />
         <AlertDescription>
-          No data to preview. The CSV file appears to be empty or contains only headers.
+          No data to preview. The CSV file appears to be empty or contains only
+          headers.
         </AlertDescription>
       </Alert>
     )
@@ -166,7 +178,10 @@ export function PreviewTable({
             </Badge>
           )}
           {warnings.length > 0 && (
-            <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-800">
+            <Badge
+              variant="secondary"
+              className="text-xs bg-yellow-100 text-yellow-800"
+            >
               <AlertTriangle className="h-3 w-3 mr-1" />
               {warnings.length} Warning{warnings.length !== 1 ? 's' : ''}
             </Badge>
@@ -177,12 +192,14 @@ export function PreviewTable({
               {duplicates.length} Duplicate{duplicates.length !== 1 ? 's' : ''}
             </Badge>
           )}
-          {errors.length === 0 && warnings.length === 0 && duplicates.length === 0 && (
-            <Badge className="text-xs bg-green-100 text-green-800">
-              <CheckCircle className="h-3 w-3 mr-1" />
-              No Issues
-            </Badge>
-          )}
+          {errors.length === 0 &&
+            warnings.length === 0 &&
+            duplicates.length === 0 && (
+              <Badge className="text-xs bg-green-100 text-green-800">
+                <CheckCircle className="h-3 w-3 mr-1" />
+                No Issues
+              </Badge>
+            )}
         </div>
       </div>
 
@@ -193,7 +210,7 @@ export function PreviewTable({
             <TableHeader>
               <TableRow>
                 <TableHead className="w-12 text-center">#</TableHead>
-                {headers.map((header) => {
+                {headers.map(header => {
                   const mapping = getColumnMapping(header)
                   return (
                     <TableHead key={header} className="min-w-32">
@@ -208,8 +225,10 @@ export function PreviewTable({
                         </div>
                         {mapping && (
                           <div className="flex items-center gap-1">
-                            <Badge 
-                              variant={mapping.isRequired ? "destructive" : "secondary"} 
+                            <Badge
+                              variant={
+                                mapping.isRequired ? 'destructive' : 'secondary'
+                              }
                               className="text-xs"
                             >
                               {mapping.dataType}
@@ -229,19 +248,21 @@ export function PreviewTable({
             </TableHeader>
             <TableBody>
               {previewData.map((row, rowIndex) => (
-                <TableRow 
+                <TableRow
                   key={rowIndex}
-                  className={duplicateRowsSet.has(rowIndex + 1) ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}
+                  className={
+                    duplicateRowsSet.has(rowIndex + 1) ? 'bg-secondary/50' : ''
+                  }
                 >
                   <TableCell className="text-center text-muted-foreground font-mono text-sm">
                     {rowIndex + 1}
                   </TableCell>
-                  {headers.map((header) => {
+                  {headers.map(header => {
                     const status = getCellStatus(rowIndex, header)
                     const value = row[header]
-                    
+
                     return (
-                      <TableCell 
+                      <TableCell
                         key={`${rowIndex}-${header}`}
                         className={getCellClassName(status)}
                         title={status.message}
@@ -258,7 +279,7 @@ export function PreviewTable({
                               <AlertTriangle className="h-3 w-3 text-yellow-600" />
                             )}
                             {status.type === 'duplicate' && (
-                              <Info className="h-3 w-3 text-blue-600" />
+                              <Info className="h-3 w-3 text-foreground" />
                             )}
                           </div>
                         )}
@@ -277,7 +298,8 @@ export function PreviewTable({
         <Alert>
           <Info className="h-4 w-4" />
           <AlertDescription>
-            Only the first {maxRows} rows are shown in the preview. All {data.length} rows will be processed during import.
+            Only the first {maxRows} rows are shown in the preview. All{' '}
+            {data.length} rows will be processed during import.
           </AlertDescription>
         </Alert>
       )}
@@ -301,7 +323,7 @@ export function PreviewTable({
             )}
             {duplicates.length > 0 && (
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-blue-50 border border-blue-200 rounded dark:bg-blue-900/20 dark:border-blue-800/20"></div>
+                <div className="w-4 h-4 bg-secondary border border-border rounded"></div>
                 <span>Potential duplicates</span>
               </div>
             )}

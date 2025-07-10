@@ -171,7 +171,7 @@ const MainLayout = () => {
                     className={cn(
                       'text-sm px-2 py-1 rounded',
                       item.isActive
-                        ? 'bg-blue-100 text-blue-800 font-medium'
+                        ? 'bg-primary/10 text-primary font-medium'
                         : 'bg-gray-100 text-gray-600'
                     )}
                     aria-current={item.isActive ? 'page' : undefined}

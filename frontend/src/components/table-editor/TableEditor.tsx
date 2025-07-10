@@ -775,8 +775,8 @@ const TableEditor = ({
   }
 
   const handleImport = async (
-    data: any[], 
-    mappings: any[], 
+    data: any[],
+    mappings: any[],
     locationResolutions?: { [key: string]: string }
   ) => {
     try {
@@ -794,9 +794,12 @@ const TableEditor = ({
 
           // Transform row data to use location references if needed
           const transformedRow = { ...row }
-          
+
           // Apply location resolutions for jobs and vehicles
-          if (locationResolutions && (tableType === 'jobs' || tableType === 'vehicles')) {
+          if (
+            locationResolutions &&
+            (tableType === 'jobs' || tableType === 'vehicles')
+          ) {
             // For jobs: replace coordinates with locationId if resolution exists
             if (tableType === 'jobs' && row.locationLat && row.locationLon) {
               const coordKey = `${row.locationLat},${row.locationLon}`
@@ -807,13 +810,14 @@ const TableEditor = ({
                 delete transformedRow.locationLon
               }
             }
-            
+
             // For vehicles: replace start/end coordinates with location references
             if (tableType === 'vehicles') {
               if (row.startLat && row.startLon) {
                 const startCoordKey = `${row.startLat},${row.startLon}`
                 if (locationResolutions[startCoordKey]) {
-                  transformedRow.startLocationId = locationResolutions[startCoordKey]
+                  transformedRow.startLocationId =
+                    locationResolutions[startCoordKey]
                   delete transformedRow.startLat
                   delete transformedRow.startLon
                 }
@@ -821,7 +825,8 @@ const TableEditor = ({
               if (row.endLat && row.endLon) {
                 const endCoordKey = `${row.endLat},${row.endLon}`
                 if (locationResolutions[endCoordKey]) {
-                  transformedRow.endLocationId = locationResolutions[endCoordKey]
+                  transformedRow.endLocationId =
+                    locationResolutions[endCoordKey]
                   delete transformedRow.endLat
                   delete transformedRow.endLon
                 }
@@ -1599,7 +1604,7 @@ const TableEditor = ({
                                     </SelectItem>
                                   ))}
                                   <SelectItem value="__create_new__">
-                                    <div className="flex items-center gap-2 text-blue-600">
+                                    <div className="flex items-center gap-2 text-primary">
                                       <Plus className="w-4 h-4" />
                                       <span>Create New Location</span>
                                     </div>

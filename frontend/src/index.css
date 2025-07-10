@@ -32,7 +32,7 @@
   --color-warning: oklch(70% 0.15 65);       /* Amber #f59e0b */
   --color-destructive: oklch(58% 0.15 25);   /* Red #ef4444 */
   --color-destructive-foreground: oklch(100% 0 0); /* White text */
-  --color-info: oklch(65% 0.12 250);         /* Blue #3b82f6 */
+  --color-info: oklch(45% 0.01 260);         /* Neutral gray for info */
   
   /* Border and input colors - clean and subtle */
   --color-border: oklch(85% 0.01 260);       /* Light gray border #e5e7eb */
@@ -74,7 +74,7 @@
   --color-success: oklch(50% 0.12 145);
   --color-warning: oklch(55% 0.15 65);
   --color-destructive: oklch(55% 0.15 25);
-  --color-info: oklch(55% 0.12 250);
+  --color-info: oklch(45% 0.01 260);
   
   /* Border and input colors for light theme */
   --color-border: oklch(85% 0.01 260);
