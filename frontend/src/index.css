@@ -3,9 +3,9 @@
 @theme {
   /* Professional Light Theme Colors - matching the target mockup */
   --color-primary: oklch(65% 0.15 160);     /* Decoy Green #00d084 */
-  --color-background: oklch(98% 0.01 270);   /* Clean White #fafafa */
+  --color-background: oklch(95% 0.01 260);   /* Light Gray #f3f4f6 - matches target mockup */
   --color-foreground: oklch(15% 0.01 260);   /* Dark Text #1f2937 */
-  --color-muted: oklch(95% 0.01 260);        /* Light Gray #f3f4f6 */
+  --color-muted: oklch(92% 0.01 260);        /* Slightly darker gray #e5e7eb */
   
   /* Card and surface colors - clean whites and grays */
   --color-card: oklch(100% 0 0);             /* Pure White #ffffff */
@@ -16,15 +16,15 @@
   /* Primary brand colors */
   --color-primary-foreground: oklch(100% 0 0); /* White text on green */
   
-  /* Secondary colors - subtle grays */
-  --color-secondary: oklch(95% 0.01 260);    /* Light gray #f3f4f6 */
+  /* Secondary colors - subtle grays aligned with background */
+  --color-secondary: oklch(92% 0.01 260);    /* Muted gray #e5e7eb */
   --color-secondary-foreground: oklch(25% 0.01 260); /* Dark gray text */
   
   /* Muted colors for subtle text */
   --color-muted-foreground: oklch(45% 0.01 260); /* Medium gray #6b7280 */
   
-  /* Accent colors */
-  --color-accent: oklch(95% 0.01 260);       /* Light gray accent */
+  /* Accent colors - harmonized with new background */
+  --color-accent: oklch(92% 0.01 260);       /* Muted gray accent */
   --color-accent-foreground: oklch(25% 0.01 260);
   
   /* Semantic colors - professional and clear */
@@ -45,29 +45,29 @@
 
 @custom-variant light (&:is(.light *));
 
-/* Light theme variant - less commonly used */
+/* Light theme variant - harmonized with target mockup */
 .light {
-  --color-background: oklch(98% 0.01 270);   /* Light background */
+  --color-background: oklch(95% 0.01 260);   /* Light gray background matches target */
   --color-foreground: oklch(15% 0.01 260);   /* Dark text */
-  --color-card: oklch(95% 0.01 270);
+  --color-card: oklch(100% 0 0);             /* Pure white for content cards */
   --color-card-foreground: oklch(15% 0.01 260);
-  --color-popover: oklch(95% 0.01 270);
+  --color-popover: oklch(100% 0 0);          /* Pure white for popovers */
   --color-popover-foreground: oklch(15% 0.01 260);
   
   /* Primary stays Decoy green in light theme */
   --color-primary: oklch(65% 0.15 160);      /* Decoy Green */
   --color-primary-foreground: oklch(95% 0.01 270);
   
-  /* Adjusted secondary colors for light theme */
-  --color-secondary: oklch(90% 0.01 260);
+  /* Adjusted secondary colors for light theme - target mockup alignment */
+  --color-secondary: oklch(92% 0.01 260);    /* Consistent with main theme */
   --color-secondary-foreground: oklch(25% 0.01 260);
   
   /* Muted colors adjusted for light theme */
-  --color-muted: oklch(90% 0.01 260);
+  --color-muted: oklch(92% 0.01 260);        /* Consistent with main theme */
   --color-muted-foreground: oklch(45% 0.01 260);
   
   /* Accent colors for light theme */
-  --color-accent: oklch(90% 0.01 260);
+  --color-accent: oklch(92% 0.01 260);       /* Consistent with main theme */
   --color-accent-foreground: oklch(25% 0.01 260);
   
   /* Semantic colors maintain contrast in light theme */

@@ -128,7 +128,7 @@ const MainLayout = () => {
 
   return (
     <div
-      className="flex flex-col h-screen bg-gray-50"
+      className="flex flex-col h-screen bg-gray-100"
       data-theme={EnvironmentConfig.current}
       style={
         {

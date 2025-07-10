@@ -97,7 +97,7 @@ const TableCard = ({
       onClick={handleCardClick}
     >
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg mb-1 flex items-center justify-between">
+        <CardTitle className="text-lg font-semibold mb-1 flex items-center justify-between">
           <div className="flex items-center gap-2">
             {icon}
             {title}
@@ -138,7 +138,7 @@ const TableCard = ({
 
       <CardContent className="pt-0">
         <div className="flex items-center justify-between">
-          <span className="text-2xl font-bold text-gray-900">
+          <span className="text-xl font-semibold text-foreground">
             {count !== undefined ? count : '...'}
           </span>
           <div className="flex items-center gap-2">
@@ -149,7 +149,7 @@ const TableCard = ({
             </Badge>
             <Badge
               variant={isActive ? 'default' : 'outline'}
-              className="text-xs"
+              className="text-sm"
             >
               {isActive ? 'Active' : 'Inactive'}
             </Badge>
@@ -229,8 +229,8 @@ const DatasetDetailPage = () => {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Dataset Not Found</h1>
-          <p className="text-gray-600 mb-4">
+          <h1 className="text-xl font-semibold mb-2">Dataset Not Found</h1>
+          <p className="text-muted-foreground mb-4">
             The requested dataset could not be found.
           </p>
           <Button onClick={() => navigate('/projects')}>
@@ -250,7 +250,7 @@ const DatasetDetailPage = () => {
       <div className="flex flex-col h-full bg-white">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-xl font-semibold text-foreground">
               Loading Dataset...
             </h1>
           </div>
@@ -274,21 +274,21 @@ const DatasetDetailPage = () => {
               onClick={() =>
                 navigate(`/projects/${projectId}/scenarios/${scenarioId}`)
               }
-              className="text-gray-500 hover:text-gray-700"
+              className="text-muted-foreground hover:text-foreground"
             >
               ← {scenario.name}
             </Button>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-xl font-semibold text-foreground">
               {dataset.name} v{dataset.version || 1}
             </h1>
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             {dataset.description || 'No description provided'}
           </p>
 
           {/* Dataset Info */}
           <div className="flex items-center gap-4 mt-3">
-            <div className="flex items-center gap-1 text-sm text-gray-500">
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <Calendar className="w-4 h-4" />
               <span>
                 Created{' '}
@@ -298,7 +298,7 @@ const DatasetDetailPage = () => {
               </span>
             </div>
             {dataset.datasetType && (
-              <div className="flex items-center gap-1 text-sm text-gray-500">
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Archive className="w-4 h-4" />
                 <span>{dataset.datasetType}</span>
               </div>
@@ -310,10 +310,14 @@ const DatasetDetailPage = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => navigate(`/projects/${projectId}/scenarios/${scenarioId}/datasets/${datasetId}/locations`)}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              navigate(
+                `/projects/${projectId}/scenarios/${scenarioId}/datasets/${datasetId}/locations`
+              )
+            }
           >
             <MapPin className="w-4 h-4 mr-2" />
             Master Locations
@@ -340,10 +344,10 @@ const DatasetDetailPage = () => {
       {/* Content */}
       <div className="flex-1 p-6">
         <div className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          <h2 className="text-lg font-semibold text-foreground mb-2">
             Data Tables
           </h2>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             Manage the core VRP data for this dataset. Click on any table to
             view and edit the data.
           </p>
@@ -438,7 +442,7 @@ const DatasetDetailPage = () => {
         {/* Dataset Summary */}
         {stats && (
           <div className="mt-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <h3 className="text-lg font-semibold text-foreground mb-4">
               Dataset Summary
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -446,10 +450,14 @@ const DatasetDetailPage = () => {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600">Total Vehicles</p>
-                      <p className="text-2xl font-bold">{stats.vehicleCount}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Total Vehicles
+                      </p>
+                      <p className="text-xl font-semibold">
+                        {stats.vehicleCount}
+                      </p>
                     </div>
-                    <Truck className="w-8 h-8 text-gray-400" />
+                    <Truck className="w-8 h-8 text-muted-foreground" />
                   </div>
                 </CardContent>
               </Card>
@@ -458,10 +466,12 @@ const DatasetDetailPage = () => {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600">Total Jobs</p>
-                      <p className="text-2xl font-bold">{stats.jobCount}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Total Jobs
+                      </p>
+                      <p className="text-xl font-semibold">{stats.jobCount}</p>
                     </div>
-                    <Briefcase className="w-8 h-8 text-gray-400" />
+                    <Briefcase className="w-8 h-8 text-muted-foreground" />
                   </div>
                 </CardContent>
               </Card>
@@ -470,12 +480,14 @@ const DatasetDetailPage = () => {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600">Total Locations</p>
-                      <p className="text-2xl font-bold">
+                      <p className="text-sm text-muted-foreground">
+                        Total Locations
+                      </p>
+                      <p className="text-xl font-semibold">
                         {stats.locationCount}
                       </p>
                     </div>
-                    <MapPin className="w-8 h-8 text-gray-400" />
+                    <MapPin className="w-8 h-8 text-muted-foreground" />
                   </div>
                 </CardContent>
               </Card>
@@ -484,12 +496,14 @@ const DatasetDetailPage = () => {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600">Total Routes</p>
-                      <p className="text-2xl font-bold">
+                      <p className="text-sm text-muted-foreground">
+                        Total Routes
+                      </p>
+                      <p className="text-xl font-semibold">
                         {stats.routeCount || 0}
                       </p>
                     </div>
-                    <Route className="w-8 h-8 text-gray-400" />
+                    <Route className="w-8 h-8 text-muted-foreground" />
                   </div>
                 </CardContent>
               </Card>

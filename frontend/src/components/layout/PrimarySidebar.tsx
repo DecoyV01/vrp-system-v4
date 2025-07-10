@@ -86,9 +86,10 @@ const PrimarySidebar = () => {
         className={`bg-background border-r border-border flex flex-col transition-all duration-150 ease-out ${
           primary.collapsed ? 'w-16 items-center' : 'w-60 items-start'
         } py-4`}
+        data-slot="PrimarySidebar"
       >
         <div
-          className={`${primary.collapsed ? 'w-8 h-8 mx-auto' : 'w-8 h-8 mx-4'} bg-primary rounded-md flex items-center justify-center text-white text-sm font-semibold mb-6`}
+          className={`${primary.collapsed ? 'w-8 h-8 mx-auto' : 'w-8 h-8 mx-4'} bg-primary rounded-md flex items-center justify-center text-primary-foreground text-sm font-semibold mb-6`}
         >
           V
         </div>
@@ -105,9 +106,10 @@ const PrimarySidebar = () => {
         className={`bg-background border-r border-border flex flex-col transition-all duration-150 ease-out ${
           primary.collapsed ? 'w-16 items-center' : 'w-60 items-start'
         } py-4`}
+        data-slot="PrimarySidebar"
       >
         <div
-          className={`${primary.collapsed ? 'w-8 h-8 mx-auto' : 'w-8 h-8 mx-4'} bg-primary rounded-md flex items-center justify-center text-white text-sm font-semibold mb-6`}
+          className={`${primary.collapsed ? 'w-8 h-8 mx-auto' : 'w-8 h-8 mx-4'} bg-primary rounded-md flex items-center justify-center text-primary-foreground text-sm font-semibold mb-6`}
         >
           V
         </div>
@@ -133,6 +135,7 @@ const PrimarySidebar = () => {
       className={`bg-background border-r border-border flex flex-col transition-all duration-150 ease-out ${
         primary.collapsed ? 'w-16 items-center' : 'w-60 items-start'
       } py-4`}
+      data-slot="PrimarySidebar"
     >
       {/* Logo/Brand */}
       <div
