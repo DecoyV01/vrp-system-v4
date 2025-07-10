@@ -530,12 +530,12 @@ export const runVROOMOptimization = action({
   handler: async (
     ctx,
     { scenarioId, datasetId, optimizationSettings = {} }
-  ) => {
+  ): Promise<any> => {
     const startTime = Date.now()
 
     try {
       // Get scenario and validate ownership via query
-      const scenario = await ctx.runQuery(api.scenarios.getById, {
+      const scenario: any = await ctx.runQuery(api.scenarios.getById, {
         id: scenarioId,
       })
       if (!scenario) {
@@ -543,7 +543,7 @@ export const runVROOMOptimization = action({
       }
 
       // Get dataset and validate it belongs to the scenario
-      const dataset = await ctx.runQuery(api.datasets.getById, {
+      const dataset: any = await ctx.runQuery(api.datasets.getById, {
         id: datasetId,
       })
       if (!dataset) {
@@ -558,10 +558,12 @@ export const runVROOMOptimization = action({
       }
 
       // Get VRP data for optimization
-      const vehicles = await ctx.runQuery(api.vehicles.listByDataset, {
+      const vehicles: any = await ctx.runQuery(api.vehicles.listByDataset, {
         datasetId,
       })
-      const jobs = await ctx.runQuery(api.jobs.listByDataset, { datasetId })
+      const jobs: any = await ctx.runQuery(api.jobs.listByDataset, {
+        datasetId,
+      })
       const shipments: any[] = [] // Shipments not implemented yet
 
       if (!vehicles || vehicles.length === 0) {
@@ -573,7 +575,7 @@ export const runVROOMOptimization = action({
       }
 
       // Create optimization run record
-      const optimizationRunId = await ctx.runMutation(
+      const optimizationRunId: any = await ctx.runMutation(
         api.scenarios.createOptimizationRun,
         {
           scenarioId,
@@ -589,7 +591,7 @@ export const runVROOMOptimization = action({
       )
 
       // Convert data to VROOM format using existing validation utilities
-      const vroomVehicles = vehicles
+      const vroomVehicles: any = vehicles
         .filter((v: any) => v.optimizerId)
         .map((vehicle: any) => ({
           id: vehicle.optimizerId,
@@ -614,7 +616,7 @@ export const runVROOMOptimization = action({
           profile: vehicle.profile || 'car',
         }))
 
-      const vroomJobs = jobs
+      const vroomJobs: any = jobs
         .filter((j: any) => j.optimizerId)
         .map((job: any) => ({
           id: job.optimizerId,
@@ -632,7 +634,7 @@ export const runVROOMOptimization = action({
         }))
 
       // Prepare VROOM request
-      const vroomRequest = {
+      const vroomRequest: any = {
         vehicles: vroomVehicles,
         jobs: vroomJobs,
         shipments: shipments || [],
@@ -656,7 +658,7 @@ export const runVROOMOptimization = action({
 
       // Call FastAPI optimization endpoint
       const fastApiUrl = process.env.FASTAPI_URL || 'http://34.78.147.27:8000'
-      const response = await fetch(`${fastApiUrl}/api/v1/optimization/`, {
+      const response: any = await fetch(`${fastApiUrl}/api/v1/optimization/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -669,7 +671,7 @@ export const runVROOMOptimization = action({
         throw new Error(`FastAPI error ${response.status}: ${errorText}`)
       }
 
-      const vroomResult = await response.json()
+      const vroomResult: any = await response.json()
       const endTime = Date.now()
       const durationMs = endTime - startTime
 
@@ -686,7 +688,7 @@ export const runVROOMOptimization = action({
 
       // Extract results from VROOM response
       const summary = vroomResult.summary || {}
-      const routes = vroomResult.routes || []
+      const routes: any = vroomResult.routes || []
 
       // Update optimization run with results
       await ctx.runMutation(api.scenarios.updateOptimizationRunResults, {
@@ -709,8 +711,9 @@ export const runVROOMOptimization = action({
 
       // Store route results
       if (routes.length > 0) {
-        const routeData = routes.map(route => ({
-          vehicleId: vehicles.find(v => v.optimizerId === route.vehicle)?._id,
+        const routeData = routes.map((route: any) => ({
+          vehicleId: vehicles.find((v: any) => v.optimizerId === route.vehicle)
+            ?._id,
           cost: route.cost || 0,
           distance: route.distance || 0,
           duration: route.duration || 0,
@@ -775,7 +778,7 @@ export const runVROOMOptimization = action({
           { scenarioId }
         )
         const recentRun = recentRuns.find(
-          r =>
+          (r: any) =>
             r.status === 'running' && Math.abs(r.timestamp - startTime) < 5000 // Within 5 seconds
         )
 

@@ -147,7 +147,7 @@ export const ModalManager = ({
   }
 
   // Clone modal handlers
-  const handleClone = async (newName: string) => {
+  const handleClone = async (newName: string, selections?: any) => {
     if (
       !modalState.data?.type ||
       !modalState.data?.id ||
@@ -162,11 +162,14 @@ export const ModalManager = ({
 
       try {
         setLoading(true)
+
+        // Pass selections to the clone entity function if available
         await cloneEntity(
           modalState.data.type as 'scenario' | 'dataset',
           modalState.data.id,
           newName,
-          modalState.data.parentId
+          modalState.data.parentId,
+          selections // Pass the selections object for enhanced cloning
         )
 
         updateProgress(
