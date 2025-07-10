@@ -28,7 +28,19 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom'],
           convex: ['convex'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-popover'],
+          ui: [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-popover',
+          ],
+          'design-system': [
+            'tailwindcss',
+            'class-variance-authority',
+            'clsx',
+            'tailwind-merge',
+          ],
+          'theme-provider': ['@/components/theme/ThemeProvider'],
+          icons: ['lucide-react'],
         },
       },
     },

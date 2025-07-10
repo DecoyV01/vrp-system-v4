@@ -298,8 +298,163 @@ if [[ "$tool_name" == "Write" ]]; then
     fi
 fi
 
+# Tech Contract Validation System
+CONTRACT_DIR="/mnt/c/projects/vrp-system/v4/docs/11-tech-contracts"
+LOGS_DIR="/mnt/c/projects/vrp-system/v4/logs"
+
+# Function to validate tech contracts
+validate_tech_contracts() {
+    local file_path="$1"
+    local content="$2"
+    local timestamp=$(date +"%Y%m%d-%H%M%S")
+    local log_file="$LOGS_DIR/contract-validation-$timestamp.log"
+    
+    # Create logs directory if it doesn't exist
+    mkdir -p "$LOGS_DIR"
+    
+    # Log validation start
+    echo "$(date): Starting contract validation for $file_path" >> "$log_file"
+    
+    # Find and validate applicable contracts
+    local violations=0
+    local contracts_checked=0
+    
+    for contract_file in "$CONTRACT_DIR"/*.json; do
+        if [[ -f "$contract_file" ]]; then
+            if contract_applies_to_file "$contract_file" "$file_path"; then
+                contracts_checked=$((contracts_checked + 1))
+                if ! validate_single_contract "$contract_file" "$file_path" "$content" "$log_file"; then
+                    violations=$((violations + 1))
+                fi
+            fi
+        fi
+    done
+    
+    # Log final result
+    if [[ $contracts_checked -eq 0 ]]; then
+        echo "$(date): No applicable contracts found for $file_path" >> "$log_file"
+        return 0
+    elif [[ $violations -eq 0 ]]; then
+        echo "$(date): ✅ All $contracts_checked contract(s) satisfied for $file_path" >> "$log_file"
+        return 0
+    else
+        echo "$(date): ❌ $violations/$contracts_checked contract violations for $file_path" >> "$log_file"
+        return 1
+    fi
+}
+
+# Function to check if contract applies to file
+contract_applies_to_file() {
+    local contract_file="$1"
+    local file_path="$2"
+    
+    # Extract file patterns using jq
+    local patterns=$(cat "$contract_file" | jq -r '.appliesTo.filePatterns[]? // empty' 2>/dev/null)
+    
+    while IFS= read -r pattern; do
+        if [[ -n "$pattern" ]] && [[ "$file_path" =~ $pattern ]]; then
+            return 0
+        fi
+    done <<< "$patterns"
+    
+    return 1
+}
+
+# Function to validate single contract
+validate_single_contract() {
+    local contract_file="$1"
+    local file_path="$2"
+    local content="$3"
+    local log_file="$4"
+    
+    local contract_data=$(cat "$contract_file")
+    local contract_id=$(echo "$contract_data" | jq -r '.contractId // "unknown"')
+    local contract_name=$(echo "$contract_data" | jq -r '.name // "unknown"')
+    local prd_ref=$(echo "$contract_data" | jq -r '.prdReference // ""')
+    
+    echo "🔍 Validating contract: $contract_id" >&2
+    echo "$(date): Validating $contract_id for $file_path" >> "$log_file"
+    
+    local violations=()
+    
+    # Get requirements and validate each
+    local requirements=$(echo "$contract_data" | jq -r '.requirements | keys[]? // empty' 2>/dev/null)
+    
+    while IFS= read -r req_key; do
+        if [[ -n "$req_key" ]]; then
+            local required=$(echo "$contract_data" | jq -r ".requirements.$req_key.validation.required // false")
+            
+            if [[ "$required" == "true" ]]; then
+                local patterns=$(echo "$contract_data" | jq -r ".requirements.$req_key.validation.codePatterns[]? // empty" 2>/dev/null)
+                local description=$(echo "$contract_data" | jq -r ".requirements.$req_key.description // \"\"")
+                local pattern_found=false
+                
+                while IFS= read -r pattern; do
+                    if [[ -n "$pattern" ]] && echo "$content" | grep -qE -- "$pattern"; then
+                        pattern_found=true
+                        break
+                    fi
+                done <<< "$patterns"
+                
+                if [[ "$pattern_found" == "true" ]]; then
+                    echo "  ✅ $req_key: $description" >&2
+                    echo "$(date):   ✅ $req_key satisfied" >> "$log_file"
+                else
+                    violations+=("❌ $req_key: $description")
+                    echo "$(date):   ❌ $req_key failed" >> "$log_file"
+                fi
+            fi
+        fi
+    done <<< "$requirements"
+    
+    if [[ ${#violations[@]} -gt 0 ]]; then
+        print_contract_violation "$contract_id" "$contract_name" "$contract_file" "$prd_ref" "${violations[@]}"
+        return 1
+    fi
+    
+    echo "  ✅ All requirements met for $contract_id" >&2
+    return 0
+}
+
+# Function to print contract violations
+print_contract_violation() {
+    local contract_id="$1"
+    local contract_name="$2"
+    local contract_file="$3"
+    local prd_ref="$4"
+    shift 4
+    local violations=("$@")
+    
+    echo "❌ BLOCKED: Tech Contract Violation" >&2
+    echo "" >&2
+    echo "Contract: $contract_id - $contract_name" >&2
+    if [[ -n "$prd_ref" ]]; then
+        echo "PRD Reference: $prd_ref" >&2
+    fi
+    echo "Contract File: $(basename "$contract_file")" >&2
+    echo "" >&2
+    echo "Failed Requirements:" >&2
+    for violation in "${violations[@]}"; do
+        echo "  $violation" >&2
+    done
+    echo "" >&2
+    echo "📋 Review: docs/11-tech-contracts/$(basename "$contract_file")" >&2
+    echo "💡 Implement missing patterns and commit again" >&2
+    echo "📊 Logs: logs/contract-validation-*.log" >&2
+    echo "" >&2
+    echo "🔄 Iterative Development: Fix one requirement at a time!" >&2
+}
+
+# Run tech contract validation
+echo "📋 Running tech contract validation..." >&2
+if ! validate_tech_contracts "$file_path" "$content"; then
+    exit 2
+fi
+echo "✅ All tech contracts satisfied!" >&2
+
 # If we get here, allow the operation but provide optimization reminders
 if [[ "$tool_name" =~ Edit|Write|MultiEdit ]]; then
+    echo "" >&2
     echo "✅ Operation allowed - Remember LEVER principles:" >&2
     echo "  L - Leverage existing patterns" >&2
     echo "  E - Extend before creating" >&2
