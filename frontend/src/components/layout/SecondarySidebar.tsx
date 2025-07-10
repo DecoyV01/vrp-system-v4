@@ -233,6 +233,15 @@ const TreeNodeComponent = ({
           'cascadeInfo:',
           cascadeInfo
         )
+
+        // Store context for post-delete navigation
+        setDeletedNodeContext({
+          entityType: node.type,
+          entityId: node.realId,
+          parentProjectId: node.metadata?.projectId,
+          parentScenarioId: node.metadata?.scenarioId,
+        })
+
         openDeleteModal(
           node.type as 'project' | 'scenario' | 'dataset',
           node.realId,
@@ -402,6 +411,12 @@ const SecondarySidebar = () => {
   const [isCreatingProject, setIsCreatingProject] = useState(false)
   const [showBulkDeleteModal, setShowBulkDeleteModal] = useState(false)
   const [showBulkCloneModal, setShowBulkCloneModal] = useState(false)
+  const [deletedNodeContext, setDeletedNodeContext] = useState<{
+    entityType: string
+    entityId: string
+    parentProjectId?: string
+    parentScenarioId?: string
+  } | null>(null)
   const { secondary, toggleSecondary } = useSidebarStore()
   const treeNavigation = useTreeNavigation({
     autoExpandOnSelect: false,
@@ -410,6 +425,15 @@ const SecondarySidebar = () => {
 
   const { startProgress, updateProgress } = useToastNotifications()
   const hierarchyOperations = useHierarchyOperations()
+  const { modalState } = useModal()
+
+  // Clean up delete context when modal is closed without deletion
+  useEffect(() => {
+    if (!modalState.isOpen && deletedNodeContext) {
+      console.log('Modal closed, clearing delete context')
+      setDeletedNodeContext(null)
+    }
+  }, [modalState.isOpen, deletedNodeContext])
 
   // Bulk selection functionality
   const bulkSelection = useBulkTreeSelection({
@@ -1036,6 +1060,57 @@ const SecondarySidebar = () => {
         }}
         onDeleteSuccess={(entityType, entityId) => {
           console.log(`${entityType} ${entityId} deleted successfully`)
+
+          // Navigate to appropriate parent page after successful deletion
+          if (deletedNodeContext && deletedNodeContext.entityId === entityId) {
+            switch (deletedNodeContext.entityType) {
+              case 'project':
+                // Navigate to projects list after project deletion
+                navigate('/projects')
+                console.log('Navigating to /projects after project deletion')
+                break
+
+              case 'scenario':
+                // Navigate to parent project after scenario deletion
+                if (deletedNodeContext.parentProjectId) {
+                  navigate(`/projects/${deletedNodeContext.parentProjectId}`)
+                  console.log(
+                    `Navigating to /projects/${deletedNodeContext.parentProjectId} after scenario deletion`
+                  )
+                } else {
+                  navigate('/projects')
+                }
+                break
+
+              case 'dataset':
+                // Navigate to parent scenario after dataset deletion
+                if (
+                  deletedNodeContext.parentProjectId &&
+                  deletedNodeContext.parentScenarioId
+                ) {
+                  navigate(
+                    `/projects/${deletedNodeContext.parentProjectId}/scenarios/${deletedNodeContext.parentScenarioId}`
+                  )
+                  console.log(
+                    `Navigating to /projects/${deletedNodeContext.parentProjectId}/scenarios/${deletedNodeContext.parentScenarioId} after dataset deletion`
+                  )
+                } else if (deletedNodeContext.parentProjectId) {
+                  navigate(`/projects/${deletedNodeContext.parentProjectId}`)
+                } else {
+                  navigate('/projects')
+                }
+                break
+
+              default:
+                // Fallback to projects list
+                navigate('/projects')
+                break
+            }
+
+            // Clear the context after navigation
+            setDeletedNodeContext(null)
+          }
+
           // Tree will automatically refresh due to Convex real-time updates
         }}
         onCloneSuccess={entityType => {
