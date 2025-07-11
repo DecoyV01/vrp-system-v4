@@ -259,7 +259,7 @@ const MasterLocationsPage = () => {
   // Loading state
   if (locations === undefined || project === undefined) {
     return (
-      <div className="flex flex-col h-full bg-white">
+      <div className="flex flex-col h-full bg-background">
         <div className="flex items-center justify-center flex-1">
           <LoadingSpinner className="w-8 h-8" />
         </div>
@@ -284,11 +284,11 @@ const MasterLocationsPage = () => {
   ]
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="flex items-center justify-between p-6 border-b border-border">
         <div>
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
             <span>{project.name}</span>
             {dataset && (
               <>
@@ -297,10 +297,12 @@ const MasterLocationsPage = () => {
               </>
             )}
             <span>/</span>
-            <span className="text-gray-900 font-medium">Locations</span>
+            <span className="text-foreground font-medium">Locations</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Master Locations</h1>
-          <p className="text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-foreground">
+            Master Locations
+          </h1>
+          <p className="text-sm text-muted-foreground">
             Manage and visualize all locations ({filteredLocations.length} of{' '}
             {locations.length} locations)
           </p>
@@ -381,7 +383,7 @@ const MasterLocationsPage = () => {
       </div>
 
       {/* Search and Filters */}
-      <div className="p-6 border-b border-gray-200 bg-gray-50">
+      <div className="p-6 border-b border-border bg-muted">
         <div className="flex items-center gap-4">
           <div className="flex-1">
             <LocationSearch
@@ -419,7 +421,7 @@ const MasterLocationsPage = () => {
 
             {/* Selected location details sidebar */}
             {selectedLocationId && (
-              <div className="absolute top-4 right-4 w-80 bg-white border border-gray-200 rounded-lg shadow-lg p-4 max-h-96 overflow-y-auto">
+              <div className="absolute top-4 right-4 w-80 bg-background border border-border rounded-lg shadow-lg p-4 max-h-96 overflow-y-auto">
                 {(() => {
                   const selectedLocation = filteredLocations.find(
                     l => l._id === selectedLocationId
@@ -445,11 +447,11 @@ const MasterLocationsPage = () => {
           <div className="p-6 h-full overflow-y-auto">
             {filteredLocations.length === 0 ? (
               <div className="text-center py-12">
-                <MapPin className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <MapPin className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-foreground mb-2">
                   No locations found
                 </h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-muted-foreground mb-6">
                   {locations.length === 0
                     ? 'Get started by creating your first location'
                     : 'Try adjusting your search or filters'}
@@ -462,7 +464,7 @@ const MasterLocationsPage = () => {
             ) : (
               <>
                 {/* Select All Checkbox */}
-                <div className="flex items-center gap-2 mb-4 p-2 bg-gray-50 rounded">
+                <div className="flex items-center gap-2 mb-4 p-2 bg-muted rounded">
                   <Checkbox
                     checked={selectionStatus.isAllSelected}
                     onCheckedChange={checked => {
@@ -474,7 +476,7 @@ const MasterLocationsPage = () => {
                     }}
                     aria-label="Select all locations"
                   />
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-muted-foreground">
                     Select all ({filteredLocations.length} locations)
                   </span>
                 </div>
@@ -510,11 +512,11 @@ const MasterLocationsPage = () => {
           <div className="p-6 h-full overflow-y-auto">
             {filteredLocations.length === 0 ? (
               <div className="text-center py-12">
-                <MapPin className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <MapPin className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-foreground mb-2">
                   No locations found
                 </h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-muted-foreground mb-6">
                   {locations.length === 0
                     ? 'Get started by creating your first location'
                     : 'Try adjusting your search or filters'}
@@ -527,7 +529,7 @@ const MasterLocationsPage = () => {
             ) : (
               <div className="space-y-2">
                 {/* Header */}
-                <div className="flex items-center gap-2 p-3 bg-gray-50 rounded font-medium text-sm">
+                <div className="flex items-center gap-2 p-3 bg-muted rounded font-medium text-sm">
                   <Checkbox
                     checked={selectionStatus.isAllSelected}
                     onCheckedChange={checked => {
@@ -554,7 +556,7 @@ const MasterLocationsPage = () => {
                 {filteredLocations.map(location => (
                   <div
                     key={location._id}
-                    className={`flex items-center gap-2 p-3 border rounded hover:bg-gray-50 cursor-pointer ${
+                    className={`flex items-center gap-2 p-3 border rounded hover:bg-muted cursor-pointer ${
                       selectedLocationId === location._id
                         ? 'bg-primary/5 border-primary/20'
                         : 'border-border'
@@ -574,10 +576,10 @@ const MasterLocationsPage = () => {
                       <Badge variant="outline" className="w-fit">
                         {location.locationType || 'Unknown'}
                       </Badge>
-                      <span className="text-gray-600 truncate">
+                      <span className="text-muted-foreground truncate">
                         {location.address || 'No address'}
                       </span>
-                      <span className="text-gray-600 font-mono text-xs">
+                      <span className="text-muted-foreground font-mono text-xs">
                         {location.locationLat && location.locationLon
                           ? `${location.locationLat.toFixed(4)}, ${location.locationLon.toFixed(4)}`
                           : 'No coordinates'}
@@ -592,7 +594,7 @@ const MasterLocationsPage = () => {
                       >
                         {location.geocodeQuality || 'Unknown'}
                       </Badge>
-                      <span className="text-gray-600">
+                      <span className="text-muted-foreground">
                         {location.usageCount || 0} uses
                       </span>
                     </div>

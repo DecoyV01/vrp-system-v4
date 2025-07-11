@@ -99,7 +99,7 @@ const ProjectCard = ({ project }: { project: any }) => {
       </CardHeader>
 
       <CardContent className="pt-0">
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
+        <div className="flex items-center justify-between text-sm text-muted-foreground mb-3">
           <div className="flex items-center gap-1">
             <Calendar className="w-4 h-4" />
             <span>
@@ -114,19 +114,19 @@ const ProjectCard = ({ project }: { project: any }) => {
         {stats && (
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="flex items-center justify-between">
-              <span className="text-gray-600">Scenarios</span>
+              <span className="text-muted-foreground">Scenarios</span>
               <Badge variant="secondary">{stats.scenarioCount}</Badge>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-gray-600">Datasets</span>
+              <span className="text-muted-foreground">Datasets</span>
               <Badge variant="secondary">{stats.datasetCount}</Badge>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-gray-600">Vehicles</span>
+              <span className="text-muted-foreground">Vehicles</span>
               <Badge variant="secondary">{stats.vehicleCount}</Badge>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-gray-600">Jobs</span>
+              <span className="text-muted-foreground">Jobs</span>
               <Badge variant="secondary">{stats.jobCount}</Badge>
             </div>
           </div>
@@ -186,11 +186,11 @@ const ProjectsPage = () => {
 
   if (user === undefined || projects === undefined) {
     return (
-      <div className="flex flex-col h-full bg-white">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="flex flex-col h-full bg-background">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
-            <p className="text-sm text-gray-600">
+            <h1 className="text-2xl font-bold text-foreground">Projects</h1>
+            <p className="text-sm text-muted-foreground">
               Manage your VRP projects and scenarios
             </p>
           </div>
@@ -203,12 +203,12 @@ const ProjectsPage = () => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="flex items-center justify-between p-6 border-b border-border">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
-          <p className="text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-foreground">Projects</h1>
+          <p className="text-sm text-muted-foreground">
             Manage your VRP projects and scenarios ({projects.length} project
             {projects.length !== 1 ? 's' : ''})
           </p>
@@ -238,13 +238,13 @@ const ProjectsPage = () => {
       <div className="flex-1 p-6">
         {projects.length === 0 ? (
           <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Folder className="w-8 h-8 text-gray-400" />
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <Folder className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               Create your first VRP project
             </h3>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
               Get started by creating a new project. You can add scenarios,
               datasets, and manage your vehicle routing problems.
             </p>
