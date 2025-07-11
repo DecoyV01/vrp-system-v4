@@ -2,6 +2,7 @@
   "contractId": "LOC-GEO-001",
   "prdName": "master-locations",
   "name": "Master Locations Geocoding Integration",
+  "priority": 3,
   "prdReference": "docs/10-pr/2025-01-10-master-locations-system-prd.md#2.1",
   "appliesTo": {
     "filePatterns": [".*locations.*", ".*geocod.*", ".*mapbox.*", ".*location.*form.*"],

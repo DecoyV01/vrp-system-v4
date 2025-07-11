@@ -128,7 +128,7 @@ const MainLayout = () => {
 
   return (
     <div
-      className="flex flex-col h-screen bg-gray-100"
+      className="flex flex-col h-screen bg-background"
       data-theme={EnvironmentConfig.current}
       style={
         {
@@ -140,7 +140,7 @@ const MainLayout = () => {
     >
       {/* TopRibbon spanning FULL WIDTH - above everything like browser tabs */}
       <div
-        className="h-12 bg-white border-b border-border flex items-center justify-between px-6 w-full z-50"
+        className="h-12 bg-card border-b border-border flex items-center justify-between px-6 w-full z-50"
         data-slot="TopRibbon"
         role="banner"
         aria-label="Navigation breadcrumb and status indicators"
@@ -249,7 +249,7 @@ const MainLayout = () => {
       <div className="flex flex-1 overflow-hidden">
         <PrimarySidebar />
         <SecondarySidebar />
-        <main className="flex-1 overflow-hidden bg-white">
+        <main className="flex-1 overflow-hidden bg-background">
           <div className="h-full overflow-auto">
             <Outlet />
           </div>

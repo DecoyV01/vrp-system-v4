@@ -308,6 +308,89 @@ fi
 CONTRACT_DIR="/mnt/c/projects/vrp-system/v4/docs/11-tech-contracts"
 LOGS_DIR="/mnt/c/projects/vrp-system/v4/logs"
 
+# Function to check if contract should be auto-closed upon completion
+check_and_close_completed_contract() {
+    local contract_file="$1"
+    local contract_id="$2"
+    local log_file="$3"
+    
+    # Check if contract has completion criteria
+    local completion_criteria=$(cat "$contract_file" | jq -r '.completionCriteria.autoClose // false' 2>/dev/null)
+    
+    if [[ "$completion_criteria" == "true" ]]; then
+        # Contract is marked for auto-closure - close it
+        local basename=$(basename "$contract_file")
+        local new_name="closed-${basename#*-}"
+        local new_path="$CONTRACT_DIR/$new_name"
+        
+        # Move to closed status
+        mv "$contract_file" "$new_path"
+        
+        echo "$(date): 🔒 Auto-closed completed contract: $contract_id" >> "$log_file"
+        echo "🔒 Contract $contract_id completed and auto-closed" >&2
+        echo "   All requirements satisfied - contract moved to closed status" >&2
+        
+        # Log completion
+        echo "$(date): Contract $contract_id lifecycle complete - moved to closed-$contract_id.json" >> "$log_file"
+        
+        return 0
+    fi
+    
+    # Check for completion patterns in contract (fallback logic)
+    local required_patterns=$(cat "$contract_file" | jq -r '.requirements | to_entries[] | select(.value.validation.required == true) | .key' 2>/dev/null)
+    local total_required=0
+    local patterns_satisfied=0
+    
+    while IFS= read -r req_key; do
+        if [[ -n "$req_key" ]]; then
+            total_required=$((total_required + 1))
+            patterns_satisfied=$((patterns_satisfied + 1))  # Assume satisfied since validation passed
+        fi
+    done <<< "$required_patterns"
+    
+    # If this looks like a design/color contract and all requirements are met
+    if [[ "$contract_id" =~ FRT-BRAND ]] && [[ $total_required -gt 0 ]] && [[ $patterns_satisfied -eq $total_required ]]; then
+        echo "$(date): 💡 Contract $contract_id appears complete but not marked for auto-close" >> "$log_file"
+        echo "💡 Hint: Contract $contract_id appears complete" >&2
+        echo "   Consider manually closing: mv $contract_file $CONTRACT_DIR/closed-$contract_id.json" >&2
+    fi
+    
+    return 0
+}
+
+# Function to find active (open) contract
+find_open_contract() {
+    local file_path="$1"
+    local open_contracts=()
+    
+    # Find all open contracts that apply to this file
+    for contract_file in "$CONTRACT_DIR"/open-*.json; do
+        if [[ -f "$contract_file" ]] && contract_applies_to_file "$contract_file" "$file_path"; then
+            open_contracts+=("$contract_file")
+        fi
+    done
+    
+    # Should only be one open contract, but handle edge cases
+    if [[ ${#open_contracts[@]} -eq 0 ]]; then
+        return 1  # No open contract applies
+    elif [[ ${#open_contracts[@]} -eq 1 ]]; then
+        echo "${open_contracts[0]}"
+        return 0
+    else
+        # Multiple open contracts - should not happen but handle gracefully
+        local contract_names=""
+        for contract in "${open_contracts[@]}"; do
+            local contract_id=$(cat "$contract" | jq -r '.contractId // "unknown"' 2>/dev/null)
+            contract_names="$contract_names $contract_id"
+        done
+        echo "⚠️  Multiple open contracts found:$contract_names" >&2
+        echo "   Only one contract should be 'open' at a time" >&2
+        echo "   Using first found: $(basename "${open_contracts[0]}")" >&2
+        echo "${open_contracts[0]}"
+        return 0
+    fi
+}
+
 # Function to validate tech contracts
 validate_tech_contracts() {
     local file_path="$1"
@@ -321,30 +404,30 @@ validate_tech_contracts() {
     # Log validation start
     echo "$(date): Starting contract validation for $file_path" >> "$log_file"
     
-    # Find and validate applicable contracts
-    local violations=0
-    local contracts_checked=0
+    # Find the single open contract that applies
+    local open_contract=$(find_open_contract "$file_path")
     
-    for contract_file in "$CONTRACT_DIR"/*.json; do
-        if [[ -f "$contract_file" ]]; then
-            if contract_applies_to_file "$contract_file" "$file_path"; then
-                contracts_checked=$((contracts_checked + 1))
-                if ! validate_single_contract "$contract_file" "$file_path" "$content" "$log_file"; then
-                    violations=$((violations + 1))
-                fi
-            fi
-        fi
-    done
-    
-    # Log final result
-    if [[ $contracts_checked -eq 0 ]]; then
-        echo "$(date): No applicable contracts found for $file_path" >> "$log_file"
+    if [[ -z "$open_contract" ]]; then
+        echo "$(date): No open contracts apply to $file_path" >> "$log_file"
+        echo "📋 No open contract applies - validation skipped" >&2
         return 0
-    elif [[ $violations -eq 0 ]]; then
-        echo "$(date): ✅ All $contracts_checked contract(s) satisfied for $file_path" >> "$log_file"
+    fi
+    
+    # Validate against the open contract
+    local contract_id=$(cat "$open_contract" | jq -r '.contractId // "unknown"' 2>/dev/null)
+    local contract_name=$(basename "$open_contract")
+    echo "$(date): Validating against open contract: $contract_id ($contract_name)" >> "$log_file"
+    echo "📋 Validating against open contract: $contract_id" >&2
+    
+    if validate_single_contract "$open_contract" "$file_path" "$content" "$log_file"; then
+        echo "$(date): ✅ Open contract $contract_id satisfied for $file_path" >> "$log_file"
+        
+        # Check if contract is fully completed and should be auto-closed
+        check_and_close_completed_contract "$open_contract" "$contract_id" "$log_file"
+        
         return 0
     else
-        echo "$(date): ❌ $violations/$contracts_checked contract violations for $file_path" >> "$log_file"
+        echo "$(date): ❌ Open contract $contract_id violation for $file_path" >> "$log_file"
         return 1
     fi
 }

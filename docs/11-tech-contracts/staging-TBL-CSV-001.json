@@ -2,6 +2,7 @@
   "contractId": "TBL-CSV-001",
   "prdName": "table-editor-bulk",
   "name": "CSV Import File Upload and Validation",
+  "priority": 2,
   "prdReference": "docs/10-pr/2025-07-04-table-editor-bulk-operations-prd.md#2.1",
   "appliesTo": {
     "filePatterns": [".*CSVImport.*", ".*csv.*import.*", ".*bulk.*import.*"],

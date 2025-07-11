@@ -115,7 +115,7 @@ const ScenarioCard = ({
       </CardHeader>
 
       <CardContent className="pt-0">
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
+        <div className="flex items-center justify-between text-sm text-muted-foreground mb-3">
           <div className="flex items-center gap-1">
             <Calendar className="w-4 h-4" />
             <span>
@@ -131,7 +131,7 @@ const ScenarioCard = ({
         </div>
 
         {scenario.optimizationObjective && (
-          <div className="text-sm text-gray-600 mb-2">
+          <div className="text-sm text-muted-foreground mb-2">
             <strong>Objective:</strong> {scenario.optimizationObjective}
           </div>
         )}
@@ -188,8 +188,8 @@ const ProjectDetailPage = () => {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Project Not Found</h1>
-          <p className="text-gray-600 mb-4">
+          <h1 className="text-xl font-semibold mb-2">Project Not Found</h1>
+          <p className="text-muted-foreground mb-4">
             The requested project could not be found.
           </p>
           <Button onClick={() => navigate('/projects')}>
@@ -202,10 +202,10 @@ const ProjectDetailPage = () => {
 
   if (project === undefined || scenarios === undefined) {
     return (
-      <div className="flex flex-col h-full bg-white">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="flex flex-col h-full bg-background">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-xl font-semibold text-foreground">
               Loading Project...
             </h1>
           </div>
@@ -218,43 +218,43 @@ const ProjectDetailPage = () => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="flex items-center justify-between p-6 border-b border-border">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/projects')}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-muted-foreground hover:text-foreground"
             >
               ← Projects
             </Button>
-            <h1 className="text-2xl font-bold text-gray-900">{project.name}</h1>
+            <h1 className="text-xl font-semibold text-foreground">{project.name}</h1>
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             {project.description || 'No description provided'}
           </p>
 
           {/* Project Stats */}
           {stats && (
             <div className="flex items-center gap-4 mt-3">
-              <div className="flex items-center gap-1 text-sm text-gray-500">
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Database className="w-4 h-4" />
                 <span>
                   {stats.scenarioCount} scenario
                   {stats.scenarioCount !== 1 ? 's' : ''}
                 </span>
               </div>
-              <div className="flex items-center gap-1 text-sm text-gray-500">
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Users className="w-4 h-4" />
                 <span>
                   {stats.vehicleCount} vehicle
                   {stats.vehicleCount !== 1 ? 's' : ''}
                 </span>
               </div>
-              <div className="flex items-center gap-1 text-sm text-gray-500">
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Calendar className="w-4 h-4" />
                 <span>
                   {stats.jobCount} job{stats.jobCount !== 1 ? 's' : ''}
@@ -301,13 +301,13 @@ const ProjectDetailPage = () => {
       <div className="flex-1 p-6">
         {scenarios.length === 0 ? (
           <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Database className="w-8 h-8 text-gray-400" />
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <Database className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               Create your first scenario
             </h3>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
               Scenarios help you test different optimization parameters and
               compare results. Start by creating your first scenario.
             </p>
@@ -332,10 +332,10 @@ const ProjectDetailPage = () => {
           <>
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-foreground">
                   Scenarios
                 </h2>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   Manage optimization scenarios for this project (
                   {scenarios.length} scenario{scenarios.length !== 1 ? 's' : ''}
                   )

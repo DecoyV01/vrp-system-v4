@@ -2,6 +2,7 @@
   "contractId": "LOC-SYS-001",
   "prdName": "master-locations-system",
   "name": "Master Locations System - Complete Implementation",
+  "priority": 2,
   "prdReference": "docs/10-pr/2025-01-10-master-locations-system-prd.md",
   "appliesTo": {
     "filePatterns": [

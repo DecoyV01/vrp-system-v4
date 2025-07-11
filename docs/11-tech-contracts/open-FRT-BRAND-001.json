@@ -3,6 +3,7 @@
   "contractId": "FRT-BRAND-001",
   "prdName": "frontend-design-enhancement",
   "name": "Frontend Color Consistency Design Token Implementation",
+  "priority": 1,
   "prdReference": "docs/10-pr/2025-01-10-frontend-design-enhancement-prd.md#10-15",
   "appliesTo": {
     "filePatterns": [
@@ -19,22 +20,27 @@
   },
   "requirements": {
     "designTokenConsistency": {
-      "description": "Consistent use of semantic design tokens instead of hardcoded gray classes",
+      "description": "Consistent use of semantic design tokens matching target design exactly - no hardcoded colors allowed",
       "validation": {
         "codePatterns": [
           "text-muted-foreground",
-          "bg-muted",
+          "bg-muted/30",
+          "bg-muted/20", 
           "border-border",
           "text-foreground",
           "bg-background",
-          "bg-card"
+          "bg-card",
+          "bg-white",
+          "hover:bg-muted/50"
         ],
         "forbidden": [
           "text-gray-[0-9]+",
-          "bg-gray-[0-9]+(?!00)",
+          "bg-gray-[0-9]+",
           "border-gray-[0-9]+",
           "hover:text-gray-[0-9]+",
-          "focus:text-gray-[0-9]+"
+          "focus:text-gray-[0-9]+",
+          "text-\\[#[0-9a-fA-F]+\\]",
+          "bg-\\[#[0-9a-fA-F]+\\]"
         ],
         "required": true
       }
@@ -69,32 +75,32 @@
         "required": true
       }
     },
-    "hardcodedColorElimination": {
-      "description": "Complete elimination of hardcoded color classes in favor of design tokens",
+    "colorCompliance": {
+      "description": "Complete elimination of hardcoded color classes in favor of design tokens to match target design exactly",
       "validation": {
         "codePatterns": [
           "bg-background",
-          "bg-card",
+          "bg-card", 
           "bg-muted",
           "text-foreground",
           "text-muted-foreground",
-          "border-border"
+          "border-border",
+          "bg-primary"
         ],
         "forbidden": [
-          "text-gray-400",
-          "text-gray-500", 
-          "text-gray-600",
-          "text-gray-900",
-          "bg-gray-100(?!.*MainLayout)",
-          "bg-gray-50",
-          "border-gray-200",
-          "hover:text-gray-",
-          "focus:bg-gray-"
+          "text-gray-[0-9]+",
+          "bg-gray-[0-9]+",
+          "border-gray-[0-9]+",
+          "hover:text-gray-[0-9]+",
+          "focus:bg-gray-[0-9]+",
+          "text-\\[#[0-9a-fA-F]+\\]",
+          "bg-\\[#[0-9a-fA-F]+\\]",
+          "border-\\[#[0-9a-fA-F]+\\]"
         ],
         "required": true
       }
     },
-    "componentStandards": {
+    "componentCompliance": {
       "description": "shadcn/ui components with proper data-slot attributes and CVA patterns",
       "validation": {
         "codePatterns": [
@@ -107,6 +113,37 @@
           "Popover",
           "VariantProps",
           "cva\\("
+        ],
+        "required": true
+      }
+    },
+    "componentStandards": {
+      "description": "Component architecture following design system standards",
+      "validation": {
+        "codePatterns": [
+          "VariantProps",
+          "cva\\(",
+          "cn\\(",
+          "forwardRef",
+          "ComponentProps"
+        ],
+        "required": true
+      }
+    },
+    "colorDistributionRule": {
+      "description": "60/30/10 color distribution rule compliance for visual hierarchy",
+      "validation": {
+        "codePatterns": [
+          "bg-background.*60%",
+          "bg-primary.*30%", 
+          "bg-accent.*10%",
+          "neutral.*dominant",
+          "primary.*secondary",
+          "accent.*minimal"
+        ],
+        "forbidden": [
+          "equal.*color.*distribution",
+          "bg-primary.*bg-primary.*bg-primary"
         ],
         "required": true
       }
@@ -126,29 +163,45 @@
       }
     },
     "topRibbonComponent": {
-      "description": "Professional top navigation ribbon with environment awareness",
+      "description": "Professional top navigation ribbon matching target design: light gray background (#f8f9fa), clean navigation",
       "validation": {
         "codePatterns": [
           "TopRibbon",
+          "bg-muted/30",
+          "bg-gray-50",
           "environment.*indicator",
           "connectionStatus",
           "convex.*status",
           "EnvironmentConfig",
-          "mild-elephant-70"
+          "mild-elephant-70",
+          "border-b.*border-border"
+        ],
+        "forbidden": [
+          "bg-white(?!.*TopRibbon)",
+          "bg-gray-100",
+          "bg-background(?!.*footer)"
         ],
         "required": true
       }
     },
     "sidebarEnhancement": {
-      "description": "Primary sidebar with modern iconography and collapsible functionality",
+      "description": "Primary sidebar matching target design: pure white background, clean icons, subtle hover states",
       "validation": {
         "codePatterns": [
           "PrimarySidebar",
+          "bg-white",
+          "bg-background",
           "collapsible",
           "activeItem",
           "navigationItems",
           "sidebar.*collapsed",
-          "20px.*24px.*icon"
+          "20px.*24px.*icon",
+          "border-r.*border-border",
+          "hover:bg-muted/50"
+        ],
+        "forbidden": [
+          "bg-gray-50(?!.*TopRibbon)",
+          "bg-muted(?!.*hover)"
         ],
         "required": true
       }
@@ -221,6 +274,144 @@
         ],
         "required": true
       }
+    },
+    "tableEditorTargetCompliance": {
+      "description": "Table Editor component must match target design exactly: white background, subtle borders, clean headers",
+      "validation": {
+        "codePatterns": [
+          "TableEditor",
+          "bg-white",
+          "bg-background", 
+          "TableHeader.*bg-muted/20",
+          "TableRow.*hover:bg-muted/20",
+          "border.*border-border",
+          "text-foreground",
+          "text-muted-foreground"
+        ],
+        "forbidden": [
+          "bg-gray-50(?!.*TopRibbon)",
+          "bg-gray-100",
+          "bg-gray-200",
+          "border-gray-[0-9]+",
+          "text-gray-[0-9]+"
+        ],
+        "required": true
+      }
+    },
+    "layoutTargetCompliance": {
+      "description": "Main layout components must match target design color scheme exactly",
+      "validation": {
+        "codePatterns": [
+          "MainLayout",
+          "PrimarySidebar.*bg-white",
+          "TopRibbon.*bg-muted/30",
+          "content.*bg-background",
+          "border-r.*border-border",
+          "border-b.*border-border"
+        ],
+        "forbidden": [
+          "MainLayout.*bg-gray-[0-9]+",
+          "layout.*bg-\\[#",
+          "sidebar.*bg-gray-[0-9]+"
+        ],
+        "required": true
+      }
+    },
+    "secondarySidebarCompliance": {
+      "description": "Secondary sidebar (tree navigation) must match target: clean white background, subtle borders",
+      "validation": {
+        "codePatterns": [
+          "SecondarySidebar",
+          "TreeNavigation",
+          "bg-white",
+          "bg-background",
+          "border-r.*border-border",
+          "text-sm",
+          "text-muted-foreground",
+          "hover:bg-muted/30"
+        ],
+        "forbidden": [
+          "bg-gray-[0-9]+",
+          "border-gray-[0-9]+",
+          "text-gray-[0-9]+"
+        ],
+        "required": true
+      }
+    },
+    "actionButtonsCompliance": {
+      "description": "Action buttons must match target: green Insert button, clean Filter/Sort buttons",
+      "validation": {
+        "codePatterns": [
+          "Button.*variant.*default",
+          "Button.*Insert.*bg-green-500",
+          "Button.*Filter.*variant.*outline",
+          "Button.*Sort.*variant.*outline",
+          "hover:bg-green-600",
+          "border-input"
+        ],
+        "forbidden": [
+          "bg-blue-[0-9]+",
+          "bg-purple-[0-9]+",
+          "Button.*bg-gray-[0-9]+"
+        ],
+        "required": true
+      }
+    },
+    "tablePaginationCompliance": {
+      "description": "Table pagination controls must match target design with clean styling",
+      "validation": {
+        "codePatterns": [
+          "pagination",
+          "bg-white",
+          "border-t.*border-border",
+          "text-sm",
+          "text-muted-foreground",
+          "Button.*variant.*ghost"
+        ],
+        "forbidden": [
+          "pagination.*bg-gray-[0-9]+",
+          "pagination.*border-gray-[0-9]+"
+        ],
+        "required": true
+      }
+    },
+    "searchFilterCompliance": {
+      "description": "Search and filter components must match target clean styling",
+      "validation": {
+        "codePatterns": [
+          "Search.*Input",
+          "Filter.*Component",
+          "bg-white",
+          "border.*border-input",
+          "placeholder.*text-muted-foreground",
+          "focus:border-ring"
+        ],
+        "forbidden": [
+          "search.*bg-gray-[0-9]+",
+          "filter.*bg-gray-[0-9]+",
+          "Input.*border-gray-[0-9]+"
+        ],
+        "required": true
+      }
+    },
+    "badgeTagCompliance": {
+      "description": "Badges and tags must match target design (orange Production badge, etc.)",
+      "validation": {
+        "codePatterns": [
+          "Badge.*variant.*secondary",
+          "Badge.*variant.*outline",
+          "Badge.*Production.*bg-orange-100",
+          "Badge.*Production.*text-orange-800",
+          "text-xs",
+          "font-medium"
+        ],
+        "forbidden": [
+          "Badge.*bg-gray-[0-9]+",
+          "Badge.*text-gray-[0-9]+",
+          "Badge.*border-gray-[0-9]+"
+        ],
+        "required": true
+      }
     }
   },
   "performance": {
@@ -259,14 +450,53 @@
       "forbiddenValues": ["p-1", "p-3", "p-5", "p-7", "p-9", "p-10", "p-11", "gap-1", "gap-3", "gap-5", "gap-7", "gap-9", "gap-10"]
     },
     "colors": {
-      "primaryColors": ["bg-primary", "text-primary", "border-primary"],
-      "neutralColors": ["bg-background", "bg-card", "bg-muted", "border"],
+      "topRibbon": {
+        "background": ["bg-muted/30", "bg-gray-50"],
+        "text": ["text-foreground", "text-muted-foreground"],
+        "borders": ["border-b", "border-border"],
+        "forbidden": ["bg-white", "bg-background", "bg-gray-100"]
+      },
+      "primarySidebar": {
+        "background": ["bg-white", "bg-background"],
+        "text": ["text-foreground", "text-muted-foreground"],
+        "borders": ["border-r", "border-border"],
+        "hover": ["hover:bg-muted/50"],
+        "forbidden": ["bg-gray-50", "bg-muted"]
+      },
+      "tableArea": {
+        "background": ["bg-white", "bg-background"],
+        "headers": ["bg-muted/20"],
+        "rows": ["bg-white", "hover:bg-muted/20"],
+        "borders": ["border", "border-border"],
+        "forbidden": ["bg-gray-100", "bg-gray-50"]
+      },
+      "buttons": {
+        "insertButton": ["bg-green-500", "hover:bg-green-600", "text-white"],
+        "filterSort": ["variant.*outline", "border-input", "hover:bg-accent"],
+        "secondary": ["bg-secondary", "hover:bg-secondary/80"],
+        "destructive": ["bg-destructive", "hover:bg-destructive/90"],
+        "ghost": ["variant.*ghost", "hover:bg-accent"],
+        "forbidden": ["bg-blue-[0-9]+", "bg-purple-[0-9]+", "bg-red-[0-9]+", "Button.*bg-gray-[0-9]+"]
+      },
+      "badges": {
+        "production": ["bg-orange-100", "text-orange-800", "border-orange-200"],
+        "secondary": ["bg-secondary", "text-secondary-foreground"],
+        "outline": ["variant.*outline", "border-input"],
+        "forbidden": ["bg-gray-[0-9]+", "text-gray-[0-9]+", "border-gray-[0-9]+"]
+      },
+      "inputs": {
+        "base": ["bg-white", "border-input", "focus:border-ring"],
+        "placeholder": ["placeholder.*text-muted-foreground"],
+        "search": ["Search.*bg-white"],
+        "forbidden": ["bg-gray-[0-9]+", "border-gray-[0-9]+", "Input.*text-gray-[0-9]+"]
+      },
+      "neutralColors": ["bg-background", "bg-card", "bg-muted", "border-border"],
       "complementaryColors": ["text-foreground", "text-muted-foreground", "bg-secondary"],
       "semanticColors": ["bg-destructive", "bg-success", "bg-warning", "bg-info"],
-      "forbiddenPatterns": ["bg-\\[#.*\\]", "text-\\[#.*\\]", "border-\\[#.*\\]"]
+      "forbiddenPatterns": ["bg-\\[#.*\\]", "text-\\[#.*\\]", "border-\\[#.*\\]", "text-gray-[0-9]+", "bg-gray-[0-9]+", "border-gray-[0-9]+"]
     },
     "components": {
-      "requiredComponents": ["Dialog", "Button", "Input", "Select", "Card", "Popover", "Badge"],
+      "requiredComponents": ["Dialog", "Button", "Input", "Select", "Card", "Popover", "Badge", "Table"],
       "dataAttributes": ["data-slot", "data-theme"],
       "variantPatterns": ["VariantProps", "cva\\(", "cn\\("]
     }
@@ -305,6 +535,16 @@
       "noSensitiveData": "error reports exclude sensitive user information",
       "secureLogging": "theme errors logged without exposing system details"
     }
+  },
+  "completionCriteria": {
+    "autoClose": true,
+    "description": "Contract will automatically close when all required validation patterns are satisfied",
+    "triggerConditions": [
+      "All design token consistency requirements met",
+      "All typography compliance patterns satisfied", 
+      "All hardcoded color eliminations complete",
+      "All component standards implemented"
+    ]
   },
   "monitoring": {
     "colorConsistencyMetrics": [
