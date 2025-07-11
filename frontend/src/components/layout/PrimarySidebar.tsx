@@ -119,8 +119,10 @@ const PrimarySidebar = () => {
             className={`${primary.collapsed ? 'w-12 h-12' : 'w-full justify-start h-12 px-4'} hover:bg-primary/10 hover:text-primary`}
             onClick={() => navigate('/auth/login')}
             title={primary.collapsed ? 'Sign In' : undefined}
+            aria-label="Sign In"
+            data-slot="auth-button"
           >
-            <User className="w-5 h-5" />
+            <User className="w-5 h-5" aria-hidden="true" />
             {!primary.collapsed && (
               <span className="ml-3 text-sm font-normal">Sign In</span>
             )}
@@ -139,7 +141,8 @@ const PrimarySidebar = () => {
     >
       {/* Logo/Brand */}
       <div
-        className={`${primary.collapsed ? 'w-8 h-8 mx-auto' : 'w-8 h-8 mx-4'} bg-primary rounded-md flex items-center justify-center text-white text-sm font-semibold mb-6`}
+        className={`${primary.collapsed ? 'w-8 h-8 mx-auto' : 'w-8 h-8 mx-4'} bg-primary rounded-md flex items-center justify-center text-primary-foreground text-sm font-semibold mb-6`}
+        data-slot="brand-logo"
       >
         V
       </div>
@@ -154,13 +157,16 @@ const PrimarySidebar = () => {
             primary.collapsed ? 'w-12 h-12' : 'w-full justify-start h-12 px-4'
           } ${
             isProjectsActive
-              ? 'bg-primary text-white'
+              ? 'bg-primary text-primary-foreground'
               : 'hover:bg-primary/10 hover:text-primary'
           }`}
           onClick={() => navigate('/projects')}
           title={primary.collapsed ? 'Projects' : undefined}
+          aria-label="Projects"
+          aria-current={isProjectsActive ? 'page' : undefined}
+          data-slot="navigation-item"
         >
-          <Folder className="w-5 h-5" />
+          <Folder className="w-5 h-5" aria-hidden="true" />
           {!primary.collapsed && (
             <span className="ml-3 text-sm font-normal">Projects</span>
           )}
@@ -177,12 +183,16 @@ const PrimarySidebar = () => {
             } hover:bg-muted`}
             onClick={togglePrimary}
             title={primary.collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-label={
+              primary.collapsed ? 'Expand sidebar' : 'Collapse sidebar'
+            }
+            data-slot="sidebar-toggle"
           >
             {primary.collapsed ? (
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-5 h-5" aria-hidden="true" />
             ) : (
               <>
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-5 h-5" aria-hidden="true" />
                 <span className="ml-3 text-sm font-normal">Collapse</span>
               </>
             )}
@@ -213,6 +223,8 @@ const PrimarySidebar = () => {
                   ? `${user?.name || user?.email || 'User'} - Profile`
                   : undefined
               }
+              aria-label="User menu"
+              data-slot="user-menu-trigger"
             >
               <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-xs font-normal text-primary">
@@ -221,7 +233,7 @@ const PrimarySidebar = () => {
               </div>
               {!primary.collapsed && (
                 <div className="ml-3 flex flex-col items-start text-left overflow-hidden">
-                  <span className="text-sm font-normal truncate max-w-full">
+                  <span className="text-sm font-normal truncate max-w-full text-foreground">
                     {user?.name || 'User'}
                   </span>
                   <span className="text-xs text-muted-foreground truncate max-w-full">
@@ -231,10 +243,15 @@ const PrimarySidebar = () => {
               )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent side="right" align="end" className="w-56">
+          <DropdownMenuContent
+            side="right"
+            align="end"
+            className="w-56"
+            data-slot="user-menu"
+          >
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-normal leading-none">
+                <p className="text-sm font-normal leading-none text-foreground">
                   {user?.name || 'User'}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground">
@@ -244,15 +261,15 @@ const PrimarySidebar = () => {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem disabled>
-              <Settings className="mr-2 h-4 w-4" />
+              <Settings className="mr-2 h-4 w-4" aria-hidden="true" />
               <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut} disabled={isSigningOut}>
               {isSigningOut ? (
-                <LoadingSpinner className="mr-2 h-4 w-4" />
+                <LoadingSpinner className="mr-2 h-4 w-4" aria-hidden="true" />
               ) : (
-                <LogOut className="mr-2 h-4 w-4" />
+                <LogOut className="mr-2 h-4 w-4" aria-hidden="true" />
               )}
               <span>{isSigningOut ? 'Signing out...' : 'Sign out'}</span>
               {!isSigningOut && (

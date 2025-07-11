@@ -140,28 +140,28 @@ const MainLayout = () => {
     >
       {/* TopRibbon spanning FULL WIDTH - above everything like browser tabs */}
       <div
-        className="h-12 bg-white border-b border-gray-200 flex items-center justify-between px-6 w-full z-50"
+        className="h-12 bg-white border-b border-border flex items-center justify-between px-6 w-full z-50"
         data-slot="TopRibbon"
         role="banner"
         aria-label="Navigation breadcrumb and status indicators"
       >
         {/* Breadcrumb navigation - ALWAYS show, not conditional */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-2">
-          <Home className="w-4 h-4 text-gray-500" aria-hidden="true" />
+          <Home className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
 
           {breadcrumbs.length > 0 ? (
             breadcrumbs.map((item, index) => (
               <div key={index} className="flex items-center gap-2">
                 {index > 0 && (
                   <ChevronRight
-                    className="w-4 h-4 text-gray-400"
+                    className="w-4 h-4 text-muted-foreground"
                     aria-hidden="true"
                   />
                 )}
                 {item.path && !item.isActive ? (
                   <a
                     href={item.path}
-                    className="text-sm text-gray-600 hover:text-gray-900 transition-colors bg-gray-100 px-2 py-1 rounded hover:bg-gray-200"
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors bg-muted px-2 py-1 rounded hover:bg-muted/80"
                     aria-current={item.isActive ? 'page' : undefined}
                   >
                     {item.label}
@@ -172,7 +172,7 @@ const MainLayout = () => {
                       'text-sm px-2 py-1 rounded',
                       item.isActive
                         ? 'bg-primary/10 text-primary font-medium'
-                        : 'bg-gray-100 text-gray-600'
+                        : 'bg-muted text-muted-foreground'
                     )}
                     aria-current={item.isActive ? 'page' : undefined}
                   >
@@ -185,10 +185,10 @@ const MainLayout = () => {
             // Always show something - never empty
             <div className="flex items-center gap-2">
               <ChevronRight
-                className="w-4 h-4 text-gray-400"
+                className="w-4 h-4 text-muted-foreground"
                 aria-hidden="true"
               />
-              <span className="text-sm bg-gray-100 text-gray-600 px-2 py-1 rounded">
+              <span className="text-sm bg-muted text-muted-foreground px-2 py-1 rounded">
                 VRP System
               </span>
             </div>
@@ -224,7 +224,7 @@ const MainLayout = () => {
             )}
           </div>
 
-          <div className="w-px h-4 bg-gray-300" />
+          <div className="w-px h-4 bg-border" />
 
           {/* Environment indicator */}
           <Badge

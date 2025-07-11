@@ -2,7 +2,7 @@
   "_comment": "Tech Contract: Frontend Design System Brand Implementation - Auto-validated by contract-creation-validation.sh hook",
   "contractId": "FRT-BRAND-001",
   "prdName": "frontend-design-enhancement",
-  "name": "Frontend Design System Brand Implementation",
+  "name": "Frontend Color Consistency Design Token Implementation",
   "prdReference": "docs/10-pr/2025-01-10-frontend-design-enhancement-prd.md#10-15",
   "appliesTo": {
     "filePatterns": [
@@ -18,16 +18,23 @@
     "excludePatterns": [".*test.*", ".*spec.*", ".*\\.d\\.ts$", ".*stories.*"]
   },
   "requirements": {
-    "brandColorImplementation": {
-      "description": "Decoy brand colors implemented using OKLCH format with CSS custom properties",
+    "designTokenConsistency": {
+      "description": "Consistent use of semantic design tokens instead of hardcoded gray classes",
       "validation": {
         "codePatterns": [
-          "oklch\\(65%.*0\\.15.*160\\)",
-          "oklch\\(22%.*0\\.02.*260\\)",
-          "--color-primary.*oklch",
-          "--color-background.*oklch",
-          "#00d084",
-          "#1e293b"
+          "text-muted-foreground",
+          "bg-muted",
+          "border-border",
+          "text-foreground",
+          "bg-background",
+          "bg-card"
+        ],
+        "forbidden": [
+          "text-gray-[0-9]+",
+          "bg-gray-[0-9]+(?!00)",
+          "border-gray-[0-9]+",
+          "hover:text-gray-[0-9]+",
+          "focus:text-gray-[0-9]+"
         ],
         "required": true
       }
@@ -62,21 +69,27 @@
         "required": true
       }
     },
-    "colorDistributionRule": {
-      "description": "60/30/10 color distribution with proper semantic usage",
+    "hardcodedColorElimination": {
+      "description": "Complete elimination of hardcoded color classes in favor of design tokens",
       "validation": {
         "codePatterns": [
           "bg-background",
           "bg-card",
+          "bg-muted",
           "text-foreground",
           "text-muted-foreground",
-          "bg-primary",
-          "text-primary"
+          "border-border"
         ],
         "forbidden": [
-          "bg-\\[#[0-9a-fA-F]+\\]",
-          "text-\\[#[0-9a-fA-F]+\\]",
-          "border-\\[#[0-9a-fA-F]+\\]"
+          "text-gray-400",
+          "text-gray-500", 
+          "text-gray-600",
+          "text-gray-900",
+          "bg-gray-100(?!.*MainLayout)",
+          "bg-gray-50",
+          "border-gray-200",
+          "hover:text-gray-",
+          "focus:bg-gray-"
         ],
         "required": true
       }
@@ -211,14 +224,13 @@
     }
   },
   "performance": {
-    "themeApplicationTime": 200,
-    "iconRenderingTime": 50,
-    "navigationResponseTime": 100,
-    "maxCSSBundleSize": 150,
-    "maxIconBundleSize": 50,
-    "maxComponentBundleSize": 100,
+    "colorConsistencyApplication": 0,
+    "noPerformanceRegression": true,
+    "cssBundleSizeIncrease": 0,
+    "renderingPerformanceImpact": 0,
     "accessibilityScore": 100,
-    "contrastRatio": 4.5
+    "contrastRatio": 4.5,
+    "designTokenUsagePercentage": 100
   },
   "dependencies": {
     "required": [
@@ -261,20 +273,20 @@
   },
   "testing": {
     "unitTests": {
-      "typographyValidation": "validates only approved font sizes and weights are used",
-      "spacingValidation": "ensures all spacing follows 8pt grid system",
-      "colorDistribution": "validates 60/30/10 color distribution rule",
-      "componentCompliance": "checks shadcn/ui component usage patterns"
+      "designTokenValidation": "validates only design tokens are used, no hardcoded grays",
+      "colorConsistency": "ensures all components use semantic color tokens",
+      "forbiddenClassDetection": "checks for absence of forbidden gray classes",
+      "componentCompliance": "verifies components maintain functionality after color changes"
     },
     "integrationTests": {
-      "themeSwitch": "theme switching works within 200ms performance target",
-      "responsiveDesign": "layout adapts properly across desktop, tablet, mobile",
-      "environmentDetection": "correctly identifies and displays environment indicators",
-      "accessibility": "meets WCAG 2.1 AA standards with automated axe-core testing"
+      "visualConsistency": "interface matches target design mockup exactly",
+      "responsiveDesign": "layout maintains color consistency across devices",
+      "crossBrowserColors": "colors render consistently across browsers",
+      "accessibility": "color contrast ratios meet WCAG 2.1 AA standards"
     },
     "visualRegressionTests": {
-      "chromatic": "automated visual regression testing across theme variants",
-      "crossBrowser": "consistent appearance across Chrome, Firefox, Safari, Edge",
+      "beforeAfterComparison": "validates color corrections match target design",
+      "componentVisualTesting": "each component uses proper neutral colors",
       "contrastValidation": "automated color contrast ratio validation"
     }
   },
@@ -295,21 +307,21 @@
     }
   },
   "monitoring": {
-    "performanceMetrics": [
-      "theme-switch-duration",
-      "bundle-size",
-      "icon-render-time",
-      "navigation-response-time"
+    "colorConsistencyMetrics": [
+      "design-token-usage-percentage",
+      "hardcoded-color-violations",
+      "visual-consistency-score",
+      "target-design-match-percentage"
     ],
     "accessibilityMetrics": [
       "contrast-violations",
-      "focus-management-errors",
-      "aria-label-coverage"
+      "color-based-accessibility-issues",
+      "wcag-aa-compliance-score"
     ],
-    "usageAnalytics": [
-      "theme-selection-patterns", 
-      "component-usage-frequency",
-      "error-rate-by-component"
+    "maintenanceMetrics": [
+      "color-related-technical-debt-reduction",
+      "component-color-consistency-score",
+      "design-system-compliance-percentage"
     ]
   },
   "deployment": {

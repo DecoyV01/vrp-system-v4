@@ -250,7 +250,7 @@ const SimpleMapView = ({
               new mapboxgl.default.Popup({ offset: 15 }).setHTML(`
                 <div class="p-2 text-sm">
                   <strong>${item.name || item.description || 'Location'}</strong>
-                  ${item.locationType ? `<br><span class="text-gray-500">${item.locationType}</span>` : ''}
+                  ${item.locationType ? `<br><span class="text-muted-foreground">${item.locationType}</span>` : ''}
                 </div>
               `)
             )
@@ -280,8 +280,8 @@ const SimpleMapView = ({
 
   if (mapError) {
     return (
-      <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-        <p className="text-gray-500">{mapError}</p>
+      <div className="h-64 bg-muted rounded-lg flex items-center justify-center">
+        <p className="text-muted-foreground">{mapError}</p>
       </div>
     )
   }
@@ -290,8 +290,8 @@ const SimpleMapView = ({
     <div className="h-64 rounded-lg overflow-hidden border">
       <div ref={mapContainerRef} className="w-full h-full" />
       {!isMapLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-          <p className="text-gray-500">Loading map...</p>
+        <div className="absolute inset-0 flex items-center justify-center bg-muted">
+          <p className="text-muted-foreground">Loading map...</p>
         </div>
       )}
     </div>
@@ -1180,7 +1180,7 @@ const TableEditor = ({
 
       return (
         <div className="flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-gray-400" />
+          <MapPin className="w-4 h-4 text-muted-foreground" />
           <span className="font-medium">{location.name}</span>
           {location.locationType && (
             <Badge variant="outline" className="text-xs">
@@ -1237,7 +1237,7 @@ const TableEditor = ({
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold capitalize">{tableType} Data</h3>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             {currentData.length} {tableType} in this dataset
           </p>
         </div>
@@ -1590,7 +1590,7 @@ const TableEditor = ({
                                       value={location._id}
                                     >
                                       <div className="flex items-center gap-2">
-                                        <MapPin className="w-4 h-4 text-gray-400" />
+                                        <MapPin className="w-4 h-4 text-muted-foreground" />
                                         <span>{location.name}</span>
                                         {location.locationType && (
                                           <Badge
@@ -1686,14 +1686,14 @@ const TableEditor = ({
       )}
 
       {currentData.length === 0 && !showMapView && (
-        <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Edit2 className="w-8 h-8 text-gray-400" />
+        <div className="text-center py-12 border-2 border-dashed border-border rounded-lg">
+          <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+            <Edit2 className="w-8 h-8 text-muted-foreground" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-foreground mb-2">
             Start Building Your {tableType} Data
           </h3>
-          <p className="text-gray-600 mb-6 max-w-md mx-auto">
+          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
             Add rows and click on cells to edit them. Changes are automatically
             saved to your dataset.
           </p>

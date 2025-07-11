@@ -8,25 +8,25 @@
 ## 1. Executive Summary
 
 ### Problem Statement
-The VRP System v4 frontend currently lacks a cohesive design system that reflects the Decoy brand identity. The interface requires visual modernization with proper branding, improved navigation clarity, and streamlined user interface elements to enhance user experience and professional presentation.
+The VRP System v4 frontend has inconsistent color usage that deviates from the established design system. Components use hardcoded Tailwind gray classes instead of semantic design tokens, creating blue/purple tints and an unprofessional appearance that doesn't match the target clean, neutral design mockup.
 
 ### Solution Overview
-Implement a comprehensive frontend design enhancement that establishes the Decoy brand visual identity through strategic color scheme implementation, creates a professional top navigation ribbon, modernizes the primary sidebar with clear iconography, and optimizes the table editor interface for improved usability.
+Implement a systematic color correction across the frontend codebase by replacing hardcoded gray classes with proper design tokens. This will create a cohesive, professional appearance using the already-established CSS variables and semantic color system without requiring new theme implementation.
 
 ### Success Metrics
-- **User Satisfaction**: 40% improvement in UI/UX satisfaction scores
-- **Task Completion Speed**: 25% faster navigation between sections
-- **Professional Appearance**: 90% of users rate interface as "professional" or "very professional"
-- **Brand Recognition**: 95% brand consistency across all interface elements
+- **Design Token Consistency**: 100% usage of semantic design tokens instead of hardcoded colors
+- **Visual Cleanliness**: Elimination of blue/purple tints in neutral interface elements
+- **Professional Appearance**: Clean, neutral color scheme matching target design mockup
+- **Maintenance Efficiency**: Reduced color-related technical debt through consistent token usage
 
 ## 2. Business Context
 
 ### Current State
-- Inconsistent color scheme not aligned with Decoy brand identity
-- Missing professional top navigation for environment awareness
-- Generic sidebar icons lacking clarity and modern aesthetics
-- Table editor contains redundant descriptive text that clutters interface
-- Overall interface lacks cohesive branding and professional polish
+- **Inconsistent Color Usage**: Components use hardcoded Tailwind classes (`text-gray-600`, `border-gray-200`) instead of design tokens
+- **Blue/Purple Tints**: Hardcoded grays create unwanted color tints that deviate from neutral design
+- **Design Token Violations**: Extensive use of `text-gray-400/500/600`, `bg-gray-100`, `border-gray-200` across components
+- **Visual Inconsistency**: Mixed usage of proper design tokens and hardcoded classes in same components
+- **Maintenance Issues**: Color-related changes require updating multiple hardcoded values instead of central tokens
 
 ### Target Users
 - **Primary**: VRP optimization specialists and logistics managers
@@ -34,99 +34,105 @@ Implement a comprehensive frontend design enhancement that establishes the Decoy
 - **Tertiary**: Executive stakeholders reviewing optimization results
 
 ### Business Value
-- **Brand Consistency**: Establishes strong Decoy brand presence across the platform
-- **User Experience**: Reduces cognitive load and improves navigation efficiency
-- **Professional Image**: Enhances credibility with enterprise clients
-- **Competitive Advantage**: Modern interface differentiates from legacy VRP tools
+- **Professional Appearance**: Clean, neutral design matches target mockup and enterprise standards
+- **Maintainability**: Centralized color management through design tokens reduces technical debt
+- **Visual Consistency**: Unified color scheme improves user experience and reduces cognitive load
+- **Development Efficiency**: Future color changes only require updating CSS variables, not scattered hardcoded values
 
 ## 3. Functional Requirements
 
 ### Core Features
 
-#### 3.1 Brand-Aligned Color Scheme Implementation
-**Business Requirement**: Establish cohesive visual identity using Decoy brand colors
+#### 3.1 Design Token Color Correction
+**Business Requirement**: Replace hardcoded gray classes with semantic design tokens
 
-**Selected Color Palette**: Based on logo analysis, implement the bright green on dark theme
-- **Primary Brand Color**: `#00d084` (Bright Green)
-- **Background Color**: `#1e293b` (Dark Navy)
-- **Text Colors**: 
-  - Primary: `#ffffff` (White)
-  - Secondary: `#cbd5e1` (Light Gray)
-  - Muted: `#64748b` (Gray)
-- **Accent Colors**:
-  - Success: `#10b981` (Green)
-  - Warning: `#f59e0b` (Amber)
-  - Error: `#ef4444` (Red)
-  - Info: `#3b82f6` (Blue)
+**Current Design Tokens (Already Defined)**:
+- **Background**: `bg-background` (mapped to `oklch(95% 0.01 260)`)
+- **Foreground**: `text-foreground` (primary text color)
+- **Muted**: `bg-muted` and `text-muted-foreground` (secondary elements)
+- **Borders**: `border-border` (consistent border colors)
+- **Cards**: `bg-card` (content surface color)
 
-**Acceptance Criteria**:
-- All interface elements use consistent brand color palette
-- High contrast ratios meet WCAG accessibility standards
-- Color usage follows semantic meaning (green=success, red=error, etc.)
-- Hover states and interactive elements use appropriate color variations
-
-#### 3.2 Professional Top Ribbon Navigation
-**Business Requirement**: Create environment-aware top navigation bar
-
-**Features**:
-- **Environment Indicator**: Clear visual distinction between Development/Staging/Production
-- **Connection Status**: Real-time Convex connection indicator
-- **User Context**: Current user identification and quick actions
-- **System Status**: Health indicators and notifications
-- **Quick Actions**: Feedback, help, and settings access
+**Color Corrections Required**:
+- Replace `text-gray-400/500/600` → `text-muted-foreground`
+- Replace `bg-gray-100` → `bg-muted` (except main layout which stays `bg-gray-100`)
+- Replace `border-gray-200` → `border-border`
+- Replace `text-gray-900` → `text-foreground`
 
 **Acceptance Criteria**:
-- Environment badge clearly shows current deployment (Dev/Staging/Production)
-- Connection status updates in real-time with color-coded indicators
-- Responsive design works on mobile and desktop
-- Consistent branding with selected color scheme
-- Accessible keyboard navigation support
+- Zero hardcoded gray classes in production code
+- All components use semantic design tokens consistently
+- Visual appearance matches target clean, neutral design
+- Maintain existing `bg-gray-100` for main layout background
 
-#### 3.3 Modernized Primary Sidebar Icons
-**Business Requirement**: Replace current sidebar icons with clear, professional iconography
+#### 3.2 TopRibbon Color Consistency
+**Business Requirement**: Fix TopRibbon component color inconsistencies
 
-**Icon Categories**:
-- **Navigation Icons**: Home, Projects, Scenarios, Datasets
-- **Data Management**: Tables, Import/Export, Analytics
-- **Operations**: Optimization, Routes, Reporting
-- **System**: Settings, Help, User Profile
+**Current Issues in TopRibbon**:
+- Mixed usage of `bg-white border-b border-gray-200` and proper tokens
+- Hardcoded `text-gray-500`, `text-gray-400`, `text-gray-600` for various elements
+- `bg-gray-100` used instead of `bg-muted` for certain elements
 
-**Design Standards**:
-- **Style**: Outline/line icons for consistency
-- **Size**: 20px standard with 24px for primary actions
-- **Weight**: 1.5px stroke weight for optimal clarity
-- **Accessibility**: Icons paired with text labels and aria-labels
+**Required Corrections**:
+- Replace `border-gray-200` → `border-border`
+- Replace `text-gray-400/500/600` → `text-muted-foreground`
+- Replace `bg-gray-100` → `bg-muted` for UI elements
+- Maintain `bg-white` for main TopRibbon background
 
 **Acceptance Criteria**:
-- All sidebar icons follow consistent design language
-- Icons are semantically meaningful and intuitive
-- Hover states provide clear visual feedback
-- Icons scale properly across different screen sizes
-- Screen reader compatible with appropriate labels
+- TopRibbon uses only semantic design tokens
+- Clean, professional appearance with neutral colors
+- Maintains existing functionality while improving visual consistency
+- No hardcoded gray classes in TopRibbon component
 
-#### 3.4 Streamlined Table Editor Interface
-**Business Requirement**: Remove redundant descriptive text and improve content hierarchy
+#### 3.3 Sidebar Color Consistency
+**Business Requirement**: Fix color inconsistencies in Primary and Secondary sidebars
 
-**Optimization Areas**:
-- **Header Simplification**: Remove redundant dataset version text
-- **Context Clarity**: Improve breadcrumb navigation visibility
-- **Action Prioritization**: Emphasize primary actions while maintaining secondary options
-- **Content Density**: Optimize spacing for better information hierarchy
+**Current Issues in Sidebars**:
+- Mixed usage of proper tokens and hardcoded grays (`text-gray-600`, `hover:text-gray-900`)
+- Inconsistent text color hierarchy
+- Some elements using `bg-white border-r border-border` (correct) with hardcoded text colors (incorrect)
+
+**Required Corrections**:
+- Replace `text-gray-600` → `text-muted-foreground` for secondary text
+- Replace `text-gray-400` → `text-muted-foreground` for muted elements
+- Replace `hover:text-gray-900` → `hover:text-foreground` for hover states
+- Ensure consistent semantic color usage across both sidebars
 
 **Acceptance Criteria**:
-- Table editor headings are concise and descriptive
-- Breadcrumb navigation clearly shows current context
-- Primary actions (Add, Import, Export) are visually prominent
-- Secondary actions remain accessible but don't compete for attention
-- Improved readability with appropriate white space usage
+- Both Primary and Secondary sidebars use only design tokens
+- Clean hover states with semantic color transitions
+- Maintains existing navigation functionality
+- Professional appearance matching target design
+
+#### 3.4 Table Editor Color Consistency
+**Business Requirement**: Fix color inconsistencies in TableEditor component
+
+**Current Issues in TableEditor**:
+- Extensive use of hardcoded grays: `text-gray-400`, `bg-gray-100`, `text-gray-500`
+- Map interface using hardcoded colors instead of design tokens
+- Inconsistent color scheme across table elements and controls
+
+**Required Corrections**:
+- Replace `text-gray-400` → `text-muted-foreground` for secondary text
+- Replace `text-gray-500` → `text-muted-foreground` for muted elements
+- Replace `bg-gray-100` → `bg-muted` for background elements
+- Update map interface colors to use semantic tokens
+- Ensure button and control colors use design system tokens
+
+**Acceptance Criteria**:
+- TableEditor uses only semantic design tokens for colors
+- Clean, professional table interface matching target design
+- Map view integration maintains color consistency
+- All interactive elements use proper hover and focus states
 
 ## 4. Non-Functional Requirements
 
 ### Performance Expectations
-- **Color Theme Application**: Instantaneous theme changes with CSS custom properties
-- **Icon Loading**: SVG icons load in <50ms with proper caching
-- **Navigation Response**: Top ribbon and sidebar interactions respond in <100ms
-- **Theme Consistency**: All components reflect theme changes without page refresh
+- **Color Consistency**: Design token changes apply instantly across all components
+- **No Performance Impact**: Color corrections maintain existing component performance
+- **CSS Bundle Size**: No increase in CSS bundle size (using existing tokens)
+- **Rendering Speed**: Maintain current rendering performance while improving visual consistency
 
 ### Reliability & Availability
 - **Cross-Browser Support**: Consistent appearance across Chrome, Firefox, Safari, Edge
@@ -202,29 +208,29 @@ Implement a comprehensive frontend design enhancement that establishes the Decoy
 
 ## 8. Implementation Phases
 
-### Phase 1: Core Design System (Week 1)
-- Implement selected color scheme with CSS custom properties
-- Create design token system for consistent spacing and typography
-- Update core UI components to use new color palette
-- Establish icon component system with SVG optimization
+### Phase 1: MainLayout and TopRibbon Color Correction (Day 1)
+- Replace hardcoded gray classes in MainLayout.tsx TopRibbon styling
+- Update TopRibbon to use consistent design tokens
+- Verify visual consistency with target design
+- Test responsive behavior
 
-### Phase 2: Navigation Enhancement (Week 2)
-- Develop top ribbon navigation component
-- Implement environment indicator and connection status
-- Update primary sidebar with new iconography
-- Create responsive navigation patterns
+### Phase 2: Sidebar Components Color Correction (Day 2)
+- Update PrimarySidebar.tsx to use design tokens consistently
+- Update SecondarySidebar.tsx to use design tokens consistently
+- Fix hover states and interactive elements
+- Ensure navigation functionality remains intact
 
-### Phase 3: Interface Optimization (Week 3)
-- Streamline table editor interface elements
-- Optimize content hierarchy and spacing
-- Implement improved breadcrumb navigation
-- Refine action button hierarchy and positioning
+### Phase 3: TableEditor Component Color Correction (Day 3)
+- Fix TableEditor.tsx color inconsistencies with design tokens
+- Update map interface colors to use semantic tokens
+- Correct bulk operations modal colors
+- Test table editing functionality
 
-### Phase 4: Quality Assurance & Launch (Week 4)
-- Comprehensive accessibility testing and remediation
-- Cross-browser and device compatibility validation
-- Performance optimization and monitoring setup
-- User acceptance testing and feedback incorporation
+### Phase 4: Page Components and Final Validation (Day 4)
+- Update all remaining page components to use design tokens consistently
+- Comprehensive visual validation against target design
+- Cross-browser testing for color consistency
+- Performance validation to ensure no regressions
 
 ## 9. Appendices
 
