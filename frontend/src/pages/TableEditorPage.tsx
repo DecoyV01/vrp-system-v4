@@ -34,7 +34,7 @@ const TableEditorPage = () => {
   // Validate parameters
   if (!projectId || !scenarioId || !datasetId || !isValidTableType(tableType)) {
     return (
-      <div className="flex flex-col h-full bg-white">
+      <div className="flex flex-col h-full bg-background">
         <div className="flex items-center justify-center flex-1">
           <Card className="w-96">
             <CardHeader>
@@ -47,7 +47,7 @@ const TableEditorPage = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-muted-foreground mb-4">
                 Expected format:
                 /projects/[projectId]/scenarios/[scenarioId]/datasets/[datasetId]/[tableType]
               </p>
@@ -69,7 +69,7 @@ const TableEditorPage = () => {
     dataset === undefined
   ) {
     return (
-      <div className="flex flex-col h-full bg-white">
+      <div className="flex flex-col h-full bg-background">
         <div className="flex items-center justify-center flex-1">
           <LoadingSpinner className="w-8 h-8" />
         </div>
@@ -80,7 +80,7 @@ const TableEditorPage = () => {
   // Error state - data not found
   if (!project || !scenario || !dataset) {
     return (
-      <div className="flex flex-col h-full bg-white">
+      <div className="flex flex-col h-full bg-background">
         <div className="flex items-center justify-center flex-1">
           <Card className="w-96">
             <CardHeader>
@@ -109,10 +109,10 @@ const TableEditorPage = () => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+      <div className="p-6 border-b border-border">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
           <Button
             variant="ghost"
             size="sm"
@@ -162,11 +162,11 @@ const TableEditorPage = () => {
 
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 capitalize flex items-center gap-2">
+            <h1 className="text-xl font-semibold text-foreground capitalize flex items-center gap-2">
               <TableIcon className="w-6 h-6" />
               {tableType} Editor
             </h1>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               Manage {tableType} data for {dataset.name} v{dataset.version}
             </p>
           </div>

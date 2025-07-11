@@ -299,7 +299,7 @@ const MasterLocationsPage = () => {
             <span>/</span>
             <span className="text-foreground font-medium">Locations</span>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">
+          <h1 className="text-xl font-semibold text-foreground">
             Master Locations
           </h1>
           <p className="text-sm text-muted-foreground">

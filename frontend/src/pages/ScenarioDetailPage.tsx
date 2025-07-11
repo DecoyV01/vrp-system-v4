@@ -227,8 +227,8 @@ const ScenarioDetailPage = () => {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Scenario Not Found</h1>
-          <p className="text-gray-600 mb-4">
+          <h1 className="text-xl font-semibold mb-2">Scenario Not Found</h1>
+          <p className="text-muted-foreground mb-4">
             The requested scenario could not be found.
           </p>
           <Button onClick={() => navigate('/projects')}>
@@ -245,10 +245,10 @@ const ScenarioDetailPage = () => {
     datasets === undefined
   ) {
     return (
-      <div className="flex flex-col h-full bg-white">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="flex flex-col h-full bg-background">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-xl font-semibold text-foreground">
               Loading Scenario...
             </h1>
           </div>
@@ -261,24 +261,24 @@ const ScenarioDetailPage = () => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="flex items-center justify-between p-6 border-b border-border">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate(`/projects/${projectId}`)}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-muted-foreground hover:text-foreground"
             >
               ← {project.name}
             </Button>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-xl font-semibold text-foreground">
               {scenario.name}
             </h1>
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             {scenario.description || 'No description provided'}
           </p>
 
