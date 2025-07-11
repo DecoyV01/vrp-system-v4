@@ -121,7 +121,7 @@ const DatasetCard = ({
       </CardHeader>
 
       <CardContent className="pt-0">
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
+        <div className="flex items-center justify-between text-sm text-muted-foreground mb-3">
           <div className="flex items-center gap-1">
             <Calendar className="w-4 h-4" />
             <span>
@@ -135,7 +135,7 @@ const DatasetCard = ({
         </div>
 
         {dataset.datasetType && (
-          <div className="text-sm text-gray-600 mb-2">
+          <div className="text-sm text-muted-foreground mb-2">
             <strong>Type:</strong> {dataset.datasetType}
           </div>
         )}
@@ -143,25 +143,25 @@ const DatasetCard = ({
         {dataset.entityCounts && (
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-600">Vehicles:</span>
+              <span className="text-muted-foreground">Vehicles:</span>
               <Badge variant="secondary">
                 {dataset.entityCounts.vehicles || 0}
               </Badge>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Jobs:</span>
+              <span className="text-muted-foreground">Jobs:</span>
               <Badge variant="secondary">
                 {dataset.entityCounts.jobs || 0}
               </Badge>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Locations:</span>
+              <span className="text-muted-foreground">Locations:</span>
               <Badge variant="secondary">
                 {dataset.entityCounts.locations || 0}
               </Badge>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Routes:</span>
+              <span className="text-muted-foreground">Routes:</span>
               <Badge variant="secondary">
                 {dataset.entityCounts.routes || 0}
               </Badge>
@@ -285,7 +285,7 @@ const ScenarioDetailPage = () => {
           {/* Scenario Stats */}
           {stats && (
             <div className="flex items-center gap-4 mt-3">
-              <div className="flex items-center gap-1 text-sm text-gray-500">
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Archive className="w-4 h-4" />
                 <span>
                   {stats.datasetCount} dataset
@@ -293,7 +293,7 @@ const ScenarioDetailPage = () => {
                 </span>
               </div>
               {scenario.optimizationObjective && (
-                <div className="flex items-center gap-1 text-sm text-gray-500">
+                <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Database className="w-4 h-4" />
                   <span>{scenario.optimizationObjective}</span>
                 </div>
@@ -331,13 +331,13 @@ const ScenarioDetailPage = () => {
       <div className="flex-1 p-6">
         {datasets.length === 0 ? (
           <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Archive className="w-8 h-8 text-gray-400" />
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <Archive className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               Create your first dataset
             </h3>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
               Datasets contain the vehicles, jobs, and locations for your
               optimization scenarios. Start by creating your first dataset.
             </p>
@@ -359,10 +359,10 @@ const ScenarioDetailPage = () => {
           <>
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-foreground">
                   Datasets
                 </h2>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   Manage datasets for this scenario ({datasets.length} dataset
                   {datasets.length !== 1 ? 's' : ''})
                 </p>
