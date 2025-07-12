@@ -93,13 +93,6 @@ const MainLayout = () => {
     <div
       className="flex flex-col h-screen bg-background"
       data-theme={EnvironmentConfig.current}
-      style={
-        {
-          // Contract validation: --color-primary oklch --color-background oklch
-          '--color-primary': BRAND_COLORS.primaryOklch,
-          '--color-background': BRAND_COLORS.backgroundOklch,
-        } as React.CSSProperties
-      }
     >
       {/* TopRibbon spanning FULL WIDTH - above everything like browser tabs */}
       <div
