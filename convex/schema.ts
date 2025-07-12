@@ -219,6 +219,11 @@ export default defineSchema({
     timezone: v.optional(v.string()), // ❓ Location timezone
     datasetName: v.optional(v.string()), // ❓ Source dataset name
     datasetVersion: v.optional(v.number()), // ❓ Source dataset version
+
+    // Geocoding metadata
+    geocodeQuality: v.optional(v.string()), // ❓ Geocoding confidence level (exact, interpolated, approximate)
+    geocodeSource: v.optional(v.string()), // ❓ Geocoding service used (mapbox, google, etc.)
+    geocodeTimestamp: v.optional(v.number()), // ❓ When geocoding was performed
   })
     .index('by_project', ['projectId'])
     .index('by_scenario', ['scenarioId'])
