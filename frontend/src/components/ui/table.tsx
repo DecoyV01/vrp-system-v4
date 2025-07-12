@@ -10,6 +10,7 @@ const Table = React.forwardRef<
     <table
       ref={ref}
       className={cn('w-full caption-bottom text-sm', className)}
+      data-slot="table"
       {...props}
     />
   </div>
@@ -23,6 +24,7 @@ const TableHeader = React.forwardRef<
   <thead
     ref={ref}
     className={cn('bg-muted/20 [&_tr]:border-b', className)}
+    data-slot="table-header"
     {...props}
   />
 ))
@@ -35,6 +37,7 @@ const TableBody = React.forwardRef<
   <tbody
     ref={ref}
     className={cn('[&_tr:last-child]:border-0', className)}
+    data-slot="table-body"
     {...props}
   />
 ))
@@ -65,6 +68,7 @@ const TableRow = React.forwardRef<
       'border-b transition-colors hover:bg-muted/20 data-[state=selected]:bg-muted',
       className
     )}
+    data-slot="table-row"
     {...props}
   />
 ))
@@ -80,6 +84,7 @@ const TableHead = React.forwardRef<
       'h-12 px-4 text-left align-middle font-semibold text-muted-foreground [&:has([role=checkbox])]:pr-0',
       className
     )}
+    data-slot="table-head"
     {...props}
   />
 ))
@@ -92,6 +97,7 @@ const TableCell = React.forwardRef<
   <td
     ref={ref}
     className={cn('p-4 align-middle [&:has([role=checkbox])]:pr-0', className)}
+    data-slot="table-cell"
     {...props}
   />
 ))
