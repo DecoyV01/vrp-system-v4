@@ -29,6 +29,11 @@ import {
   Target,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import {
+  getGeocodingService,
+  GeocodingResult,
+  VRPErrorHandling,
+} from '@/utils/errorHandling'
 
 interface LocationFormProps {
   mode: 'create' | 'edit'
@@ -37,19 +42,6 @@ interface LocationFormProps {
   onCancel: () => void
   initialCoordinates?: [number, number]
   initialAddress?: string
-}
-
-interface GeocodingResult {
-  coordinates: [number, number]
-  address: string
-  confidence: 'exact' | 'interpolated' | 'approximate'
-  components: {
-    street?: string
-    city?: string
-    state?: string
-    country?: string
-    postalCode?: string
-  }
 }
 
 export const LocationForm = ({
@@ -91,32 +83,7 @@ export const LocationForm = ({
     }
   }
 
-  // Mock geocoding function (in real implementation, this would call Mapbox API)
-  const geocodeAddress = async (address: string): Promise<GeocodingResult> => {
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
-    // Mock geocoding result (in real app, this would be actual Mapbox API call)
-    const mockCoordinates: [number, number] = [
-      -122.4194 + (Math.random() - 0.5) * 0.1, // SF area longitude ± variance
-      37.7749 + (Math.random() - 0.5) * 0.1, // SF area latitude ± variance
-    ]
-
-    return {
-      coordinates: mockCoordinates,
-      address: address || 'Mock Address, San Francisco, CA',
-      confidence: Math.random() > 0.5 ? 'exact' : 'interpolated',
-      components: {
-        street: '123 Mock Street',
-        city: 'San Francisco',
-        state: 'CA',
-        country: 'US',
-        postalCode: '94105',
-      },
-    }
-  }
-
-  // Handle geocoding
+  // Handle geocoding using real Mapbox API
   const handleGeocode = async () => {
     if (!formData.address.trim()) {
       toast.error('Please enter an address to geocode')
@@ -127,7 +94,8 @@ export const LocationForm = ({
     setGeocodeError(null)
 
     try {
-      const result = await geocodeAddress(formData.address)
+      const geocodingService = getGeocodingService()
+      const result = await geocodingService.geocodeAddress(formData.address)
       setGeocodeResult(result)
       setFormData(prev => ({
         ...prev,
@@ -137,11 +105,9 @@ export const LocationForm = ({
       }))
       toast.success(`Address geocoded with ${result.confidence} confidence`)
     } catch (error) {
-      console.error('Geocoding failed:', error)
-      setGeocodeError(
-        'Failed to geocode address. Please check the address or enter coordinates manually.'
-      )
-      toast.error('Failed to geocode address')
+      const errorMessage = VRPErrorHandling.geocoding.forward(error)
+      setGeocodeError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setIsGeocoding(false)
     }
@@ -160,15 +126,15 @@ export const LocationForm = ({
     setIsGeocoding(true)
 
     try {
-      // Mock reverse geocoding (in real app, this would be Mapbox API call)
-      await new Promise(resolve => setTimeout(resolve, 800))
-      const mockAddress = `${Math.floor(lat * 1000)} Mock Street, San Francisco, CA`
+      const geocodingService = getGeocodingService()
+      const result = await geocodingService.reverseGeocode(lat, lon)
 
-      setFormData(prev => ({ ...prev, address: mockAddress }))
+      setFormData(prev => ({ ...prev, address: result.address }))
+      setGeocodeResult(result)
       toast.success('Address found for coordinates')
     } catch (error) {
-      console.error('Reverse geocoding failed:', error)
-      toast.error('Failed to find address for coordinates')
+      const errorMessage = VRPErrorHandling.geocoding.reverse(error)
+      toast.error(errorMessage)
     } finally {
       setIsGeocoding(false)
     }

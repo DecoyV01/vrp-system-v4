@@ -158,7 +158,6 @@ const MainLayout = () => {
           <div className="flex items-center gap-2">
             {isConnected ? (
               <>
-                <Wifi className="w-4 h-4 text-green-600" aria-hidden="true" />
                 <Badge
                   variant="outline"
                   className="text-xs bg-green-50 text-green-700 border-green-200"
@@ -169,7 +168,6 @@ const MainLayout = () => {
               </>
             ) : (
               <>
-                <WifiOff className="w-4 h-4 text-red-500" aria-hidden="true" />
                 <Badge
                   variant="outline"
                   className="text-xs bg-red-50 text-red-700 border-red-200"
