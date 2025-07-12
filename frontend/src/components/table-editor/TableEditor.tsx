@@ -1267,7 +1267,12 @@ const TableEditor = ({
           <Separator orientation="vertical" className="h-6" />
 
           {/* Add Row */}
-          <Button onClick={addRow} size="sm" disabled={isCreating}>
+          <Button
+            onClick={addRow}
+            size="sm"
+            disabled={isCreating}
+            className="bg-green-500 hover:bg-green-600 text-white"
+          >
             {isCreating ? (
               <>
                 <LoadingSpinner className="w-4 h-4 mr-2" />
@@ -1697,7 +1702,11 @@ const TableEditor = ({
             Add rows and click on cells to edit them. Changes are automatically
             saved to your dataset.
           </p>
-          <Button onClick={addRow} disabled={isCreating}>
+          <Button
+            onClick={addRow}
+            disabled={isCreating}
+            className="bg-green-500 hover:bg-green-600 text-white"
+          >
             {isCreating ? (
               <>
                 <LoadingSpinner className="w-4 h-4 mr-2" />

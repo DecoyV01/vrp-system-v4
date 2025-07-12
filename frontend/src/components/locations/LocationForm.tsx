@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -20,13 +20,13 @@ import {
 } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { 
-  MapPin, 
-  Search, 
+import {
+  MapPin,
+  Search,
   Navigation,
   AlertTriangle,
   CheckCircle,
-  Target
+  Target,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -58,7 +58,7 @@ export const LocationForm = ({
   onSave,
   onCancel,
   initialCoordinates,
-  initialAddress
+  initialAddress,
 }: LocationFormProps) => {
   const [formData, setFormData] = useState({
     name: location?.name || '',
@@ -71,9 +71,11 @@ export const LocationForm = ({
     contactInfo: location?.contactInfo || '',
     timezone: location?.timezone || '',
   })
-  
+
   const [isGeocoding, setIsGeocoding] = useState(false)
-  const [geocodeResult, setGeocodeResult] = useState<GeocodingResult | null>(null)
+  const [geocodeResult, setGeocodeResult] = useState<GeocodingResult | null>(
+    null
+  )
   const [geocodeError, setGeocodeError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showCoordinatePicker, setShowCoordinatePicker] = useState(false)
@@ -81,7 +83,7 @@ export const LocationForm = ({
   // Handle form field changes
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
-    
+
     // Clear geocode results when address changes
     if (field === 'address') {
       setGeocodeResult(null)
@@ -93,13 +95,13 @@ export const LocationForm = ({
   const geocodeAddress = async (address: string): Promise<GeocodingResult> => {
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1000))
-    
+
     // Mock geocoding result (in real app, this would be actual Mapbox API call)
     const mockCoordinates: [number, number] = [
       -122.4194 + (Math.random() - 0.5) * 0.1, // SF area longitude ± variance
-      37.7749 + (Math.random() - 0.5) * 0.1    // SF area latitude ± variance
+      37.7749 + (Math.random() - 0.5) * 0.1, // SF area latitude ± variance
     ]
-    
+
     return {
       coordinates: mockCoordinates,
       address: address || 'Mock Address, San Francisco, CA',
@@ -109,8 +111,8 @@ export const LocationForm = ({
         city: 'San Francisco',
         state: 'CA',
         country: 'US',
-        postalCode: '94105'
-      }
+        postalCode: '94105',
+      },
     }
   }
 
@@ -123,7 +125,7 @@ export const LocationForm = ({
 
     setIsGeocoding(true)
     setGeocodeError(null)
-    
+
     try {
       const result = await geocodeAddress(formData.address)
       setGeocodeResult(result)
@@ -131,12 +133,14 @@ export const LocationForm = ({
         ...prev,
         locationLat: result.coordinates[1].toString(),
         locationLon: result.coordinates[0].toString(),
-        address: result.address // Use formatted address from geocoder
+        address: result.address, // Use formatted address from geocoder
       }))
       toast.success(`Address geocoded with ${result.confidence} confidence`)
     } catch (error) {
       console.error('Geocoding failed:', error)
-      setGeocodeError('Failed to geocode address. Please check the address or enter coordinates manually.')
+      setGeocodeError(
+        'Failed to geocode address. Please check the address or enter coordinates manually.'
+      )
       toast.error('Failed to geocode address')
     } finally {
       setIsGeocoding(false)
@@ -147,19 +151,19 @@ export const LocationForm = ({
   const handleReverseGeocode = async () => {
     const lat = parseFloat(formData.locationLat as string)
     const lon = parseFloat(formData.locationLon as string)
-    
+
     if (!lat || !lon) {
       toast.error('Please enter valid coordinates')
       return
     }
 
     setIsGeocoding(true)
-    
+
     try {
       // Mock reverse geocoding (in real app, this would be Mapbox API call)
       await new Promise(resolve => setTimeout(resolve, 800))
       const mockAddress = `${Math.floor(lat * 1000)} Mock Street, San Francisco, CA`
-      
+
       setFormData(prev => ({ ...prev, address: mockAddress }))
       toast.success('Address found for coordinates')
     } catch (error) {
@@ -174,26 +178,26 @@ export const LocationForm = ({
   const validateCoordinates = (lat: string, lon: string) => {
     const latNum = parseFloat(lat)
     const lonNum = parseFloat(lon)
-    
+
     if (isNaN(latNum) || isNaN(lonNum)) {
       return 'Coordinates must be valid numbers'
     }
-    
+
     if (latNum < -90 || latNum > 90) {
       return 'Latitude must be between -90 and 90'
     }
-    
+
     if (lonNum < -180 || lonNum > 180) {
       return 'Longitude must be between -180 and 180'
     }
-    
+
     return null
   }
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!formData.name.trim()) {
       toast.error('Location name is required')
       return
@@ -201,7 +205,10 @@ export const LocationForm = ({
 
     // Validate coordinates if provided
     if (formData.locationLat && formData.locationLon) {
-      const coordError = validateCoordinates(formData.locationLat as string, formData.locationLon as string)
+      const coordError = validateCoordinates(
+        formData.locationLat as string,
+        formData.locationLon as string
+      )
       if (coordError) {
         toast.error(coordError)
         return
@@ -209,17 +216,23 @@ export const LocationForm = ({
     }
 
     setIsSubmitting(true)
-    
+
     try {
       const submitData = {
         ...formData,
-        locationLat: formData.locationLat ? parseFloat(formData.locationLat as string) : undefined,
-        locationLon: formData.locationLon ? parseFloat(formData.locationLon as string) : undefined,
-        geocodeQuality: geocodeResult?.confidence || (formData.locationLat && formData.locationLon ? 'manual' : undefined),
+        locationLat: formData.locationLat
+          ? parseFloat(formData.locationLat as string)
+          : undefined,
+        locationLon: formData.locationLon
+          ? parseFloat(formData.locationLon as string)
+          : undefined,
+        geocodeQuality:
+          geocodeResult?.confidence ||
+          (formData.locationLat && formData.locationLon ? 'manual' : undefined),
         geocodeSource: geocodeResult ? 'mapbox' : 'manual',
         geocodeTimestamp: geocodeResult ? Date.now() : undefined,
       }
-      
+
       await onSave(submitData)
     } catch (error) {
       console.error('Failed to save location:', error)
@@ -229,9 +242,13 @@ export const LocationForm = ({
     }
   }
 
-  const coordinateError = formData.locationLat && formData.locationLon 
-    ? validateCoordinates(formData.locationLat as string, formData.locationLon as string) 
-    : null
+  const coordinateError =
+    formData.locationLat && formData.locationLon
+      ? validateCoordinates(
+          formData.locationLat as string,
+          formData.locationLon as string
+        )
+      : null
 
   return (
     <Dialog open={true} onOpenChange={() => onCancel()}>
@@ -241,10 +258,9 @@ export const LocationForm = ({
             {mode === 'create' ? 'Create New Location' : 'Edit Location'}
           </DialogTitle>
           <DialogDescription>
-            {mode === 'create' 
+            {mode === 'create'
               ? 'Add a new location to your project. You can enter an address to automatically geocode coordinates.'
-              : 'Update the location details. Changes will be saved immediately.'
-            }
+              : 'Update the location details. Changes will be saved immediately.'}
           </DialogDescription>
         </DialogHeader>
 
@@ -256,7 +272,7 @@ export const LocationForm = ({
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => handleChange('name', e.target.value)}
+                onChange={e => handleChange('name', e.target.value)}
                 placeholder="Enter location name"
                 required
               />
@@ -267,7 +283,7 @@ export const LocationForm = ({
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => handleChange('description', e.target.value)}
+                onChange={e => handleChange('description', e.target.value)}
                 placeholder="Optional description"
                 rows={2}
               />
@@ -275,7 +291,10 @@ export const LocationForm = ({
 
             <div>
               <Label htmlFor="locationType">Location Type</Label>
-              <Select value={formData.locationType} onValueChange={(value) => handleChange('locationType', value)}>
+              <Select
+                value={formData.locationType}
+                onValueChange={value => handleChange('locationType', value)}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select location type" />
                 </SelectTrigger>
@@ -283,7 +302,9 @@ export const LocationForm = ({
                   <SelectItem value="depot">Depot</SelectItem>
                   <SelectItem value="customer">Customer</SelectItem>
                   <SelectItem value="warehouse">Warehouse</SelectItem>
-                  <SelectItem value="distribution_center">Distribution Center</SelectItem>
+                  <SelectItem value="distribution_center">
+                    Distribution Center
+                  </SelectItem>
                   <SelectItem value="pickup_point">Pickup Point</SelectItem>
                   <SelectItem value="delivery_point">Delivery Point</SelectItem>
                 </SelectContent>
@@ -295,7 +316,9 @@ export const LocationForm = ({
           <div className="space-y-4 border-t pt-4">
             <div className="flex items-center gap-2">
               <MapPin className="w-5 h-5 text-gray-400" />
-              <Label className="text-base font-medium">Address & Coordinates</Label>
+              <Label className="text-base font-medium">
+                Address & Coordinates
+              </Label>
             </div>
 
             <div>
@@ -304,7 +327,7 @@ export const LocationForm = ({
                 <Input
                   id="address"
                   value={formData.address}
-                  onChange={(e) => handleChange('address', e.target.value)}
+                  onChange={e => handleChange('address', e.target.value)}
                   placeholder="Enter street address"
                   className="flex-1"
                 />
@@ -334,7 +357,9 @@ export const LocationForm = ({
               <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-sm font-medium text-green-800">Geocoding Successful</span>
+                  <span className="text-sm font-medium text-green-800">
+                    Geocoding Successful
+                  </span>
                   <Badge variant="outline" className="text-xs">
                     {geocodeResult.confidence}
                   </Badge>
@@ -342,7 +367,8 @@ export const LocationForm = ({
                 <div className="text-sm text-green-700">
                   <div>Address: {geocodeResult.address}</div>
                   <div className="font-mono">
-                    Coordinates: {geocodeResult.coordinates[1].toFixed(6)}, {geocodeResult.coordinates[0].toFixed(6)}
+                    Coordinates: {geocodeResult.coordinates[1].toFixed(6)},{' '}
+                    {geocodeResult.coordinates[0].toFixed(6)}
                   </div>
                 </div>
               </div>
@@ -356,7 +382,7 @@ export const LocationForm = ({
                   <Input
                     id="latitude"
                     value={formData.locationLat}
-                    onChange={(e) => handleChange('locationLat', e.target.value)}
+                    onChange={e => handleChange('locationLat', e.target.value)}
                     placeholder="37.7749"
                     type="number"
                     step="any"
@@ -369,7 +395,7 @@ export const LocationForm = ({
                   <Input
                     id="longitude"
                     value={formData.locationLon}
-                    onChange={(e) => handleChange('locationLon', e.target.value)}
+                    onChange={e => handleChange('locationLon', e.target.value)}
                     placeholder="-122.4194"
                     type="number"
                     step="any"
@@ -378,7 +404,11 @@ export const LocationForm = ({
                     type="button"
                     variant="outline"
                     onClick={handleReverseGeocode}
-                    disabled={isGeocoding || !formData.locationLat || !formData.locationLon}
+                    disabled={
+                      isGeocoding ||
+                      !formData.locationLat ||
+                      !formData.locationLon
+                    }
                     title="Find address for coordinates"
                   >
                     {isGeocoding ? (
@@ -408,7 +438,7 @@ export const LocationForm = ({
               <Input
                 id="operatingHours"
                 value={formData.operatingHours}
-                onChange={(e) => handleChange('operatingHours', e.target.value)}
+                onChange={e => handleChange('operatingHours', e.target.value)}
                 placeholder="e.g., Mon-Fri 9:00-17:00"
               />
             </div>
@@ -418,7 +448,7 @@ export const LocationForm = ({
               <Input
                 id="contactInfo"
                 value={formData.contactInfo}
-                onChange={(e) => handleChange('contactInfo', e.target.value)}
+                onChange={e => handleChange('contactInfo', e.target.value)}
                 placeholder="Phone, email, or contact person"
               />
             </div>
@@ -428,7 +458,7 @@ export const LocationForm = ({
               <Input
                 id="timezone"
                 value={formData.timezone}
-                onChange={(e) => handleChange('timezone', e.target.value)}
+                onChange={e => handleChange('timezone', e.target.value)}
                 placeholder="e.g., America/Los_Angeles"
               />
             </div>
@@ -439,17 +469,22 @@ export const LocationForm = ({
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
           </Button>
-          <Button 
+          <Button
             onClick={handleSubmit}
-            disabled={isSubmitting || !!coordinateError || !formData.name.trim()}
+            disabled={
+              isSubmitting || !!coordinateError || !formData.name.trim()
+            }
+            className="bg-green-500 hover:bg-green-600 text-white"
           >
             {isSubmitting ? (
               <>
                 <LoadingSpinner className="w-4 h-4 mr-2" />
                 {mode === 'create' ? 'Creating...' : 'Updating...'}
               </>
+            ) : mode === 'create' ? (
+              'Create Location'
             ) : (
-              mode === 'create' ? 'Create Location' : 'Update Location'
+              'Update Location'
             )}
           </Button>
         </DialogFooter>

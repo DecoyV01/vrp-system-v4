@@ -403,7 +403,11 @@ export const LocationMap = ({
                 variant={isCreatingLocation ? 'default' : 'ghost'}
                 size="sm"
                 onClick={handleToggleCreateMode}
-                className="w-8 h-8 p-0"
+                className={
+                  isCreatingLocation
+                    ? 'w-8 h-8 p-0 bg-green-500 hover:bg-green-600 text-white'
+                    : 'w-8 h-8 p-0'
+                }
                 title={isCreatingLocation ? 'Cancel Create' : 'Create Location'}
               >
                 <Plus className="w-4 h-4" />

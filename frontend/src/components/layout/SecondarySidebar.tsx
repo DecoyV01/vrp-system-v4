@@ -1082,7 +1082,7 @@ const SecondarySidebar = () => {
       <div className="p-4 border-t border-border">
         <Button
           size="sm"
-          className="w-full"
+          className="w-full bg-green-500 hover:bg-green-600 text-white"
           onClick={handleCreateProject}
           disabled={isCreatingProject}
         >
