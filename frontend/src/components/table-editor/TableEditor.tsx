@@ -130,14 +130,14 @@ const calculateMapCenter = (
   data: any[],
   tableType: string,
   locations?: any[]
-): [number, number] => {
+): [number, number] | null => {
   const validItems = data.filter(item =>
     getCoordinates(item, tableType, locations)
   )
 
   if (validItems.length === 0) {
-    // Default to center of continental US only as absolute fallback
-    return [-98.5795, 39.8283]
+    // No fallback coordinates - return null to indicate no valid center
+    return null
   }
 
   // Calculate centroid of all valid coordinates
@@ -193,8 +193,8 @@ const SimpleMapView = ({
         mapRef.current = new mapboxgl.default.Map({
           container: mapContainerRef.current!,
           style: 'mapbox://styles/mapbox/streets-v12',
-          center,
-          zoom: data.length > 0 ? 10 : 4,
+          center: center || [0, 0], // Use [0,0] as neutral fallback if no data
+          zoom: center ? 10 : 2, // Lower zoom if no specific location
         })
 
         setIsMapLoaded(true)

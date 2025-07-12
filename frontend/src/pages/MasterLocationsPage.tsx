@@ -100,11 +100,7 @@ const MasterLocationsPage = () => {
   const [showImportModal, setShowImportModal] = useState(false)
   const [showExportModal, setShowExportModal] = useState(false)
   const [showBulkEditModal, setShowBulkEditModal] = useState(false)
-  const [mapViewport, setMapViewport] = useState<MapViewport>({
-    latitude: 37.7749,
-    longitude: -122.4194,
-    zoom: 10,
-  })
+  const [mapViewport, setMapViewport] = useState<MapViewport | null>(null)
 
   // Filtered locations based on search and filters
   const filteredLocations = useMemo(() => {
@@ -149,6 +145,62 @@ const MasterLocationsPage = () => {
 
     return filtered
   }, [locations, searchQuery, filters])
+
+  // Calculate viewport from locations data
+  const calculatedViewport = useMemo(() => {
+    const locationsWithCoords = filteredLocations.filter(
+      loc => loc.locationLat && loc.locationLon
+    )
+
+    if (locationsWithCoords.length === 0) {
+      return null // No locations with coordinates
+    }
+
+    if (locationsWithCoords.length === 1) {
+      // Single location - center on it
+      const loc = locationsWithCoords[0]
+      return {
+        latitude: loc.locationLat!,
+        longitude: loc.locationLon!,
+        zoom: 14,
+      }
+    }
+
+    // Multiple locations - calculate center and appropriate zoom
+    const lats = locationsWithCoords.map(loc => loc.locationLat!)
+    const lons = locationsWithCoords.map(loc => loc.locationLon!)
+
+    const centerLat = lats.reduce((sum, lat) => sum + lat, 0) / lats.length
+    const centerLon = lons.reduce((sum, lon) => sum + lon, 0) / lons.length
+
+    // Calculate bounds to determine appropriate zoom
+    const minLat = Math.min(...lats)
+    const maxLat = Math.max(...lats)
+    const minLon = Math.min(...lons)
+    const maxLon = Math.max(...lons)
+
+    const latRange = maxLat - minLat
+    const lonRange = maxLon - minLon
+    const maxRange = Math.max(latRange, lonRange)
+
+    // Estimate zoom based on coordinate range
+    let zoom = 10
+    if (maxRange < 0.01)
+      zoom = 15 // Very close locations
+    else if (maxRange < 0.1)
+      zoom = 12 // City level
+    else if (maxRange < 1)
+      zoom = 9 // Regional level
+    else if (maxRange < 10)
+      zoom = 6 // Country level
+    else zoom = 4 // Continental level
+
+    return {
+      latitude: centerLat,
+      longitude: centerLon,
+      zoom,
+    }
+  }, [filteredLocations])
 
   // Bulk selection functionality
   const {
@@ -413,7 +465,7 @@ const MasterLocationsPage = () => {
                 // Open create modal with coordinates
                 setShowCreateModal(true)
               }}
-              viewport={mapViewport}
+              viewport={calculatedViewport || undefined}
               onViewportChange={setMapViewport}
               showClusters={true}
               interactive={true}

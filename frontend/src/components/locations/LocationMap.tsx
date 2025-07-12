@@ -57,7 +57,7 @@ export const LocationMap = ({
   selectedLocationId,
   onLocationSelect,
   onLocationCreate,
-  viewport = { latitude: 37.7749, longitude: -122.4194, zoom: 10 },
+  viewport,
   onViewportChange,
   showClusters = true,
   interactive = true,
@@ -88,8 +88,8 @@ export const LocationMap = ({
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: 'mapbox://styles/mapbox/streets-v12',
-        center: [viewport.longitude, viewport.latitude],
-        zoom: viewport.zoom,
+        center: viewport ? [viewport.longitude, viewport.latitude] : [0, 0],
+        zoom: viewport?.zoom || 2,
         interactive,
       })
 
@@ -145,9 +145,9 @@ export const LocationMap = ({
       console.error('Failed to initialize Mapbox map:', error)
     }
   }, [
-    viewport.latitude,
-    viewport.longitude,
-    viewport.zoom,
+    viewport?.latitude,
+    viewport?.longitude,
+    viewport?.zoom,
     interactive,
     onViewportChange,
     onLocationCreate,
@@ -293,7 +293,7 @@ export const LocationMap = ({
   }, [])
 
   const handleResetView = useCallback(() => {
-    if (mapRef.current) {
+    if (mapRef.current && viewport) {
       mapRef.current.flyTo({
         center: [viewport.longitude, viewport.latitude],
         zoom: viewport.zoom,
