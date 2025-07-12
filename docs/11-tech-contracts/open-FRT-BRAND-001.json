@@ -155,7 +155,7 @@
           "ThemeProvider",
           "data-theme",
           "useTheme",
-          "defaultTheme.*dark",
+          "defaultTheme.*light",
           "storageKey",
           "document\\.documentElement\\.setAttribute.*data-theme"
         ],
@@ -177,9 +177,7 @@
           "border-b.*border-border"
         ],
         "forbidden": [
-          "bg-white(?!.*TopRibbon)",
-          "bg-gray-100",
-          "bg-background(?!.*footer)"
+          "bg-gray-100"
         ],
         "required": true
       }
@@ -451,10 +449,10 @@
     },
     "colors": {
       "topRibbon": {
-        "background": ["bg-muted/30", "bg-gray-50"],
+        "background": ["bg-muted/30", "bg-gray-50", "bg-white", "bg-background"],
         "text": ["text-foreground", "text-muted-foreground"],
         "borders": ["border-b", "border-border"],
-        "forbidden": ["bg-white", "bg-background", "bg-gray-100"]
+        "forbidden": ["bg-gray-100"]
       },
       "primarySidebar": {
         "background": ["bg-white", "bg-background"],
