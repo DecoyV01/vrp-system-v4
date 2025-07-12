@@ -328,6 +328,7 @@ export class MapboxGeocodingService {
   private cache = new Map<string, { result: any; timestamp: number }>()
   private baseUrl = 'https://api.mapbox.com/geocoding/v5/mapbox.places'
   private cacheMaxAge = 24 * 60 * 60 * 1000 // 24 hours
+  private defaultCountry = 'za' // South Africa ISO code
 
   constructor(apiKey: string) {
     if (!apiKey) {
@@ -347,7 +348,7 @@ export class MapboxGeocodingService {
 
     try {
       const encodedAddress = encodeURIComponent(address.trim())
-      const url = `${this.baseUrl}/${encodedAddress}.json?access_token=${this.apiKey}&limit=1`
+      const url = `${this.baseUrl}/${encodedAddress}.json?access_token=${this.apiKey}&limit=1&country=${this.defaultCountry}`
 
       const response = await fetch(url)
       if (!response.ok) {
