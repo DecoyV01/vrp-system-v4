@@ -156,6 +156,9 @@ export const create = mutation({
     timezone: v.optional(v.string()),
     datasetName: v.optional(v.string()),
     datasetVersion: v.optional(v.number()),
+    geocodeQuality: v.optional(v.string()),
+    geocodeSource: v.optional(v.string()),
+    geocodeTimestamp: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const user = await getCurrentUser(ctx)
@@ -244,6 +247,9 @@ export const update = mutation({
     timezone: v.optional(v.string()),
     datasetName: v.optional(v.string()),
     datasetVersion: v.optional(v.number()),
+    geocodeQuality: v.optional(v.string()),
+    geocodeSource: v.optional(v.string()),
+    geocodeTimestamp: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const user = await getCurrentUser(ctx)
@@ -395,6 +401,9 @@ export const bulkImport = mutation({
         operatingHours: v.optional(v.string()),
         contactInfo: v.optional(v.string()),
         timezone: v.optional(v.string()),
+        geocodeQuality: v.optional(v.string()),
+        geocodeSource: v.optional(v.string()),
+        geocodeTimestamp: v.optional(v.number()),
       })
     ),
     clearExisting: v.optional(v.boolean()),
