@@ -224,6 +224,7 @@ export default defineSchema({
     geocodeQuality: v.optional(v.string()), // ❓ Geocoding confidence level (exact, interpolated, approximate)
     geocodeSource: v.optional(v.string()), // ❓ Geocoding service used (mapbox, google, etc.)
     geocodeTimestamp: v.optional(v.number()), // ❓ When geocoding was performed
+    usageCount: v.optional(v.number()), // ❓ Number of times this location has been used in routes/jobs
   })
     .index('by_project', ['projectId'])
     .index('by_scenario', ['scenarioId'])

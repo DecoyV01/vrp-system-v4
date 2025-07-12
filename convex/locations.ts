@@ -159,6 +159,7 @@ export const create = mutation({
     geocodeQuality: v.optional(v.string()),
     geocodeSource: v.optional(v.string()),
     geocodeTimestamp: v.optional(v.number()),
+    usageCount: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const user = await getCurrentUser(ctx)
@@ -210,7 +211,7 @@ export const create = mutation({
       geocodeQuality: geocodingMeta.quality,
       geocodeSource: geocodingMeta.source,
       geocodeTimestamp: geocodingMeta.quality ? now : undefined,
-      usageCount: 0,
+      usageCount: args.usageCount ?? 0, // Use provided usageCount or default to 0
       updatedAt: now,
     })
 
@@ -250,6 +251,7 @@ export const update = mutation({
     geocodeQuality: v.optional(v.string()),
     geocodeSource: v.optional(v.string()),
     geocodeTimestamp: v.optional(v.number()),
+    usageCount: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const user = await getCurrentUser(ctx)
@@ -404,6 +406,7 @@ export const bulkImport = mutation({
         geocodeQuality: v.optional(v.string()),
         geocodeSource: v.optional(v.string()),
         geocodeTimestamp: v.optional(v.number()),
+        usageCount: v.optional(v.number()),
       })
     ),
     clearExisting: v.optional(v.boolean()),
@@ -443,6 +446,7 @@ export const bulkImport = mutation({
         scenarioId: args.scenarioId,
         datasetId: args.datasetId,
         ...locationData,
+        usageCount: locationData.usageCount ?? 0, // Set default usageCount if not provided
         updatedAt: now,
       })
       locationIds.push(locationId)
