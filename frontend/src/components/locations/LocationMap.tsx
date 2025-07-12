@@ -140,6 +140,93 @@ export const LocationMap = ({
     []
   )
 
+  // Enhanced map control handlers with smooth animations - MOVED BEFORE useEffect dependencies
+  const handleZoomIn = useCallback(() => {
+    if (mapRef.current) {
+      mapRef.current.easeTo({
+        zoom: mapRef.current.getZoom() + 1,
+        duration: 400,
+        easing: easingFunctions.easeOutQuad,
+      })
+    }
+  }, [])
+
+  const handleZoomOut = useCallback(() => {
+    if (mapRef.current) {
+      mapRef.current.easeTo({
+        zoom: mapRef.current.getZoom() - 1,
+        duration: 400,
+        easing: easingFunctions.easeOutQuad,
+      })
+    }
+  }, [])
+
+  const handleFitToBounds = useCallback(() => {
+    if (!mapRef.current || validLocations.length === 0) return
+
+    const map = mapRef.current
+    const bounds = new mapboxgl.LngLatBounds()
+
+    validLocations.forEach(location => {
+      bounds.extend([location.locationLon!, location.locationLat!])
+    })
+
+    // Reset user interaction flag since this is a manual action
+    setHasUserInteracted(false)
+
+    if (validLocations.length === 1) {
+      // Single location - center with appropriate zoom using gentle spring easing
+      const location = validLocations[0]
+      map.flyTo({
+        center: [location.locationLon!, location.locationLat!],
+        zoom: 14,
+        duration: 1200,
+        easing: easingFunctions.easeOutBack,
+      })
+    } else {
+      // Multiple locations - fit bounds with smooth dramatic animation
+      map.fitBounds(bounds, {
+        padding: { top: 50, bottom: 50, left: 50, right: 50 },
+        maxZoom: 15,
+        duration: 1000,
+        easing: easingFunctions.easeInOutQuad,
+      })
+    }
+  }, [validLocations])
+
+  const handleResetView = useCallback(() => {
+    if (mapRef.current && viewport) {
+      mapRef.current.flyTo({
+        center: [viewport.longitude, viewport.latitude],
+        zoom: viewport.zoom,
+        duration: 800,
+        easing: easingFunctions.easeOutCubic,
+      })
+    }
+  }, [viewport])
+
+  const handleToggleCreateMode = useCallback(() => {
+    setIsCreatingLocation(!isCreatingLocation)
+    if (mapRef.current) {
+      mapRef.current.getCanvas().style.cursor = isCreatingLocation
+        ? ''
+        : 'crosshair'
+    }
+  }, [isCreatingLocation])
+
+  // Smooth focus on selected location with professional animation
+  const focusOnLocation = useCallback((location: Location) => {
+    if (!mapRef.current || !location.locationLat || !location.locationLon)
+      return
+
+    mapRef.current.easeTo({
+      center: [location.locationLon, location.locationLat],
+      zoom: Math.max(mapRef.current.getZoom(), 12),
+      duration: 600,
+      easing: easingFunctions.easeOutQuad,
+    })
+  }, [])
+
   // Initialize map
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return
@@ -446,93 +533,6 @@ export const LocationMap = ({
 
       popupRef.current = popup
     }
-
-  // Enhanced map control handlers with smooth animations
-  const handleZoomIn = useCallback(() => {
-    if (mapRef.current) {
-      mapRef.current.easeTo({
-        zoom: mapRef.current.getZoom() + 1,
-        duration: 400,
-        easing: easingFunctions.easeOutQuad,
-      })
-    }
-  }, [])
-
-  const handleZoomOut = useCallback(() => {
-    if (mapRef.current) {
-      mapRef.current.easeTo({
-        zoom: mapRef.current.getZoom() - 1,
-        duration: 400,
-        easing: easingFunctions.easeOutQuad,
-      })
-    }
-  }, [])
-
-  const handleFitToBounds = useCallback(() => {
-    if (!mapRef.current || validLocations.length === 0) return
-
-    const map = mapRef.current
-    const bounds = new mapboxgl.LngLatBounds()
-
-    validLocations.forEach(location => {
-      bounds.extend([location.locationLon!, location.locationLat!])
-    })
-
-    // Reset user interaction flag since this is a manual action
-    setHasUserInteracted(false)
-
-    if (validLocations.length === 1) {
-      // Single location - center with appropriate zoom using gentle spring easing
-      const location = validLocations[0]
-      map.flyTo({
-        center: [location.locationLon!, location.locationLat!],
-        zoom: 14,
-        duration: 1200,
-        easing: easingFunctions.easeOutBack,
-      })
-    } else {
-      // Multiple locations - fit bounds with smooth dramatic animation
-      map.fitBounds(bounds, {
-        padding: { top: 50, bottom: 50, left: 50, right: 50 },
-        maxZoom: 15,
-        duration: 1000,
-        easing: easingFunctions.easeInOutQuad,
-      })
-    }
-  }, [validLocations])
-
-  const handleResetView = useCallback(() => {
-    if (mapRef.current && viewport) {
-      mapRef.current.flyTo({
-        center: [viewport.longitude, viewport.latitude],
-        zoom: viewport.zoom,
-        duration: 800,
-        easing: easingFunctions.easeOutCubic,
-      })
-    }
-  }, [viewport])
-
-  const handleToggleCreateMode = useCallback(() => {
-    setIsCreatingLocation(!isCreatingLocation)
-    if (mapRef.current) {
-      mapRef.current.getCanvas().style.cursor = isCreatingLocation
-        ? ''
-        : 'crosshair'
-    }
-  }, [isCreatingLocation])
-
-  // Smooth focus on selected location with professional animation
-  const focusOnLocation = useCallback((location: Location) => {
-    if (!mapRef.current || !location.locationLat || !location.locationLon)
-      return
-
-    mapRef.current.easeTo({
-      center: [location.locationLon, location.locationLat],
-      zoom: Math.max(mapRef.current.getZoom(), 12),
-      duration: 600,
-      easing: easingFunctions.easeOutQuad,
-    })
-  }, [])
 
   // Show fallback if no Mapbox token
   if (!MAPBOX_TOKEN || MAPBOX_TOKEN.includes('example')) {
