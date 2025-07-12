@@ -83,7 +83,7 @@ const PrimarySidebar = () => {
   if (user === undefined) {
     return (
       <div
-        className={`bg-white border-r border-border flex flex-col transition-all duration-150 ease-out ${
+        className={`bg-card border-r border-border flex flex-col transition-all duration-150 ease-out ${
           primary.collapsed ? 'w-16 items-center' : 'w-60 items-start'
         } py-4`}
         data-slot="PrimarySidebar"
@@ -103,7 +103,7 @@ const PrimarySidebar = () => {
   if (user === null) {
     return (
       <div
-        className={`bg-white border-r border-border flex flex-col transition-all duration-150 ease-out ${
+        className={`bg-card border-r border-border flex flex-col transition-all duration-150 ease-out ${
           primary.collapsed ? 'w-16 items-center' : 'w-60 items-start'
         } py-4`}
         data-slot="PrimarySidebar"
@@ -134,7 +134,7 @@ const PrimarySidebar = () => {
 
   return (
     <div
-      className={`bg-white border-r border-border flex flex-col transition-all duration-150 ease-out ${
+      className={`bg-slate-900 border-r border-slate-700 flex flex-col transition-all duration-150 ease-out ${
         primary.collapsed ? 'w-16 items-center' : 'w-60 items-start'
       } py-4`}
       data-slot="PrimarySidebar"
@@ -157,8 +157,8 @@ const PrimarySidebar = () => {
             primary.collapsed ? 'w-12 h-12' : 'w-full justify-start h-12 px-4'
           } ${
             isProjectsActive
-              ? 'bg-primary/10 text-primary border border-primary/20'
-              : 'hover:bg-muted/50 hover:text-primary'
+              ? 'bg-primary/20 text-primary border border-primary/30'
+              : 'hover:bg-muted/50'
           }`}
           onClick={() => navigate('/projects')}
           title={primary.collapsed ? 'Projects' : undefined}
