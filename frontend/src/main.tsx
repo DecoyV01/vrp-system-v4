@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import { ConvexAuthProvider } from '@convex-dev/auth/react'
 import { ConvexReactClient } from 'convex/react'
+import { ThemeProvider } from '@/components/theme/ThemeProvider'
 import App from './App.tsx'
 import './index.css'
 import './utils/uatHealthCheck'
@@ -14,6 +15,8 @@ if (import.meta.env.DEV) {
 
 createRoot(document.getElementById('root')!).render(
   <ConvexAuthProvider client={convex}>
-    <App />
+    <ThemeProvider defaultTheme="light" storageKey="vrp-theme">
+      <App />
+    </ThemeProvider>
   </ConvexAuthProvider>
 )

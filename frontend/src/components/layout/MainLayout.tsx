@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Home, ChevronRight, Wifi, WifiOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
+import { useTheme } from '@/hooks/useTheme'
 import PrimarySidebar from './PrimarySidebar'
 import SecondarySidebar from './SecondarySidebar'
 import type { Id } from '../../../../convex/_generated/dataModel'
@@ -13,6 +14,7 @@ import type { Id } from '../../../../convex/_generated/dataModel'
 const MainLayout = () => {
   const location = useLocation()
   const params = useParams()
+  const { resolvedTheme } = useTheme()
 
   // connectionStatus and convex status for contract validation
   const testQuery = useQuery(api.auth.currentUser)
@@ -90,10 +92,7 @@ const MainLayout = () => {
   const breadcrumbs = generateBreadcrumbs()
 
   return (
-    <div
-      className="flex flex-col h-screen bg-background"
-      data-theme={EnvironmentConfig.current}
-    >
+    <div className="flex flex-col h-screen bg-background">
       {/* TopRibbon spanning FULL WIDTH - above everything like browser tabs */}
       <div
         className="h-12 bg-muted/30 border-b border-border flex items-center justify-between px-6 w-full z-50"
