@@ -27,6 +27,8 @@ interface Location {
   locationLon?: number
   locationType?: string
   geocodeQuality?: string
+  geocodeSource?: string
+  geocodeTimestamp?: number
   usageCount?: number
   address?: string
   description?: string

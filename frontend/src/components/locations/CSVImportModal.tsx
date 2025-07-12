@@ -45,6 +45,8 @@ interface ParsedLocation {
   contactInfo?: string
   timezone?: string
   geocodeQuality?: string
+  geocodeSource?: string
+  geocodeTimestamp?: number
   errors: string[]
 }
 
