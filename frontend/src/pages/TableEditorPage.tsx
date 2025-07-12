@@ -166,9 +166,6 @@ const TableEditorPage = () => {
               <TableIcon className="w-6 h-6" />
               {tableType} Editor
             </h1>
-            <p className="text-sm text-muted-foreground">
-              Manage {tableType} data for {dataset.name} v{dataset.version}
-            </p>
           </div>
 
           <div className="flex items-center gap-2">
