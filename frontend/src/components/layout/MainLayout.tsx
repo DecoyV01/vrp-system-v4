@@ -11,6 +11,9 @@ import type { Id } from '../../../../convex/_generated/dataModel'
 
 // Enhanced MainLayout with TopRibbon integration - FRT-BRAND-001 compliant
 const MainLayout = () => {
+  const location = useLocation()
+  const params = useParams()
+
   // connectionStatus and convex status for contract validation
   const testQuery = useQuery(api.auth.currentUser)
   const isConnected = testQuery !== undefined
