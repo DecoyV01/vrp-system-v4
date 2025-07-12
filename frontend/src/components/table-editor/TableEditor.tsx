@@ -79,6 +79,9 @@ import {
 } from '@/hooks/useVRPData'
 import { logError, VRPErrorHandling } from '@/utils/errorHandling'
 
+// Constants for SelectItem values
+const NO_LOCATION_VALUE = '__no_location__'
+
 // Helper functions for map functionality with location master support
 const getCoordinates = (
   item: any,
@@ -1543,7 +1546,7 @@ const TableEditor = ({
                           column.type === 'location' ? (
                             <div className="flex items-center gap-2">
                               <Select
-                                value={item[column.key] || ''}
+                                value={item[column.key] || NO_LOCATION_VALUE}
                                 onValueChange={async locationId => {
                                   if (locationId === '__create_new__') {
                                     // Quick location creation with minimal data
@@ -1578,7 +1581,10 @@ const TableEditor = ({
 
                                   const updateData: any = {
                                     id: item._id,
-                                    [column.key]: locationId || null,
+                                    [column.key]:
+                                      locationId === NO_LOCATION_VALUE
+                                        ? null
+                                        : locationId,
                                   }
                                   handleLocationUpdate(updateData, tableType)
                                   setEditingCell(null)
@@ -1588,7 +1594,9 @@ const TableEditor = ({
                                   <SelectValue placeholder="Select location..." />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="">No location</SelectItem>
+                                  <SelectItem value={NO_LOCATION_VALUE}>
+                                    No location
+                                  </SelectItem>
                                   {(locations || []).map(location => (
                                     <SelectItem
                                       key={location._id}
