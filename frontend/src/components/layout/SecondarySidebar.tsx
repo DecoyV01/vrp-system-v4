@@ -998,7 +998,7 @@ const SecondarySidebar = () => {
   if (treeData === undefined) {
     return (
       <div
-        className="w-64 bg-card border-r border-border flex flex-col transition-all duration-150 ease-out"
+        className="w-64 bg-white border-r border-border flex flex-col transition-all duration-150 ease-out"
         data-slot="SecondarySidebar"
       >
         <div className="p-4 border-b border-border flex items-center justify-between">
@@ -1024,7 +1024,7 @@ const SecondarySidebar = () => {
 
   return (
     <div
-      className="w-64 bg-card border-r border-border flex flex-col transition-all duration-150 ease-out"
+      className="w-64 bg-white border-r border-border flex flex-col transition-all duration-150 ease-out"
       data-slot="SecondarySidebar"
     >
       {/* Header */}
