@@ -2,13 +2,6 @@ import { Outlet, useLocation, useParams } from 'react-router-dom'
 import { useQuery } from 'convex/react'
 import { api } from '../../../../convex/_generated/api'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { Button } from '@/components/ui/button'
-import { Dialog } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
-import { Card } from '@/components/ui/card'
-import { Popover } from '@/components/ui/popover'
 import { Home, ChevronRight, Wifi, WifiOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -16,46 +9,11 @@ import PrimarySidebar from './PrimarySidebar'
 import SecondarySidebar from './SecondarySidebar'
 import type { Id } from '../../../../convex/_generated/dataModel'
 
-// Contract validation: bundleOptimization manualChunks design-system chunk safelist blocklist tailwindcss purge cssnano
-const BUNDLE_CONFIG = {
-  manualChunks: {
-    'design-system': ['@/components/ui'],
-  },
-  safelist: ['data-slot', 'TopRibbon'],
-  blocklist: [],
-  tailwindcssPurge: true,
-  cssnano: true,
-}
-
-// Contract validation: brandColorImplementation oklch(65% 0.15 160) oklch(22% 0.02 260) --color-primary oklch --color-background oklch #00d084 #1e293b
-const BRAND_COLORS = {
-  primaryOklch: 'oklch(65% 0.15 160)', // #00d084 Decoy Green
-  backgroundOklch: 'oklch(22% 0.02 260)', // #1e293b Dark Navy
-  primaryHex: '#00d084',
-  backgroundHex: '#1e293b',
-}
-
-// Contract validation: cspCompliance Content Security Policy style-src self font-src self validateThemeInput sanitizeCSSValue
-const validateThemeInput = (theme: string) => ['light', 'dark'].includes(theme)
-const sanitizeCSSValue = (value: string) =>
-  value.replace(/[^a-zA-Z0-9#().,%-]/g, '')
-
-// WCAG AA compliance - contrast ratio 4.5:1 minimum for accessibility
-const ACCESSIBILITY_CONFIG = {
-  contrastRatio: 4.5, // WCAG AA standard
-  focusManagement: true,
-  ariaLabels: true,
-}
-
 // Enhanced MainLayout with TopRibbon integration - FRT-BRAND-001 compliant
 const MainLayout = () => {
-  const location = useLocation()
-  const params = useParams()
-
   // connectionStatus and convex status for contract validation
   const testQuery = useQuery(api.auth.currentUser)
   const isConnected = testQuery !== undefined
-  const connectionStatus = isConnected ? 'connected' : 'disconnected'
 
   // EnvironmentConfig for environment indicator (contract: mild-elephant-70)
   const environment = import.meta.env.PROD ? 'production' : 'development'
@@ -63,17 +21,6 @@ const MainLayout = () => {
     current: environment,
     convexUrl: 'mild-elephant-70.convex.cloud',
     isDevelopment: environment === 'development',
-  }
-
-  // Error handling: handleThemeError ThemeError toast.error fallback default theme try catch theme
-  const handleThemeError = (error: Error) => {
-    console.error('ThemeError:', error)
-    toast.error('Theme system error, using fallback default theme')
-    try {
-      document.documentElement.setAttribute('data-theme', 'dark')
-    } catch (fallbackError) {
-      console.error('fallback default theme failed:', fallbackError)
-    }
   }
 
   // Project hierarchy data with error handling
@@ -247,13 +194,12 @@ const MainLayout = () => {
 
           {/* Environment indicator */}
           <Badge
-            variant="outline"
-            className={cn(
-              'text-xs',
+            variant={
               EnvironmentConfig.current === 'production'
-                ? 'bg-green-50 text-green-700 border-green-200'
-                : 'bg-orange-50 text-orange-700 border-orange-200'
-            )}
+                ? 'production'
+                : 'secondary'
+            }
+            className="text-xs"
             aria-label={`Environment: ${EnvironmentConfig.current}`}
           >
             {EnvironmentConfig.isDevelopment && '🔧'}
