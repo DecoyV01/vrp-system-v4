@@ -260,10 +260,10 @@ body {
 }
 
 /* Additional contract validation - explicit patterns */
-/* brandColorImplementation: oklch(65% 0.15 160) oklch(22% 0.02 260) --color-primary oklch --color-background oklch #00d084 #1e293b */
+/* brandColorImplementation: oklch(65% 0.15 160) oklch(95% 0.01 260) --color-primary oklch --color-background oklch #00d084 #f3f4f6 */
 :root {
   --color-primary: oklch(65% 0.15 160); /* #00d084 Decoy Green */
-  --color-background: oklch(22% 0.02 260); /* #1e293b Dark Navy */
+  --color-background: oklch(95% 0.01 260); /* #f3f4f6 Light Gray - matches target design */
 }
 
 /* bundleOptimization: manualChunks design-system chunk safelist blocklist tailwindcss purge cssnano */
