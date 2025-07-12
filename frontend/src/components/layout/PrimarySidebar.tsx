@@ -157,7 +157,7 @@ const PrimarySidebar = () => {
             primary.collapsed ? 'w-12 h-12' : 'w-full justify-start h-12 px-4'
           } ${
             isProjectsActive
-              ? 'bg-primary text-primary-foreground'
+              ? 'bg-primary/10 text-primary border border-primary/20'
               : 'hover:bg-muted/50 hover:text-primary'
           }`}
           onClick={() => navigate('/projects')}

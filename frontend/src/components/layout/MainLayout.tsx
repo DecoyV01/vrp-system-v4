@@ -1,20 +1,16 @@
-import { Outlet, useLocation, useParams } from 'react-router-dom'
+import { Outlet, useParams } from 'react-router-dom'
 import { useQuery } from 'convex/react'
 import { api } from '../../../../convex/_generated/api'
 import { Badge } from '@/components/ui/badge'
 import { Home, ChevronRight, Wifi, WifiOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { toast } from 'sonner'
-import { useTheme } from '@/hooks/useTheme'
 import PrimarySidebar from './PrimarySidebar'
 import SecondarySidebar from './SecondarySidebar'
 import type { Id } from '../../../../convex/_generated/dataModel'
 
 // Enhanced MainLayout with TopRibbon integration - FRT-BRAND-001 compliant
 const MainLayout = () => {
-  const location = useLocation()
   const params = useParams()
-  const { resolvedTheme } = useTheme()
 
   // connectionStatus and convex status for contract validation
   const testQuery = useQuery(api.auth.currentUser)
@@ -95,7 +91,7 @@ const MainLayout = () => {
     <div className="flex flex-col h-screen bg-background">
       {/* TopRibbon spanning FULL WIDTH - above everything like browser tabs */}
       <div
-        className="h-12 bg-muted/30 border-b border-border flex items-center justify-between px-6 w-full z-50"
+        className="h-12 bg-card border-b border-border flex items-center justify-between px-6 w-full z-50"
         data-slot="TopRibbon"
         role="banner"
         aria-label="Navigation breadcrumb and status indicators"
@@ -209,7 +205,7 @@ const MainLayout = () => {
       <div className="flex flex-1 overflow-hidden">
         <PrimarySidebar />
         <SecondarySidebar />
-        <main className="flex-1 overflow-hidden bg-background">
+        <main className="flex-1 overflow-hidden bg-card">
           <div className="h-full overflow-auto">
             <Outlet />
           </div>
