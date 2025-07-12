@@ -146,54 +146,62 @@ const MasterLocationsPage = () => {
     return filtered
   }, [locations, searchQuery, filters])
 
-  // Calculate viewport from locations data
+  // Optimized viewport calculation with single-pass algorithm
   const calculatedViewport = useMemo(() => {
-    const locationsWithCoords = filteredLocations.filter(
-      loc => loc.locationLat && loc.locationLon
-    )
+    // Single-pass calculation for better performance
+    let validCount = 0
+    let sumLat = 0
+    let sumLon = 0
+    let minLat = Infinity
+    let maxLat = -Infinity
+    let minLon = Infinity
+    let maxLon = -Infinity
 
-    if (locationsWithCoords.length === 0) {
+    // Single iteration to calculate all required values
+    for (const loc of filteredLocations) {
+      if (loc.locationLat && loc.locationLon) {
+        validCount++
+        sumLat += loc.locationLat
+        sumLon += loc.locationLon
+        minLat = Math.min(minLat, loc.locationLat)
+        maxLat = Math.max(maxLat, loc.locationLat)
+        minLon = Math.min(minLon, loc.locationLon)
+        maxLon = Math.max(maxLon, loc.locationLon)
+      }
+    }
+
+    if (validCount === 0) {
       return null // No locations with coordinates
     }
 
-    if (locationsWithCoords.length === 1) {
+    if (validCount === 1) {
       // Single location - center on it
-      const loc = locationsWithCoords[0]
       return {
-        latitude: loc.locationLat!,
-        longitude: loc.locationLon!,
+        latitude: sumLat,
+        longitude: sumLon,
         zoom: 14,
       }
     }
 
     // Multiple locations - calculate center and appropriate zoom
-    const lats = locationsWithCoords.map(loc => loc.locationLat!)
-    const lons = locationsWithCoords.map(loc => loc.locationLon!)
-
-    const centerLat = lats.reduce((sum, lat) => sum + lat, 0) / lats.length
-    const centerLon = lons.reduce((sum, lon) => sum + lon, 0) / lons.length
-
-    // Calculate bounds to determine appropriate zoom
-    const minLat = Math.min(...lats)
-    const maxLat = Math.max(...lats)
-    const minLon = Math.min(...lons)
-    const maxLon = Math.max(...lons)
+    const centerLat = sumLat / validCount
+    const centerLon = sumLon / validCount
 
     const latRange = maxLat - minLat
     const lonRange = maxLon - minLon
     const maxRange = Math.max(latRange, lonRange)
 
-    // Estimate zoom based on coordinate range
-    let zoom = 10
-    if (maxRange < 0.01)
-      zoom = 15 // Very close locations
-    else if (maxRange < 0.1)
-      zoom = 12 // City level
-    else if (maxRange < 1)
-      zoom = 9 // Regional level
-    else if (maxRange < 10)
-      zoom = 6 // Country level
-    else zoom = 4 // Continental level
+    // Optimized zoom calculation with clear thresholds
+    const zoom =
+      maxRange < 0.01
+        ? 15 // Very close locations (< 1km)
+        : maxRange < 0.1
+          ? 12 // City level (< 10km)
+          : maxRange < 1
+            ? 9 // Regional level (< 100km)
+            : maxRange < 10
+              ? 6 // Country level (< 1000km)
+              : 4 // Continental level
 
     return {
       latitude: centerLat,
@@ -461,14 +469,14 @@ const MasterLocationsPage = () => {
               locations={filteredLocations}
               selectedLocationId={selectedLocationId}
               onLocationSelect={setSelectedLocationId}
-              onLocationCreate={(coordinates, address) => {
+              onLocationCreate={(_coordinates, _address) => {
                 // Open create modal with coordinates
                 setShowCreateModal(true)
               }}
               viewport={calculatedViewport || undefined}
               onViewportChange={setMapViewport}
-              showClusters={true}
               interactive={true}
+              autoFitBounds={true}
             />
 
             {/* Selected location details sidebar */}
