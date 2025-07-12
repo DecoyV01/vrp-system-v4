@@ -260,7 +260,7 @@ export function DesignSystemAudit({
             {/* Overall Score */}
             <Separator className="my-4" />
             <div className="text-center">
-              <div className="text-2xl font-bold">
+              <div className="text-xl font-semibold">
                 {Math.round((summary.passed / summary.total) * 100)}%
               </div>
               <div className="text-sm text-muted-foreground">

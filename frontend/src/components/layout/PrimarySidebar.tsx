@@ -116,7 +116,7 @@ const PrimarySidebar = () => {
         <div className="flex-1 flex items-center justify-center">
           <Button
             variant="ghost"
-            className={`${primary.collapsed ? 'w-12 h-12' : 'w-full justify-start h-12 px-4'} hover:bg-primary/10 hover:text-primary`}
+            className={`${primary.collapsed ? 'w-12 h-12' : 'w-full justify-start h-12 px-4'} hover:bg-muted/50 hover:text-primary`}
             onClick={() => navigate('/auth/login')}
             title={primary.collapsed ? 'Sign In' : undefined}
             aria-label="Sign In"
@@ -158,7 +158,7 @@ const PrimarySidebar = () => {
           } ${
             isProjectsActive
               ? 'bg-primary text-primary-foreground'
-              : 'hover:bg-primary/10 hover:text-primary'
+              : 'hover:bg-muted/50 hover:text-primary'
           }`}
           onClick={() => navigate('/projects')}
           title={primary.collapsed ? 'Projects' : undefined}
@@ -180,7 +180,7 @@ const PrimarySidebar = () => {
               primary.collapsed
                 ? 'w-12 h-12 mt-2'
                 : 'w-full justify-start h-12 px-4 mt-2'
-            } hover:bg-muted`}
+            } hover:bg-muted/50`}
             onClick={togglePrimary}
             title={primary.collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             aria-label={
@@ -217,7 +217,7 @@ const PrimarySidebar = () => {
                 primary.collapsed
                   ? 'w-12 h-12'
                   : 'w-full justify-start h-12 px-4'
-              } hover:bg-muted`}
+              } hover:bg-muted/50`}
               title={
                 primary.collapsed
                   ? `${user?.name || user?.email || 'User'} - Profile`

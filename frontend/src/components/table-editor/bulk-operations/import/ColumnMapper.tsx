@@ -1,15 +1,31 @@
 import { useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
-import { RefreshCw, AlertTriangle, CheckCircle2, ArrowRight, Info } from 'lucide-react'
+import {
+  RefreshCw,
+  AlertTriangle,
+  CheckCircle2,
+  ArrowRight,
+  Info,
+} from 'lucide-react'
 import { csvProcessor } from '../utils/csvProcessor'
-import type { ColumnMapping, VRPTableType, CSVParseResult } from '../types/shared.types'
+import type {
+  ColumnMapping,
+  VRPTableType,
+  CSVParseResult,
+} from '../types/shared.types'
 
 interface ColumnMapperProps {
   parseResult: CSVParseResult
@@ -29,20 +45,27 @@ export function ColumnMapper({
   parseResult,
   tableType,
   onMappingChange,
-  className
+  className,
 }: ColumnMapperProps) {
   const [mappingState, setMappingState] = useState<MappingState>(() => {
     // Generate initial auto-mappings
-    const initialMappings = csvProcessor.generateColumnMappings(parseResult.headers, tableType)
-    const unmappedColumns = parseResult.headers.filter(header => 
-      !initialMappings.some(mapping => mapping.sourceColumn === header && mapping.confidence >= 0.6)
+    const initialMappings = csvProcessor.generateColumnMappings(
+      parseResult.headers,
+      tableType
     )
-    
+    const unmappedColumns = parseResult.headers.filter(
+      header =>
+        !initialMappings.some(
+          mapping =>
+            mapping.sourceColumn === header && mapping.confidence >= 0.6
+        )
+    )
+
     return {
       mappings: initialMappings,
       autoMappingEnabled: true,
       unmappedColumns,
-      requiredFieldsMissing: []
+      requiredFieldsMissing: [],
     }
   })
 
@@ -64,7 +87,7 @@ export function ColumnMapper({
         { field: 'maxTasks', dataType: 'number', isRequired: false },
         { field: 'costFixed', dataType: 'number', isRequired: false },
         { field: 'costPerHour', dataType: 'number', isRequired: false },
-        { field: 'costPerKm', dataType: 'number', isRequired: false }
+        { field: 'costPerKm', dataType: 'number', isRequired: false },
       ],
       jobs: [
         { field: 'description', dataType: 'string', isRequired: false },
@@ -75,7 +98,7 @@ export function ColumnMapper({
         { field: 'delivery', dataType: 'array', isRequired: false },
         { field: 'pickup', dataType: 'array', isRequired: false },
         { field: 'priority', dataType: 'number', isRequired: false },
-        { field: 'timeWindows', dataType: 'array', isRequired: false }
+        { field: 'timeWindows', dataType: 'array', isRequired: false },
       ],
       locations: [
         { field: 'name', dataType: 'string', isRequired: true },
@@ -85,7 +108,7 @@ export function ColumnMapper({
         { field: 'locationLon', dataType: 'number', isRequired: false },
         { field: 'locationType', dataType: 'string', isRequired: false },
         { field: 'operatingHours', dataType: 'string', isRequired: false },
-        { field: 'contactInfo', dataType: 'string', isRequired: false }
+        { field: 'contactInfo', dataType: 'string', isRequired: false },
       ],
       routes: [
         { field: 'vehicleId', dataType: 'string', isRequired: true },
@@ -93,14 +116,14 @@ export function ColumnMapper({
         { field: 'distance', dataType: 'number', isRequired: false },
         { field: 'duration', dataType: 'number', isRequired: false },
         { field: 'arrivalTime', dataType: 'number', isRequired: false },
-        { field: 'departureTime', dataType: 'number', isRequired: false }
-      ]
+        { field: 'departureTime', dataType: 'number', isRequired: false },
+      ],
     }
     return schemas[tableType] || []
   }, [tableType])
 
-  const requiredFields = useMemo(() => 
-    schemaFields.filter(field => field.isRequired), 
+  const requiredFields = useMemo(
+    () => schemaFields.filter(field => field.isRequired),
     [schemaFields]
   )
 
@@ -110,9 +133,9 @@ export function ColumnMapper({
     if (targetField === '__no_mapping__') {
       targetField = sourceColumn // Reset to original column name (unmapped)
     }
-    
+
     const schemaField = schemaFields.find(f => f.field === targetField)
-    
+
     setMappingState(prev => {
       const newMappings = prev.mappings.map(mapping => {
         if (mapping.sourceColumn === sourceColumn) {
@@ -121,7 +144,8 @@ export function ColumnMapper({
             targetField,
             dataType: schemaField?.dataType || 'string',
             isRequired: schemaField?.isRequired || false,
-            confidence: targetField === sourceColumn ? 1.0 : (schemaField ? 0.8 : 0)
+            confidence:
+              targetField === sourceColumn ? 1.0 : schemaField ? 0.8 : 0,
           }
         }
         return mapping
@@ -130,17 +154,18 @@ export function ColumnMapper({
       onMappingChange(newMappings)
 
       // Update unmapped columns and missing required fields
-      const unmappedColumns = parseResult.headers.filter(header => 
-        !newMappings.some(mapping => 
-          mapping.sourceColumn === header && 
-          mapping.targetField !== header
-        )
+      const unmappedColumns = parseResult.headers.filter(
+        header =>
+          !newMappings.some(
+            mapping =>
+              mapping.sourceColumn === header && mapping.targetField !== header
+          )
       )
 
       const mappedRequiredFields = newMappings
         .filter(mapping => mapping.isRequired)
         .map(mapping => mapping.targetField)
-      
+
       const requiredFieldsMissing = requiredFields
         .map(field => field.field)
         .filter(field => !mappedRequiredFields.includes(field))
@@ -149,25 +174,32 @@ export function ColumnMapper({
         ...prev,
         mappings: newMappings,
         unmappedColumns,
-        requiredFieldsMissing
+        requiredFieldsMissing,
       }
     })
   }
 
   // Auto-map columns
   const autoMapColumns = () => {
-    const newMappings = csvProcessor.generateColumnMappings(parseResult.headers, tableType)
+    const newMappings = csvProcessor.generateColumnMappings(
+      parseResult.headers,
+      tableType
+    )
     setMappingState(prev => {
       onMappingChange(newMappings)
-      
-      const unmappedColumns = parseResult.headers.filter(header => 
-        !newMappings.some(mapping => mapping.sourceColumn === header && mapping.confidence >= 0.6)
+
+      const unmappedColumns = parseResult.headers.filter(
+        header =>
+          !newMappings.some(
+            mapping =>
+              mapping.sourceColumn === header && mapping.confidence >= 0.6
+          )
       )
 
       const mappedRequiredFields = newMappings
         .filter(mapping => mapping.isRequired)
         .map(mapping => mapping.targetField)
-      
+
       const requiredFieldsMissing = requiredFields
         .map(field => field.field)
         .filter(field => !mappedRequiredFields.includes(field))
@@ -176,7 +208,7 @@ export function ColumnMapper({
         ...prev,
         mappings: newMappings,
         unmappedColumns,
-        requiredFieldsMissing
+        requiredFieldsMissing,
       }
     })
   }
@@ -184,14 +216,16 @@ export function ColumnMapper({
   // Get mapping status for UI feedback
   const getMappingStatus = () => {
     const totalColumns = parseResult.headers.length
-    const mappedColumns = mappingState.mappings.filter(m => m.confidence >= 0.6).length
+    const mappedColumns = mappingState.mappings.filter(
+      m => m.confidence >= 0.6
+    ).length
     const hasRequiredMissing = mappingState.requiredFieldsMissing.length > 0
-    
+
     return {
       totalColumns,
       mappedColumns,
       hasRequiredMissing,
-      mappingPercentage: Math.round((mappedColumns / totalColumns) * 100)
+      mappingPercentage: Math.round((mappedColumns / totalColumns) * 100),
     }
   }
 
@@ -208,22 +242,27 @@ export function ColumnMapper({
               Map CSV columns to {tableType} table fields
             </p>
           </div>
-          
+
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <Label htmlFor="auto-mapping" className="text-sm">Auto-map</Label>
+              <Label htmlFor="auto-mapping" className="text-sm">
+                Auto-map
+              </Label>
               <Switch
                 id="auto-mapping"
                 checked={mappingState.autoMappingEnabled}
-                onCheckedChange={(checked) => {
-                  setMappingState(prev => ({ ...prev, autoMappingEnabled: checked }))
+                onCheckedChange={checked => {
+                  setMappingState(prev => ({
+                    ...prev,
+                    autoMappingEnabled: checked,
+                  }))
                   if (checked) {
                     autoMapColumns()
                   }
                 }}
               />
             </div>
-            
+
             <Button
               variant="outline"
               size="sm"
@@ -241,16 +280,26 @@ export function ColumnMapper({
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold">{status.mappedColumns}/{status.totalColumns}</div>
-                <div className="text-sm text-muted-foreground">Columns Mapped</div>
+                <div className="text-xl font-semibold">
+                  {status.mappedColumns}/{status.totalColumns}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Columns Mapped
+                </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold">{status.mappingPercentage}%</div>
+                <div className="text-xl font-semibold">
+                  {status.mappingPercentage}%
+                </div>
                 <div className="text-sm text-muted-foreground">Coverage</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold">{mappingState.requiredFieldsMissing.length}</div>
-                <div className="text-sm text-muted-foreground">Missing Required</div>
+                <div className="text-xl font-semibold">
+                  {mappingState.requiredFieldsMissing.length}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Missing Required
+                </div>
               </div>
               <div className="text-center flex justify-center">
                 {status.hasRequiredMissing ? (
@@ -269,8 +318,9 @@ export function ColumnMapper({
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Missing required fields: {mappingState.requiredFieldsMissing.join(', ')}. 
-            These must be mapped before import can proceed.
+            Missing required fields:{' '}
+            {mappingState.requiredFieldsMissing.join(', ')}. These must be
+            mapped before import can proceed.
           </AlertDescription>
         </Alert>
       )}
@@ -279,8 +329,9 @@ export function ColumnMapper({
         <Alert>
           <Info className="h-4 w-4" />
           <AlertDescription>
-            {mappingState.unmappedColumns.length} column(s) remain unmapped: {mappingState.unmappedColumns.join(', ')}. 
-            These will be ignored during import.
+            {mappingState.unmappedColumns.length} column(s) remain unmapped:{' '}
+            {mappingState.unmappedColumns.join(', ')}. These will be ignored
+            during import.
           </AlertDescription>
         </Alert>
       )}
@@ -288,23 +339,32 @@ export function ColumnMapper({
       {/* Mapping Interface */}
       <div className="space-y-4">
         <h4 className="text-base font-semibold">Column Mappings</h4>
-        
+
         <div className="space-y-3">
-          {parseResult.headers.map((header) => {
-            const mapping = mappingState.mappings.find(m => m.sourceColumn === header)
+          {parseResult.headers.map(header => {
+            const mapping = mappingState.mappings.find(
+              m => m.sourceColumn === header
+            )
             const isHighConfidence = mapping && mapping.confidence >= 0.8
             const isMapped = mapping && mapping.targetField !== header
-            
+
             return (
-              <Card key={header} className={`p-4 ${isHighConfidence ? 'bg-green-50 dark:bg-green-900/10' : ''}`}>
+              <Card
+                key={header}
+                className={`p-4 ${isHighConfidence ? 'bg-green-50 dark:bg-green-900/10' : ''}`}
+              >
                 <div className="flex items-center gap-4">
                   {/* Source Column */}
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <code className="text-sm bg-muted px-2 py-1 rounded">{header}</code>
+                      <code className="text-sm bg-muted px-2 py-1 rounded">
+                        {header}
+                      </code>
                       {mapping && mapping.confidence > 0 && (
-                        <Badge 
-                          variant={mapping.confidence >= 0.8 ? "default" : "secondary"}
+                        <Badge
+                          variant={
+                            mapping.confidence >= 0.8 ? 'default' : 'secondary'
+                          }
                           className="text-xs"
                         >
                           {Math.round(mapping.confidence * 100)}% match
@@ -320,26 +380,33 @@ export function ColumnMapper({
                   <div className="flex-1">
                     <Select
                       value={mapping?.targetField || '__no_mapping__'}
-                      onValueChange={(value) => updateMapping(header, value)}
+                      onValueChange={value => updateMapping(header, value)}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select target field" />
                       </SelectTrigger>
                       <SelectContent className="max-h-[200px]">
-                        <SelectItem value="__no_mapping__">No mapping</SelectItem>
+                        <SelectItem value="__no_mapping__">
+                          No mapping
+                        </SelectItem>
                         <Separator />
-                        {schemaFields.map((field) => (
+                        {schemaFields.map(field => (
                           <SelectItem key={field.field} value={field.field}>
                             <div className="flex items-center gap-2">
                               <span>{field.field}</span>
-                              <Badge 
-                                variant={field.isRequired ? "destructive" : "secondary"}
+                              <Badge
+                                variant={
+                                  field.isRequired ? 'destructive' : 'secondary'
+                                }
                                 className="text-xs"
                               >
                                 {field.dataType}
                               </Badge>
                               {field.isRequired && (
-                                <Badge variant="destructive" className="text-xs">
+                                <Badge
+                                  variant="destructive"
+                                  className="text-xs"
+                                >
                                   Required
                                 </Badge>
                               )}
@@ -370,19 +437,23 @@ export function ColumnMapper({
       {requiredFields.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Required Fields for {tableType}</CardTitle>
+            <CardTitle className="text-base">
+              Required Fields for {tableType}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
-              {requiredFields.map((field) => {
+              {requiredFields.map(field => {
                 const isMapped = mappingState.mappings.some(
-                  mapping => mapping.targetField === field.field && mapping.confidence >= 0.6
+                  mapping =>
+                    mapping.targetField === field.field &&
+                    mapping.confidence >= 0.6
                 )
-                
+
                 return (
-                  <Badge 
+                  <Badge
                     key={field.field}
-                    variant={isMapped ? "default" : "destructive"}
+                    variant={isMapped ? 'default' : 'destructive'}
                     className="gap-1"
                   >
                     {field.field}

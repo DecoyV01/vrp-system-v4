@@ -1,28 +1,28 @@
 import { useState, useCallback } from 'react'
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter 
+  DialogFooter,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Separator } from '@/components/ui/separator'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { 
-  Upload, 
-  FileText, 
-  Settings, 
-  Copy, 
-  CheckCircle2, 
+import {
+  Upload,
+  FileText,
+  Settings,
+  Copy,
+  CheckCircle2,
   AlertTriangle,
   X,
   ArrowRight,
   Loader2,
-  MapPin
+  MapPin,
 } from 'lucide-react'
 import { FileUploadZone } from './FileUploadZone'
 import { PreviewTable } from './PreviewTable'
@@ -32,13 +32,13 @@ import { DuplicateResolution } from './DuplicateResolution'
 import { LocationResolutionModal } from './LocationResolutionModal'
 import { duplicateDetector } from '../utils/duplicateDetector'
 import { locationMasterService } from '../utils/locationMasterService'
-import type { 
-  CSVParseResult, 
-  ColumnMapping, 
-  DuplicateMatch, 
+import type {
+  CSVParseResult,
+  ColumnMapping,
+  DuplicateMatch,
   VRPTableType,
   LocationResolution,
-  LocationImportOptions 
+  LocationImportOptions,
 } from '../types/shared.types'
 
 interface CSVImportModalProps {
@@ -47,19 +47,31 @@ interface CSVImportModalProps {
   tableType: VRPTableType
   existingData: any[]
   existingLocations?: any[]
-  onImport: (data: any[], mappings: ColumnMapping[], locationResolutions?: LocationResolution[]) => Promise<void>
+  onImport: (
+    data: any[],
+    mappings: ColumnMapping[],
+    locationResolutions?: LocationResolution[]
+  ) => Promise<void>
   onCreateLocation?: (locationData: any) => Promise<string>
   className?: string
 }
 
-type ImportStep = 'upload' | 'preview' | 'mapping' | 'validation' | 'duplicates' | 'locations' | 'importing' | 'complete'
+type ImportStep =
+  | 'upload'
+  | 'preview'
+  | 'mapping'
+  | 'validation'
+  | 'duplicates'
+  | 'locations'
+  | 'importing'
+  | 'complete'
 
 // Helper function to get required fields for each table type
 const getRequiredFieldsForTableType = (tableType: VRPTableType): string[] => {
   const requiredFieldsMap = {
     vehicles: ['name'],
     jobs: ['name', 'locationId'],
-    locations: ['name', 'address']
+    locations: ['name', 'address'],
   }
   return requiredFieldsMap[tableType] || []
 }
@@ -85,10 +97,16 @@ interface ImportState {
 // Transform imported row data to proper types
 const transformRowData = (row: any, tableType: string) => {
   const transformed = { ...row }
-  
+
   // Handle array fields that come as strings from CSV
-  const arrayFields = ['capacity', 'skills', 'delivery', 'pickup', 'timeWindows']
-  
+  const arrayFields = [
+    'capacity',
+    'skills',
+    'delivery',
+    'pickup',
+    'timeWindows',
+  ]
+
   arrayFields.forEach(field => {
     if (transformed[field] && typeof transformed[field] === 'string') {
       try {
@@ -100,12 +118,26 @@ const transformRowData = (row: any, tableType: string) => {
       }
     }
   })
-  
+
   // Handle numeric fields
-  const numericFields = ['twStart', 'twEnd', 'startLon', 'startLat', 'endLon', 'endLat', 
-                        'locationLon', 'locationLat', 'speedFactor', 'maxTasks', 
-                        'maxTravelTime', 'maxDistance', 'costFixed', 'costPerHour', 'costPerKm']
-  
+  const numericFields = [
+    'twStart',
+    'twEnd',
+    'startLon',
+    'startLat',
+    'endLon',
+    'endLat',
+    'locationLon',
+    'locationLat',
+    'speedFactor',
+    'maxTasks',
+    'maxTravelTime',
+    'maxDistance',
+    'costFixed',
+    'costPerHour',
+    'costPerKm',
+  ]
+
   numericFields.forEach(field => {
     if (transformed[field] && typeof transformed[field] === 'string') {
       const num = parseFloat(transformed[field])
@@ -114,14 +146,17 @@ const transformRowData = (row: any, tableType: string) => {
       }
     }
   })
-  
+
   // Validate time windows
   if (transformed.twStart && transformed.twEnd) {
     if (transformed.twStart >= transformed.twEnd) {
-      console.warn('Invalid time window: start >= end', { twStart: transformed.twStart, twEnd: transformed.twEnd })
+      console.warn('Invalid time window: start >= end', {
+        twStart: transformed.twStart,
+        twEnd: transformed.twEnd,
+      })
     }
   }
-  
+
   return transformed
 }
 
@@ -133,7 +168,7 @@ export function CSVImportModal({
   existingLocations = [],
   onImport,
   onCreateLocation,
-  className
+  className,
 }: CSVImportModalProps) {
   const [state, setState] = useState<ImportState>({
     step: 'upload',
@@ -144,12 +179,12 @@ export function CSVImportModal({
     locationResolutions: [],
     progress: 0,
     error: null,
-    importStats: null
+    importStats: null,
   })
 
   // Location resolution modal state
   const [showLocationResolution, setShowLocationResolution] = useState(false)
-  
+
   // Location import options
   const [locationOptions] = useState<LocationImportOptions>({
     geocodingEnabled: true,
@@ -158,7 +193,7 @@ export function CSVImportModal({
     coordinateMatchThreshold: 0.1, // 100 meters
     addressMatchThreshold: 0.85,
     validateAddresses: true,
-    requireCoordinates: false
+    requireCoordinates: false,
   })
 
   // Reset state when modal opens/closes
@@ -172,22 +207,25 @@ export function CSVImportModal({
       locationResolutions: [],
       progress: 0,
       error: null,
-      importStats: null
+      importStats: null,
     })
     setShowLocationResolution(false)
     onClose()
   }, [onClose])
 
   // Handle file upload and parsing
-  const handleFileProcessed = useCallback((parseResult: CSVParseResult, file: File) => {
-    setState(prev => ({
-      ...prev,
-      file,
-      parseResult,
-      step: 'preview',
-      error: null
-    }))
-  }, [])
+  const handleFileProcessed = useCallback(
+    (parseResult: CSVParseResult, file: File) => {
+      setState(prev => ({
+        ...prev,
+        file,
+        parseResult,
+        step: 'preview',
+        error: null,
+      }))
+    },
+    []
+  )
 
   // Handle file removal
   const handleFileRemoved = useCallback(() => {
@@ -196,17 +234,17 @@ export function CSVImportModal({
       file: null,
       parseResult: null,
       step: 'upload',
-      error: null
+      error: null,
     }))
   }, [])
 
   // Move to column mapping step
   const handleProceedToMapping = useCallback(() => {
     if (!state.parseResult) return
-    
+
     setState(prev => ({
       ...prev,
-      step: 'mapping'
+      step: 'mapping',
     }))
   }, [state.parseResult])
 
@@ -214,27 +252,29 @@ export function CSVImportModal({
   const handleMappingChange = useCallback((mappings: ColumnMapping[]) => {
     setState(prev => ({
       ...prev,
-      columnMappings: mappings
+      columnMappings: mappings,
     }))
   }, [])
 
   // Move to validation step - transform data first
   const handleProceedToValidation = useCallback(() => {
     if (!state.parseResult) return
-    
+
     // Transform all rows to proper data types before validation
-    const transformedData = state.parseResult.data.map(row => transformRowData(row, tableType))
-    
+    const transformedData = state.parseResult.data.map(row =>
+      transformRowData(row, tableType)
+    )
+
     // Update parseResult with transformed data
     const updatedParseResult = {
       ...state.parseResult,
-      data: transformedData
+      data: transformedData,
     }
-    
+
     setState(prev => ({
       ...prev,
       parseResult: updatedParseResult,
-      step: 'validation'
+      step: 'validation',
     }))
   }, [state.parseResult, tableType])
 
@@ -253,12 +293,15 @@ export function CSVImportModal({
       setState(prev => ({
         ...prev,
         duplicates: detectionResult.duplicates,
-        step: 'duplicates'
+        step: 'duplicates',
       }))
     } catch (error) {
       setState(prev => ({
         ...prev,
-        error: error instanceof Error ? error.message : 'Failed to detect duplicates'
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to detect duplicates',
       }))
     }
   }, [state.parseResult, existingData, tableType])
@@ -269,26 +312,28 @@ export function CSVImportModal({
 
     try {
       // Check if location resolution is needed
-      const needsLocationResolution = state.columnMappings.some(mapping => 
-        mapping.requiresLocationResolution || 
-        (mapping.sourceColumn.toLowerCase().includes('lat') || 
-         mapping.sourceColumn.toLowerCase().includes('lon') ||
-         mapping.sourceColumn.toLowerCase().includes('address'))
+      const needsLocationResolution = state.columnMappings.some(
+        mapping =>
+          mapping.requiresLocationResolution ||
+          mapping.sourceColumn.toLowerCase().includes('lat') ||
+          mapping.sourceColumn.toLowerCase().includes('lon') ||
+          mapping.sourceColumn.toLowerCase().includes('address')
       )
 
       if (needsLocationResolution && existingLocations.length > 0) {
         // Generate location resolutions
-        const resolutions = await locationMasterService.processBatchLocationResolution(
-          state.parseResult.data,
-          existingLocations,
-          locationOptions
-        )
+        const resolutions =
+          await locationMasterService.processBatchLocationResolution(
+            state.parseResult.data,
+            existingLocations,
+            locationOptions
+          )
 
         if (resolutions.length > 0) {
           setState(prev => ({
             ...prev,
             locationResolutions: resolutions,
-            step: 'locations'
+            step: 'locations',
           }))
           return
         }
@@ -299,18 +344,29 @@ export function CSVImportModal({
     } catch (error) {
       setState(prev => ({
         ...prev,
-        error: error instanceof Error ? error.message : 'Failed to process location resolution'
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to process location resolution',
       }))
     }
-  }, [state.parseResult, state.columnMappings, existingLocations, locationOptions])
+  }, [
+    state.parseResult,
+    state.columnMappings,
+    existingLocations,
+    locationOptions,
+  ])
 
   // Handle duplicate resolution changes
-  const handleDuplicateResolutionChange = useCallback((duplicates: DuplicateMatch[]) => {
-    setState(prev => ({
-      ...prev,
-      duplicates
-    }))
-  }, [])
+  const handleDuplicateResolutionChange = useCallback(
+    (duplicates: DuplicateMatch[]) => {
+      setState(prev => ({
+        ...prev,
+        duplicates,
+      }))
+    },
+    []
+  )
 
   // Start import process
   const handleStartImport = useCallback(async () => {
@@ -325,8 +381,8 @@ export function CSVImportModal({
         processedRows: 0,
         successfulRows: 0,
         errorRows: 0,
-        skippedRows: 0
-      }
+        skippedRows: 0,
+      },
     }))
 
     try {
@@ -334,7 +390,7 @@ export function CSVImportModal({
       const dataToImport: any[] = []
       let processedRows = 0
       let successfulRows = 0
-      let errorRows = 0
+      const errorRows = 0
       let skippedRows = 0
 
       for (let i = 0; i < state.parseResult.data.length; i++) {
@@ -345,14 +401,18 @@ export function CSVImportModal({
         processedRows++
         setState(prev => ({
           ...prev,
-          progress: Math.round((processedRows / state.parseResult!.data.length) * 100),
-          importStats: prev.importStats ? {
-            ...prev.importStats,
-            processedRows,
-            successfulRows,
-            errorRows,
-            skippedRows
-          } : null
+          progress: Math.round(
+            (processedRows / state.parseResult!.data.length) * 100
+          ),
+          importStats: prev.importStats
+            ? {
+                ...prev.importStats,
+                processedRows,
+                successfulRows,
+                errorRows,
+                skippedRows,
+              }
+            : null,
         }))
 
         // Handle duplicate resolution
@@ -391,39 +451,80 @@ export function CSVImportModal({
           processedRows,
           successfulRows,
           errorRows,
-          skippedRows
-        }
+          skippedRows,
+        },
       }))
 
       // Call the import handler with location resolutions
-      await onImport(dataToImport, state.columnMappings, state.locationResolutions)
+      await onImport(
+        dataToImport,
+        state.columnMappings,
+        state.locationResolutions
+      )
 
       setState(prev => ({
         ...prev,
         step: 'complete',
-        progress: 100
+        progress: 100,
       }))
-
     } catch (error) {
       setState(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : 'Import failed',
-        step: 'validation' // Go back to validation step
+        step: 'validation', // Go back to validation step
       }))
     }
-  }, [state.parseResult, state.duplicates, state.columnMappings, state.locationResolutions, onImport])
+  }, [
+    state.parseResult,
+    state.duplicates,
+    state.columnMappings,
+    state.locationResolutions,
+    onImport,
+  ])
 
   // Get step information
   const getStepInfo = (step: ImportStep) => {
     const steps = {
-      upload: { title: 'Upload File', icon: Upload, description: 'Select and upload your CSV file' },
-      preview: { title: 'Preview Data', icon: FileText, description: 'Review your data before import' },
-      mapping: { title: 'Map Columns', icon: Settings, description: 'Map CSV columns to table fields' },
-      validation: { title: 'Validate Data', icon: AlertTriangle, description: 'Review validation results' },
-      duplicates: { title: 'Resolve Duplicates', icon: Copy, description: 'Handle duplicate records' },
-      locations: { title: 'Resolve Locations', icon: MapPin, description: 'Handle location conflicts' },
-      importing: { title: 'Importing', icon: Loader2, description: 'Processing your data...' },
-      complete: { title: 'Complete', icon: CheckCircle2, description: 'Import completed successfully' }
+      upload: {
+        title: 'Upload File',
+        icon: Upload,
+        description: 'Select and upload your CSV file',
+      },
+      preview: {
+        title: 'Preview Data',
+        icon: FileText,
+        description: 'Review your data before import',
+      },
+      mapping: {
+        title: 'Map Columns',
+        icon: Settings,
+        description: 'Map CSV columns to table fields',
+      },
+      validation: {
+        title: 'Validate Data',
+        icon: AlertTriangle,
+        description: 'Review validation results',
+      },
+      duplicates: {
+        title: 'Resolve Duplicates',
+        icon: Copy,
+        description: 'Handle duplicate records',
+      },
+      locations: {
+        title: 'Resolve Locations',
+        icon: MapPin,
+        description: 'Handle location conflicts',
+      },
+      importing: {
+        title: 'Importing',
+        icon: Loader2,
+        description: 'Processing your data...',
+      },
+      complete: {
+        title: 'Complete',
+        icon: CheckCircle2,
+        description: 'Import completed successfully',
+      },
     }
     return steps[step]
   }
@@ -439,10 +540,14 @@ export function CSVImportModal({
       case 'validation':
         return state.parseResult && state.parseResult.errors.length === 0
       case 'duplicates':
-        const unresolvedDuplicates = state.duplicates.filter(d => !d.resolution).length
+        const unresolvedDuplicates = state.duplicates.filter(
+          d => !d.resolution
+        ).length
         return unresolvedDuplicates === 0
       case 'locations':
-        const unresolvedLocations = state.locationResolutions.filter(r => r.resolution === 'manual_select').length
+        const unresolvedLocations = state.locationResolutions.filter(
+          r => r.resolution === 'manual_select'
+        ).length
         return unresolvedLocations === 0
       default:
         return false
@@ -474,21 +579,26 @@ export function CSVImportModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className={`max-w-6xl max-h-[95vh] overflow-hidden flex flex-col ${className}`} aria-describedby="import-dialog-description">
+      <DialogContent
+        className={`max-w-6xl max-h-[95vh] overflow-hidden flex flex-col ${className}`}
+        aria-describedby="import-dialog-description"
+      >
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-primary/10 rounded-lg">
-                <StepIcon className={`h-5 w-5 text-primary ${state.step === 'importing' ? 'animate-spin' : ''}`} />
+                <StepIcon
+                  className={`h-5 w-5 text-primary ${state.step === 'importing' ? 'animate-spin' : ''}`}
+                />
               </div>
               <div>
                 <DialogTitle>{stepInfo.title}</DialogTitle>
-                <DialogDescription id="import-dialog-description">{stepInfo.description}</DialogDescription>
+                <DialogDescription id="import-dialog-description">
+                  {stepInfo.description}
+                </DialogDescription>
               </div>
             </div>
-            <Badge variant="outline">
-              {tableType} Import
-            </Badge>
+            <Badge variant="outline">{tableType} Import</Badge>
           </div>
         </DialogHeader>
 
@@ -496,12 +606,39 @@ export function CSVImportModal({
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span>Import Progress</span>
-            <span>Step {['upload', 'preview', 'mapping', 'validation', 'duplicates', 'locations', 'importing', 'complete'].indexOf(state.step) + 1} of 8</span>
+            <span>
+              Step{' '}
+              {[
+                'upload',
+                'preview',
+                'mapping',
+                'validation',
+                'duplicates',
+                'locations',
+                'importing',
+                'complete',
+              ].indexOf(state.step) + 1}{' '}
+              of 8
+            </span>
           </div>
-          <Progress 
-            value={state.step === 'importing' ? state.progress : 
-                   (['upload', 'preview', 'mapping', 'validation', 'duplicates', 'locations', 'importing', 'complete'].indexOf(state.step) / 7) * 100} 
-            className="h-2" 
+          <Progress
+            value={
+              state.step === 'importing'
+                ? state.progress
+                : ([
+                    'upload',
+                    'preview',
+                    'mapping',
+                    'validation',
+                    'duplicates',
+                    'locations',
+                    'importing',
+                    'complete',
+                  ].indexOf(state.step) /
+                    7) *
+                  100
+            }
+            className="h-2"
           />
         </div>
 
@@ -530,7 +667,8 @@ export function CSVImportModal({
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">Data Preview</h3>
                 <Badge variant="secondary">
-                  {state.parseResult.data.length} rows, {state.parseResult.headers.length} columns
+                  {state.parseResult.data.length} rows,{' '}
+                  {state.parseResult.headers.length} columns
                 </Badge>
               </div>
               <PreviewTable parseResult={state.parseResult} />
@@ -565,7 +703,9 @@ export function CSVImportModal({
           {state.step === 'locations' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Location Resolution Required</h3>
+                <h3 className="text-lg font-semibold">
+                  Location Resolution Required
+                </h3>
                 <Badge variant="outline">
                   {state.locationResolutions.length} location conflicts
                 </Badge>
@@ -573,11 +713,12 @@ export function CSVImportModal({
               <Alert>
                 <MapPin className="h-4 w-4" />
                 <AlertDescription>
-                  Some import data contains addresses or coordinates that need to be resolved to location references.
-                  Click "Resolve Locations" to review and handle these conflicts.
+                  Some import data contains addresses or coordinates that need
+                  to be resolved to location references. Click "Resolve
+                  Locations" to review and handle these conflicts.
                 </AlertDescription>
               </Alert>
-              <Button 
+              <Button
                 onClick={() => setShowLocationResolution(true)}
                 className="w-full"
               >
@@ -593,10 +734,11 @@ export function CSVImportModal({
                 <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
                 <h3 className="text-lg font-semibold">Importing Data...</h3>
                 <p className="text-muted-foreground">
-                  Processing {state.importStats.processedRows} of {state.importStats.totalRows} rows
+                  Processing {state.importStats.processedRows} of{' '}
+                  {state.importStats.totalRows} rows
                 </p>
               </div>
-              
+
               <div className="space-y-2">
                 <Progress value={state.progress} className="h-3" />
                 <div className="text-sm text-muted-foreground">
@@ -606,19 +748,29 @@ export function CSVImportModal({
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">{state.importStats.successfulRows}</div>
-                  <div className="text-sm text-muted-foreground">Successful</div>
+                  <div className="text-xl font-semibold text-green-600">
+                    {state.importStats.successfulRows}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Successful
+                  </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-500">{state.importStats.skippedRows}</div>
+                  <div className="text-xl font-semibold text-gray-500">
+                    {state.importStats.skippedRows}
+                  </div>
                   <div className="text-sm text-muted-foreground">Skipped</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-red-600">{state.importStats.errorRows}</div>
+                  <div className="text-xl font-semibold text-red-600">
+                    {state.importStats.errorRows}
+                  </div>
                   <div className="text-sm text-muted-foreground">Errors</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold">{state.importStats.processedRows}</div>
+                  <div className="text-xl font-semibold">
+                    {state.importStats.processedRows}
+                  </div>
                   <div className="text-sm text-muted-foreground">Processed</div>
                 </div>
               </div>
@@ -629,7 +781,9 @@ export function CSVImportModal({
             <div className="space-y-6 text-center py-8">
               <div className="space-y-4">
                 <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto" />
-                <h3 className="text-xl font-semibold">Import Completed Successfully!</h3>
+                <h3 className="text-xl font-semibold">
+                  Import Completed Successfully!
+                </h3>
                 <p className="text-muted-foreground">
                   Your data has been imported into the {tableType} table.
                 </p>
@@ -637,20 +791,32 @@ export function CSVImportModal({
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-green-600">{state.importStats.successfulRows}</div>
-                  <div className="text-sm text-muted-foreground">Records Added</div>
+                  <div className="text-xl font-semibold text-green-600">
+                    {state.importStats.successfulRows}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Records Added
+                  </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-gray-500">{state.importStats.skippedRows}</div>
+                  <div className="text-xl font-semibold text-gray-500">
+                    {state.importStats.skippedRows}
+                  </div>
                   <div className="text-sm text-muted-foreground">Skipped</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-red-600">{state.importStats.errorRows}</div>
+                  <div className="text-xl font-semibold text-red-600">
+                    {state.importStats.errorRows}
+                  </div>
                   <div className="text-sm text-muted-foreground">Errors</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold">{state.importStats.totalRows}</div>
-                  <div className="text-sm text-muted-foreground">Total Rows</div>
+                  <div className="text-xl font-semibold">
+                    {state.importStats.totalRows}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Total Rows
+                  </div>
                 </div>
               </div>
             </div>
@@ -664,7 +830,7 @@ export function CSVImportModal({
           resolutions={state.locationResolutions}
           existingLocations={existingLocations}
           importOptions={locationOptions}
-          onResolutionUpdate={(resolutions) => {
+          onResolutionUpdate={resolutions => {
             setState(prev => ({ ...prev, locationResolutions: resolutions }))
           }}
           onCreateLocation={onCreateLocation}
@@ -690,10 +856,10 @@ export function CSVImportModal({
               <Button variant="outline" onClick={handleClose}>
                 {state.step === 'complete' ? 'Close' : 'Cancel'}
               </Button>
-              
+
               {nextStepAction && (
-                <Button 
-                  onClick={nextStepAction.action} 
+                <Button
+                  onClick={nextStepAction.action}
                   disabled={!canProceedResult}
                   className="gap-2"
                 >

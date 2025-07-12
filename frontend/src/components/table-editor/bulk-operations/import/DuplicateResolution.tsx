@@ -8,17 +8,21 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  Copy, 
-  SkipForward, 
-  RefreshCw, 
-  ChevronDown, 
+import {
+  Copy,
+  SkipForward,
+  RefreshCw,
+  ChevronDown,
   ChevronUp,
   AlertTriangle,
   Info,
-  CheckCircle2
+  CheckCircle2,
 } from 'lucide-react'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import type { DuplicateMatch, VRPTableType } from '../types/shared.types'
 
 interface DuplicateResolutionProps {
@@ -46,17 +50,22 @@ export function DuplicateResolution({
   existingData,
   tableType,
   onResolutionChange,
-  className
+  className,
 }: DuplicateResolutionProps) {
-  const [expandedDuplicates, setExpandedDuplicates] = useState<Set<number>>(new Set())
-  const [globalStrategy, setGlobalStrategy] = useState<ResolutionStrategy>('replace')
+  const [expandedDuplicates, setExpandedDuplicates] = useState<Set<number>>(
+    new Set()
+  )
+  const [globalStrategy, setGlobalStrategy] =
+    useState<ResolutionStrategy>('replace')
 
   // Group duplicates by match type and confidence
   const groupedDuplicates = useMemo(() => {
     const groups = {
       'high-confidence': duplicates.filter(d => d.confidence >= 0.95),
-      'medium-confidence': duplicates.filter(d => d.confidence >= 0.8 && d.confidence < 0.95),
-      'low-confidence': duplicates.filter(d => d.confidence < 0.8)
+      'medium-confidence': duplicates.filter(
+        d => d.confidence >= 0.8 && d.confidence < 0.95
+      ),
+      'low-confidence': duplicates.filter(d => d.confidence < 0.8),
     }
     return groups
   }, [duplicates])
@@ -73,14 +82,17 @@ export function DuplicateResolution({
       toReplace,
       toCreate,
       toSkip,
-      unresolved
+      unresolved,
     }
   }, [duplicates])
 
   // Update resolution for a specific duplicate
-  const updateResolution = (importRowIndex: number, resolution: ResolutionStrategy) => {
-    const updatedDuplicates = duplicates.map(duplicate => 
-      duplicate.importRowIndex === importRowIndex 
+  const updateResolution = (
+    importRowIndex: number,
+    resolution: ResolutionStrategy
+  ) => {
+    const updatedDuplicates = duplicates.map(duplicate =>
+      duplicate.importRowIndex === importRowIndex
         ? { ...duplicate, resolution }
         : duplicate
     )
@@ -89,8 +101,8 @@ export function DuplicateResolution({
 
   // Apply global strategy to all unresolved duplicates
   const applyGlobalStrategy = () => {
-    const updatedDuplicates = duplicates.map(duplicate => 
-      !duplicate.resolution 
+    const updatedDuplicates = duplicates.map(duplicate =>
+      !duplicate.resolution
         ? { ...duplicate, resolution: globalStrategy }
         : duplicate
     )
@@ -98,10 +110,15 @@ export function DuplicateResolution({
   }
 
   // Apply strategy to specific confidence group
-  const applyGroupStrategy = (confidence: 'high-confidence' | 'medium-confidence' | 'low-confidence', strategy: ResolutionStrategy) => {
+  const applyGroupStrategy = (
+    confidence: 'high-confidence' | 'medium-confidence' | 'low-confidence',
+    strategy: ResolutionStrategy
+  ) => {
     const groupDuplicates = groupedDuplicates[confidence]
     const updatedDuplicates = duplicates.map(duplicate => {
-      const isInGroup = groupDuplicates.some(g => g.importRowIndex === duplicate.importRowIndex)
+      const isInGroup = groupDuplicates.some(
+        g => g.importRowIndex === duplicate.importRowIndex
+      )
       return isInGroup ? { ...duplicate, resolution: strategy } : duplicate
     })
     onResolutionChange(updatedDuplicates)
@@ -158,11 +175,15 @@ export function DuplicateResolution({
     }
   }
 
-  const formatFieldDifferences = (importRow: any, existingRow: any, conflictingFields: string[]) => {
+  const formatFieldDifferences = (
+    importRow: any,
+    existingRow: any,
+    conflictingFields: string[]
+  ) => {
     return conflictingFields.map(field => ({
       field,
       importValue: importRow[field],
-      existingValue: existingRow[field]
+      existingValue: existingRow[field],
     }))
   }
 
@@ -174,7 +195,8 @@ export function DuplicateResolution({
             <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">No Duplicates Found</h3>
             <p className="text-muted-foreground">
-              All import data appears to be unique. No duplicate resolution is needed.
+              All import data appears to be unique. No duplicate resolution is
+              needed.
             </p>
           </div>
         </CardContent>
@@ -191,30 +213,41 @@ export function DuplicateResolution({
             <div>
               <CardTitle className="text-lg">Duplicate Resolution</CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
-                Found {duplicates.length} potential duplicate{duplicates.length !== 1 ? 's' : ''} that need resolution
+                Found {duplicates.length} potential duplicate
+                {duplicates.length !== 1 ? 's' : ''} that need resolution
               </p>
             </div>
-            <Badge variant={summary.unresolved > 0 ? "destructive" : "default"}>
-              {summary.unresolved > 0 ? `${summary.unresolved} Unresolved` : 'All Resolved'}
+            <Badge variant={summary.unresolved > 0 ? 'destructive' : 'default'}>
+              {summary.unresolved > 0
+                ? `${summary.unresolved} Unresolved`
+                : 'All Resolved'}
             </Badge>
           </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-orange-500">{summary.toReplace}</div>
+              <div className="text-xl font-semibold text-orange-500">
+                {summary.toReplace}
+              </div>
               <div className="text-sm text-muted-foreground">Replace</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-500">{summary.toCreate}</div>
+              <div className="text-xl font-semibold text-blue-500">
+                {summary.toCreate}
+              </div>
               <div className="text-sm text-muted-foreground">Create New</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-500">{summary.toSkip}</div>
+              <div className="text-xl font-semibold text-gray-500">
+                {summary.toSkip}
+              </div>
               <div className="text-sm text-muted-foreground">Skip</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-destructive">{summary.unresolved}</div>
+              <div className="text-xl font-semibold text-destructive">
+                {summary.unresolved}
+              </div>
               <div className="text-sm text-muted-foreground">Unresolved</div>
             </div>
           </div>
@@ -225,7 +258,9 @@ export function DuplicateResolution({
               <Label htmlFor="global-strategy">Apply to unresolved:</Label>
               <RadioGroup
                 value={globalStrategy}
-                onValueChange={(value) => setGlobalStrategy(value as ResolutionStrategy)}
+                onValueChange={value =>
+                  setGlobalStrategy(value as ResolutionStrategy)
+                }
                 className="flex gap-4"
               >
                 <div className="flex items-center space-x-2">
@@ -268,21 +303,26 @@ export function DuplicateResolution({
                       High Confidence Duplicates
                     </CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      {groupedDuplicates['high-confidence'].length} duplicate(s) with 95%+ confidence
+                      {groupedDuplicates['high-confidence'].length} duplicate(s)
+                      with 95%+ confidence
                     </p>
                   </div>
                   <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
-                      onClick={() => applyGroupStrategy('high-confidence', 'replace')}
+                      onClick={() =>
+                        applyGroupStrategy('high-confidence', 'replace')
+                      }
                     >
                       Replace All
                     </Button>
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
-                      onClick={() => applyGroupStrategy('high-confidence', 'skip')}
+                      onClick={() =>
+                        applyGroupStrategy('high-confidence', 'skip')
+                      }
                     >
                       Skip All
                     </Button>
@@ -291,26 +331,42 @@ export function DuplicateResolution({
               </CardHeader>
               <CardContent>
                 <div className="text-sm text-muted-foreground mb-3">
-                  These are very likely duplicates. Consider replacing existing records or skipping import.
+                  These are very likely duplicates. Consider replacing existing
+                  records or skipping import.
                 </div>
                 <div className="space-y-2">
-                  {groupedDuplicates['high-confidence'].map((duplicate, index) => (
-                    <div key={duplicate.importRowIndex} className="p-3 rounded-lg border bg-red-50 dark:bg-red-900/20">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Badge variant="destructive">Row {duplicate.importRowIndex + 1}</Badge>
-                          <Badge variant="outline">{Math.round(duplicate.confidence * 100)}% match</Badge>
-                          <span className="text-sm">{getMatchTypeDescription(duplicate.matchType)}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {getResolutionIcon(duplicate.resolution)}
-                          <Badge variant={getResolutionBadgeVariant(duplicate.resolution)}>
-                            {duplicate.resolution || 'Unresolved'}
-                          </Badge>
+                  {groupedDuplicates['high-confidence'].map(
+                    (duplicate, index) => (
+                      <div
+                        key={duplicate.importRowIndex}
+                        className="p-3 rounded-lg border bg-red-50 dark:bg-red-900/20"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="destructive">
+                              Row {duplicate.importRowIndex + 1}
+                            </Badge>
+                            <Badge variant="outline">
+                              {Math.round(duplicate.confidence * 100)}% match
+                            </Badge>
+                            <span className="text-sm">
+                              {getMatchTypeDescription(duplicate.matchType)}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {getResolutionIcon(duplicate.resolution)}
+                            <Badge
+                              variant={getResolutionBadgeVariant(
+                                duplicate.resolution
+                              )}
+                            >
+                              {duplicate.resolution || 'Unresolved'}
+                            </Badge>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -327,21 +383,26 @@ export function DuplicateResolution({
                       Medium Confidence Duplicates
                     </CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      {groupedDuplicates['medium-confidence'].length} duplicate(s) with 80-95% confidence
+                      {groupedDuplicates['medium-confidence'].length}{' '}
+                      duplicate(s) with 80-95% confidence
                     </p>
                   </div>
                   <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
-                      onClick={() => applyGroupStrategy('medium-confidence', 'create')}
+                      onClick={() =>
+                        applyGroupStrategy('medium-confidence', 'create')
+                      }
                     >
                       Create All
                     </Button>
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
-                      onClick={() => applyGroupStrategy('medium-confidence', 'skip')}
+                      onClick={() =>
+                        applyGroupStrategy('medium-confidence', 'skip')
+                      }
                     >
                       Skip All
                     </Button>
@@ -350,26 +411,42 @@ export function DuplicateResolution({
               </CardHeader>
               <CardContent>
                 <div className="text-sm text-muted-foreground mb-3">
-                  These might be duplicates. Review individual cases or create as new records.
+                  These might be duplicates. Review individual cases or create
+                  as new records.
                 </div>
                 <div className="space-y-2">
-                  {groupedDuplicates['medium-confidence'].map((duplicate, index) => (
-                    <div key={duplicate.importRowIndex} className="p-3 rounded-lg border bg-orange-50 dark:bg-orange-900/20">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Badge variant="secondary">Row {duplicate.importRowIndex + 1}</Badge>
-                          <Badge variant="outline">{Math.round(duplicate.confidence * 100)}% match</Badge>
-                          <span className="text-sm">{getMatchTypeDescription(duplicate.matchType)}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {getResolutionIcon(duplicate.resolution)}
-                          <Badge variant={getResolutionBadgeVariant(duplicate.resolution)}>
-                            {duplicate.resolution || 'Unresolved'}
-                          </Badge>
+                  {groupedDuplicates['medium-confidence'].map(
+                    (duplicate, index) => (
+                      <div
+                        key={duplicate.importRowIndex}
+                        className="p-3 rounded-lg border bg-orange-50 dark:bg-orange-900/20"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary">
+                              Row {duplicate.importRowIndex + 1}
+                            </Badge>
+                            <Badge variant="outline">
+                              {Math.round(duplicate.confidence * 100)}% match
+                            </Badge>
+                            <span className="text-sm">
+                              {getMatchTypeDescription(duplicate.matchType)}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {getResolutionIcon(duplicate.resolution)}
+                            <Badge
+                              variant={getResolutionBadgeVariant(
+                                duplicate.resolution
+                              )}
+                            >
+                              {duplicate.resolution || 'Unresolved'}
+                            </Badge>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -386,14 +463,17 @@ export function DuplicateResolution({
                       Low Confidence Duplicates
                     </CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      {groupedDuplicates['low-confidence'].length} duplicate(s) with &lt;80% confidence
+                      {groupedDuplicates['low-confidence'].length} duplicate(s)
+                      with &lt;80% confidence
                     </p>
                   </div>
                   <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
-                      onClick={() => applyGroupStrategy('low-confidence', 'create')}
+                      onClick={() =>
+                        applyGroupStrategy('low-confidence', 'create')
+                      }
                     >
                       Create All
                     </Button>
@@ -402,26 +482,42 @@ export function DuplicateResolution({
               </CardHeader>
               <CardContent>
                 <div className="text-sm text-muted-foreground mb-3">
-                  These are probably not duplicates. Safe to create as new records.
+                  These are probably not duplicates. Safe to create as new
+                  records.
                 </div>
                 <div className="space-y-2">
-                  {groupedDuplicates['low-confidence'].map((duplicate, index) => (
-                    <div key={duplicate.importRowIndex} className="p-3 rounded-lg border bg-blue-50 dark:bg-blue-900/20">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline">Row {duplicate.importRowIndex + 1}</Badge>
-                          <Badge variant="outline">{Math.round(duplicate.confidence * 100)}% match</Badge>
-                          <span className="text-sm">{getMatchTypeDescription(duplicate.matchType)}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {getResolutionIcon(duplicate.resolution)}
-                          <Badge variant={getResolutionBadgeVariant(duplicate.resolution)}>
-                            {duplicate.resolution || 'Unresolved'}
-                          </Badge>
+                  {groupedDuplicates['low-confidence'].map(
+                    (duplicate, index) => (
+                      <div
+                        key={duplicate.importRowIndex}
+                        className="p-3 rounded-lg border bg-blue-50 dark:bg-blue-900/20"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline">
+                              Row {duplicate.importRowIndex + 1}
+                            </Badge>
+                            <Badge variant="outline">
+                              {Math.round(duplicate.confidence * 100)}% match
+                            </Badge>
+                            <span className="text-sm">
+                              {getMatchTypeDescription(duplicate.matchType)}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {getResolutionIcon(duplicate.resolution)}
+                            <Badge
+                              variant={getResolutionBadgeVariant(
+                                duplicate.resolution
+                              )}
+                            >
+                              {duplicate.resolution || 'Unresolved'}
+                            </Badge>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -433,11 +529,16 @@ export function DuplicateResolution({
             <div className="space-y-4">
               {duplicates.map((duplicate, index) => {
                 const importRow = importData[duplicate.importRowIndex]
-                const existingRow = existingData.find(row => 
-                  (row._id || row.id) === duplicate.existingRecordId
+                const existingRow = existingData.find(
+                  row => (row._id || row.id) === duplicate.existingRecordId
                 )
-                const fieldDifferences = existingRow ? 
-                  formatFieldDifferences(importRow, existingRow, duplicate.conflictingFields) : []
+                const fieldDifferences = existingRow
+                  ? formatFieldDifferences(
+                      importRow,
+                      existingRow,
+                      duplicate.conflictingFields
+                    )
+                  : []
 
                 return (
                   <Card key={duplicate.importRowIndex}>
@@ -449,18 +550,35 @@ export function DuplicateResolution({
                         <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <Badge variant="outline">Row {duplicate.importRowIndex + 1}</Badge>
-                              <Badge variant="secondary">{Math.round(duplicate.confidence * 100)}% confidence</Badge>
-                              <Badge variant="outline">{duplicate.matchType} match</Badge>
+                              <Badge variant="outline">
+                                Row {duplicate.importRowIndex + 1}
+                              </Badge>
+                              <Badge variant="secondary">
+                                {Math.round(duplicate.confidence * 100)}%
+                                confidence
+                              </Badge>
+                              <Badge variant="outline">
+                                {duplicate.matchType} match
+                              </Badge>
                               {duplicate.conflictingFields.length > 0 && (
-                                <Badge variant="destructive" className="text-xs">
-                                  {duplicate.conflictingFields.length} conflict{duplicate.conflictingFields.length !== 1 ? 's' : ''}
+                                <Badge
+                                  variant="destructive"
+                                  className="text-xs"
+                                >
+                                  {duplicate.conflictingFields.length} conflict
+                                  {duplicate.conflictingFields.length !== 1
+                                    ? 's'
+                                    : ''}
                                 </Badge>
                               )}
                             </div>
                             <div className="flex items-center gap-2">
                               {getResolutionIcon(duplicate.resolution)}
-                              <Badge variant={getResolutionBadgeVariant(duplicate.resolution)}>
+                              <Badge
+                                variant={getResolutionBadgeVariant(
+                                  duplicate.resolution
+                                )}
+                              >
                                 {duplicate.resolution || 'Unresolved'}
                               </Badge>
                               {expandedDuplicates.has(index) ? (
@@ -478,27 +596,40 @@ export function DuplicateResolution({
                             {/* Field Differences */}
                             {fieldDifferences.length > 0 && (
                               <div>
-                                <h5 className="text-sm font-semibold mb-2">Field Differences:</h5>
+                                <h5 className="text-sm font-semibold mb-2">
+                                  Field Differences:
+                                </h5>
                                 <div className="space-y-2">
-                                  {fieldDifferences.map(({ field, importValue, existingValue }) => (
-                                    <div key={field} className="p-2 rounded border text-sm">
-                                      <div className="font-medium text-xs text-muted-foreground mb-1">{field}</div>
-                                      <div className="grid grid-cols-2 gap-2">
-                                        <div>
-                                          <span className="text-xs text-muted-foreground">Import:</span>
-                                          <div className="font-mono bg-blue-50 p-1 rounded dark:bg-blue-900/20">
-                                            {JSON.stringify(importValue)}
-                                          </div>
+                                  {fieldDifferences.map(
+                                    ({ field, importValue, existingValue }) => (
+                                      <div
+                                        key={field}
+                                        className="p-2 rounded border text-sm"
+                                      >
+                                        <div className="font-medium text-xs text-muted-foreground mb-1">
+                                          {field}
                                         </div>
-                                        <div>
-                                          <span className="text-xs text-muted-foreground">Existing:</span>
-                                          <div className="font-mono bg-gray-50 p-1 rounded dark:bg-gray-900/20">
-                                            {JSON.stringify(existingValue)}
+                                        <div className="grid grid-cols-2 gap-2">
+                                          <div>
+                                            <span className="text-xs text-muted-foreground">
+                                              Import:
+                                            </span>
+                                            <div className="font-mono bg-blue-50 p-1 rounded dark:bg-blue-900/20">
+                                              {JSON.stringify(importValue)}
+                                            </div>
+                                          </div>
+                                          <div>
+                                            <span className="text-xs text-muted-foreground">
+                                              Existing:
+                                            </span>
+                                            <div className="font-mono bg-gray-50 p-1 rounded dark:bg-gray-900/20">
+                                              {JSON.stringify(existingValue)}
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  ))}
+                                    )
+                                  )}
                                 </div>
                               </div>
                             )}
@@ -507,29 +638,54 @@ export function DuplicateResolution({
 
                             {/* Resolution Options */}
                             <div>
-                              <h5 className="text-sm font-semibold mb-2">Resolution:</h5>
+                              <h5 className="text-sm font-semibold mb-2">
+                                Resolution:
+                              </h5>
                               <RadioGroup
                                 value={duplicate.resolution || ''}
-                                onValueChange={(value) => updateResolution(duplicate.importRowIndex, value as ResolutionStrategy)}
+                                onValueChange={value =>
+                                  updateResolution(
+                                    duplicate.importRowIndex,
+                                    value as ResolutionStrategy
+                                  )
+                                }
                                 className="space-y-2"
                               >
                                 <div className="flex items-center space-x-2">
-                                  <RadioGroupItem value="replace" id={`replace-${index}`} />
-                                  <Label htmlFor={`replace-${index}`} className="flex items-center gap-2">
+                                  <RadioGroupItem
+                                    value="replace"
+                                    id={`replace-${index}`}
+                                  />
+                                  <Label
+                                    htmlFor={`replace-${index}`}
+                                    className="flex items-center gap-2"
+                                  >
                                     <RefreshCw className="h-4 w-4 text-orange-500" />
                                     Replace existing record with import data
                                   </Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                  <RadioGroupItem value="create" id={`create-${index}`} />
-                                  <Label htmlFor={`create-${index}`} className="flex items-center gap-2">
+                                  <RadioGroupItem
+                                    value="create"
+                                    id={`create-${index}`}
+                                  />
+                                  <Label
+                                    htmlFor={`create-${index}`}
+                                    className="flex items-center gap-2"
+                                  >
                                     <Copy className="h-4 w-4 text-blue-500" />
                                     Create as new record (ignore similarity)
                                   </Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                  <RadioGroupItem value="skip" id={`skip-${index}`} />
-                                  <Label htmlFor={`skip-${index}`} className="flex items-center gap-2">
+                                  <RadioGroupItem
+                                    value="skip"
+                                    id={`skip-${index}`}
+                                  />
+                                  <Label
+                                    htmlFor={`skip-${index}`}
+                                    className="flex items-center gap-2"
+                                  >
                                     <SkipForward className="h-4 w-4 text-gray-500" />
                                     Skip this import row
                                   </Label>

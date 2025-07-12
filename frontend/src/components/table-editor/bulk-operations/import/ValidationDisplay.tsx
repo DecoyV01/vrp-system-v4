@@ -240,25 +240,25 @@ export function ValidationDisplay({
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-destructive">
+              <div className="text-xl font-semibold text-destructive">
                 {summary.errorCount}
               </div>
               <div className="text-sm text-muted-foreground">Errors</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-orange-500">
+              <div className="text-xl font-semibold text-orange-500">
                 {summary.warningCount}
               </div>
               <div className="text-sm text-muted-foreground">Warnings</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-foreground">
+              <div className="text-xl font-semibold text-foreground">
                 {summary.duplicateCount}
               </div>
               <div className="text-sm text-muted-foreground">Duplicates</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold">
+              <div className="text-xl font-semibold">
                 {parseResult.data.length - summary.errorCount}
               </div>
               <div className="text-sm text-muted-foreground">Valid Rows</div>

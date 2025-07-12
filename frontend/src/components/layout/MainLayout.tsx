@@ -153,13 +153,17 @@ const MainLayout = () => {
     >
       {/* TopRibbon spanning FULL WIDTH - above everything like browser tabs */}
       <div
-        className="h-12 bg-card border-b border-border flex items-center justify-between px-6 w-full z-50"
+        className="h-12 bg-muted/30 border-b border-border flex items-center justify-between px-6 w-full z-50"
         data-slot="TopRibbon"
         role="banner"
         aria-label="Navigation breadcrumb and status indicators"
       >
         {/* Breadcrumb navigation - ALWAYS show, not conditional */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2" role="navigation">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center gap-2"
+          role="navigation"
+        >
           <Home className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
 
           {breadcrumbs.length > 0 ? (

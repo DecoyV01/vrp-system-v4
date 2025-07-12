@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -22,21 +22,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { 
-  MapPin, 
+import {
+  MapPin,
   Navigation,
   AlertTriangle,
   CheckCircle2,
   Plus,
   Search,
   Target,
-  ArrowRight
+  ArrowRight,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import type { 
+import type {
   LocationResolution,
   LocationMatch,
-  LocationImportOptions
+  LocationImportOptions,
 } from '../types/shared.types'
 
 interface LocationResolutionModalProps {
@@ -58,7 +58,7 @@ export function LocationResolutionModal({
   importOptions,
   onResolutionUpdate,
   onCreateLocation,
-  className
+  className,
 }: LocationResolutionModalProps) {
   const [currentResolutionIndex, setCurrentResolutionIndex] = useState(0)
   const [isCreatingLocation, setIsCreatingLocation] = useState(false)
@@ -67,29 +67,36 @@ export function LocationResolutionModal({
     address: '',
     locationLat: '',
     locationLon: '',
-    locationType: 'customer'
+    locationType: 'customer',
   })
 
   const currentResolution = resolutions[currentResolutionIndex]
-  const hasUnresolvedConflicts = resolutions.some(r => r.resolution === 'manual_select')
+  const hasUnresolvedConflicts = resolutions.some(
+    r => r.resolution === 'manual_select'
+  )
 
   // Get resolution statistics
   const stats = useMemo(() => {
     const total = resolutions.length
-    const resolved = resolutions.filter(r => 
-      r.resolution === 'use_existing' || 
-      r.resolution === 'create_new' || 
-      r.resolution === 'skip'
+    const resolved = resolutions.filter(
+      r =>
+        r.resolution === 'use_existing' ||
+        r.resolution === 'create_new' ||
+        r.resolution === 'skip'
     ).length
-    const needsAttention = resolutions.filter(r => r.resolution === 'manual_select').length
-    
+    const needsAttention = resolutions.filter(
+      r => r.resolution === 'manual_select'
+    ).length
+
     return { total, resolved, needsAttention }
   }, [resolutions])
 
   // Update current resolution
   const updateCurrentResolution = (updates: Partial<LocationResolution>) => {
-    const updatedResolutions = resolutions.map((resolution, index) => 
-      index === currentResolutionIndex ? { ...resolution, ...updates } : resolution
+    const updatedResolutions = resolutions.map((resolution, index) =>
+      index === currentResolutionIndex
+        ? { ...resolution, ...updates }
+        : resolution
     )
     onResolutionUpdate(updatedResolutions)
   }
@@ -98,7 +105,7 @@ export function LocationResolutionModal({
   const handleLocationSelect = (locationId: string) => {
     updateCurrentResolution({
       resolution: 'use_existing',
-      selectedLocationId: locationId
+      selectedLocationId: locationId,
     })
   }
 
@@ -106,27 +113,29 @@ export function LocationResolutionModal({
   const handleCreateNew = () => {
     const sourceData = currentResolution
     setNewLocationData({
-      name: sourceData.sourceAddress?.split(',')[0] || `Location ${currentResolution.importRowIndex + 1}`,
+      name:
+        sourceData.sourceAddress?.split(',')[0] ||
+        `Location ${currentResolution.importRowIndex + 1}`,
       address: sourceData.sourceAddress || '',
       locationLat: sourceData.sourceCoordinates?.[1]?.toString() || '',
       locationLon: sourceData.sourceCoordinates?.[0]?.toString() || '',
-      locationType: 'customer'
+      locationType: 'customer',
     })
-    
+
     updateCurrentResolution({
       resolution: 'create_new',
       newLocationData: {
         name: newLocationData.name,
         address: newLocationData.address,
-        coordinates: sourceData.sourceCoordinates
-      }
+        coordinates: sourceData.sourceCoordinates,
+      },
     })
   }
 
   // Handle skip
   const handleSkip = () => {
     updateCurrentResolution({
-      resolution: 'skip'
+      resolution: 'skip',
     })
   }
 
@@ -134,7 +143,10 @@ export function LocationResolutionModal({
   const navigateResolution = (direction: 'prev' | 'next') => {
     if (direction === 'prev' && currentResolutionIndex > 0) {
       setCurrentResolutionIndex(currentResolutionIndex - 1)
-    } else if (direction === 'next' && currentResolutionIndex < resolutions.length - 1) {
+    } else if (
+      direction === 'next' &&
+      currentResolutionIndex < resolutions.length - 1
+    ) {
       setCurrentResolutionIndex(currentResolutionIndex + 1)
     }
   }
@@ -149,7 +161,7 @@ export function LocationResolutionModal({
           return {
             ...resolution,
             resolution: 'use_existing' as const,
-            selectedLocationId: bestMatch.id
+            selectedLocationId: bestMatch.id,
           }
         } else {
           // Create new location
@@ -157,16 +169,18 @@ export function LocationResolutionModal({
             ...resolution,
             resolution: 'create_new' as const,
             newLocationData: {
-              name: resolution.sourceAddress?.split(',')[0] || `Location ${resolution.importRowIndex + 1}`,
+              name:
+                resolution.sourceAddress?.split(',')[0] ||
+                `Location ${resolution.importRowIndex + 1}`,
               address: resolution.sourceAddress,
-              coordinates: resolution.sourceCoordinates
-            }
+              coordinates: resolution.sourceCoordinates,
+            },
           }
         }
       }
       return resolution
     })
-    
+
     onResolutionUpdate(updatedResolutions)
     toast.success('Auto-resolved all location conflicts')
   }
@@ -189,7 +203,9 @@ export function LocationResolutionModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`max-w-5xl max-h-[95vh] overflow-hidden flex flex-col ${className}`}>
+      <DialogContent
+        className={`max-w-5xl max-h-[95vh] overflow-hidden flex flex-col ${className}`}
+      >
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -209,7 +225,9 @@ export function LocationResolutionModal({
           <Card>
             <CardContent className="pt-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">{stats.resolved}</div>
+                <div className="text-xl font-semibold text-green-600">
+                  {stats.resolved}
+                </div>
                 <div className="text-sm text-muted-foreground">Resolved</div>
               </div>
             </CardContent>
@@ -217,16 +235,22 @@ export function LocationResolutionModal({
           <Card>
             <CardContent className="pt-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-orange-600">{stats.needsAttention}</div>
-                <div className="text-sm text-muted-foreground">Need Attention</div>
+                <div className="text-xl font-semibold text-orange-600">
+                  {stats.needsAttention}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Need Attention
+                </div>
               </div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-4">
               <div className="text-center">
-                <div className="text-2xl font-bold">{stats.total}</div>
-                <div className="text-sm text-muted-foreground">Total Conflicts</div>
+                <div className="text-xl font-semibold">{stats.total}</div>
+                <div className="text-sm text-muted-foreground">
+                  Total Conflicts
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -246,14 +270,18 @@ export function LocationResolutionModal({
               {currentResolution.sourceAddress && (
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm"><strong>Address:</strong> {currentResolution.sourceAddress}</span>
+                  <span className="text-sm">
+                    <strong>Address:</strong> {currentResolution.sourceAddress}
+                  </span>
                 </div>
               )}
               {currentResolution.sourceCoordinates && (
                 <div className="flex items-center gap-2">
                   <Navigation className="w-4 h-4 text-gray-400" />
                   <span className="text-sm">
-                    <strong>Coordinates:</strong> {currentResolution.sourceCoordinates[1].toFixed(6)}, {currentResolution.sourceCoordinates[0].toFixed(6)}
+                    <strong>Coordinates:</strong>{' '}
+                    {currentResolution.sourceCoordinates[1].toFixed(6)},{' '}
+                    {currentResolution.sourceCoordinates[0].toFixed(6)}
                   </span>
                 </div>
               )}
@@ -263,28 +291,26 @@ export function LocationResolutionModal({
           {/* Resolution Options */}
           <Tabs value={currentResolution.resolution} className="w-full">
             <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger 
+              <TabsTrigger
                 value="use_existing"
-                onClick={() => updateCurrentResolution({ resolution: 'use_existing' })}
+                onClick={() =>
+                  updateCurrentResolution({ resolution: 'use_existing' })
+                }
                 disabled={currentResolution.matches.length === 0}
               >
                 Use Existing
               </TabsTrigger>
-              <TabsTrigger 
-                value="create_new"
-                onClick={() => handleCreateNew()}
-              >
+              <TabsTrigger value="create_new" onClick={() => handleCreateNew()}>
                 Create New
               </TabsTrigger>
-              <TabsTrigger 
-                value="skip"
-                onClick={() => handleSkip()}
-              >
+              <TabsTrigger value="skip" onClick={() => handleSkip()}>
                 Skip
               </TabsTrigger>
-              <TabsTrigger 
+              <TabsTrigger
                 value="manual_select"
-                onClick={() => updateCurrentResolution({ resolution: 'manual_select' })}
+                onClick={() =>
+                  updateCurrentResolution({ resolution: 'manual_select' })
+                }
                 disabled={currentResolution.matches.length === 0}
               >
                 Manual Select
@@ -296,12 +322,12 @@ export function LocationResolutionModal({
               {currentResolution.matches.length > 0 ? (
                 <div className="space-y-3">
                   <h4 className="font-medium">Select existing location:</h4>
-                  {currentResolution.matches.slice(0, 5).map((match) => (
-                    <Card 
+                  {currentResolution.matches.slice(0, 5).map(match => (
+                    <Card
                       key={match.id}
                       className={`cursor-pointer transition-colors ${
-                        currentResolution.selectedLocationId === match.id 
-                          ? 'ring-2 ring-primary bg-primary/5' 
+                        currentResolution.selectedLocationId === match.id
+                          ? 'ring-2 ring-primary bg-primary/5'
                           : 'hover:bg-muted/50'
                       }`}
                       onClick={() => handleLocationSelect(match.id)}
@@ -311,17 +337,25 @@ export function LocationResolutionModal({
                           <div className="space-y-1">
                             <div className="font-medium">{match.name}</div>
                             {match.address && (
-                              <div className="text-sm text-muted-foreground">{match.address}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {match.address}
+                              </div>
                             )}
                             {match.coordinates && (
                               <div className="text-xs text-muted-foreground font-mono">
-                                {match.coordinates[1].toFixed(6)}, {match.coordinates[0].toFixed(6)}
+                                {match.coordinates[1].toFixed(6)},{' '}
+                                {match.coordinates[0].toFixed(6)}
                               </div>
                             )}
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge variant={getConfidenceBadgeVariant(match.confidence)}>
-                              {formatConfidence(match.confidence)} {match.matchType}
+                            <Badge
+                              variant={getConfidenceBadgeVariant(
+                                match.confidence
+                              )}
+                            >
+                              {formatConfidence(match.confidence)}{' '}
+                              {match.matchType}
                             </Badge>
                             {match.distance !== undefined && (
                               <Badge variant="outline" className="text-xs">
@@ -354,15 +388,25 @@ export function LocationResolutionModal({
                     <Input
                       id="newLocationName"
                       value={newLocationData.name}
-                      onChange={(e) => setNewLocationData(prev => ({ ...prev, name: e.target.value }))}
+                      onChange={e =>
+                        setNewLocationData(prev => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
                       placeholder="Location name"
                     />
                   </div>
                   <div>
                     <Label htmlFor="newLocationType">Type</Label>
-                    <Select 
-                      value={newLocationData.locationType} 
-                      onValueChange={(value) => setNewLocationData(prev => ({ ...prev, locationType: value }))}
+                    <Select
+                      value={newLocationData.locationType}
+                      onValueChange={value =>
+                        setNewLocationData(prev => ({
+                          ...prev,
+                          locationType: value,
+                        }))
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -371,7 +415,9 @@ export function LocationResolutionModal({
                         <SelectItem value="customer">Customer</SelectItem>
                         <SelectItem value="depot">Depot</SelectItem>
                         <SelectItem value="warehouse">Warehouse</SelectItem>
-                        <SelectItem value="distribution_center">Distribution Center</SelectItem>
+                        <SelectItem value="distribution_center">
+                          Distribution Center
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -381,7 +427,12 @@ export function LocationResolutionModal({
                   <Input
                     id="newLocationAddress"
                     value={newLocationData.address}
-                    onChange={(e) => setNewLocationData(prev => ({ ...prev, address: e.target.value }))}
+                    onChange={e =>
+                      setNewLocationData(prev => ({
+                        ...prev,
+                        address: e.target.value,
+                      }))
+                    }
                     placeholder="Street address"
                   />
                 </div>
@@ -391,7 +442,12 @@ export function LocationResolutionModal({
                     <Input
                       id="newLocationLat"
                       value={newLocationData.locationLat}
-                      onChange={(e) => setNewLocationData(prev => ({ ...prev, locationLat: e.target.value }))}
+                      onChange={e =>
+                        setNewLocationData(prev => ({
+                          ...prev,
+                          locationLat: e.target.value,
+                        }))
+                      }
                       placeholder="37.7749"
                       type="number"
                       step="any"
@@ -402,7 +458,12 @@ export function LocationResolutionModal({
                     <Input
                       id="newLocationLon"
                       value={newLocationData.locationLon}
-                      onChange={(e) => setNewLocationData(prev => ({ ...prev, locationLon: e.target.value }))}
+                      onChange={e =>
+                        setNewLocationData(prev => ({
+                          ...prev,
+                          locationLon: e.target.value,
+                        }))
+                      }
                       placeholder="-122.4194"
                       type="number"
                       step="any"
@@ -417,7 +478,8 @@ export function LocationResolutionModal({
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  This row will be skipped during import. No location data will be processed for this record.
+                  This row will be skipped during import. No location data will
+                  be processed for this record.
                 </AlertDescription>
               </Alert>
             </TabsContent>
@@ -427,7 +489,8 @@ export function LocationResolutionModal({
               <Alert variant="destructive">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  Manual selection required. Please choose one of the other resolution options.
+                  Manual selection required. Please choose one of the other
+                  resolution options.
                 </AlertDescription>
               </Alert>
             </TabsContent>
@@ -453,7 +516,7 @@ export function LocationResolutionModal({
               >
                 Previous
               </Button>
-              
+
               {currentResolutionIndex < resolutions.length - 1 ? (
                 <Button
                   onClick={() => navigateResolution('next')}
@@ -463,10 +526,7 @@ export function LocationResolutionModal({
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               ) : (
-                <Button
-                  onClick={onClose}
-                  disabled={hasUnresolvedConflicts}
-                >
+                <Button onClick={onClose} disabled={hasUnresolvedConflicts}>
                   {hasUnresolvedConflicts ? (
                     <>
                       <AlertTriangle className="w-4 h-4 mr-2" />
